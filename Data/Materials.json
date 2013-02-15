@@ -1,0 +1,23 @@
+{
+	"tilesets": {
+		"1": "tileset.png"
+	},
+	"autotiles": {
+		"2": "autotile1.png",
+		"3": "autotile2.png"
+	},
+	"characters": {
+		"4": "event1.png",
+		"event": "105-Civilian05.png",
+		"event3": "027-Cleric03.png"
+	},
+	"faces": {
+		"2": "Aluxes.png"
+	},
+	"windowskins": {
+		"window": "window.png"
+	},
+	"animations": {
+		"2": "Heal5.png"
+	}
+}

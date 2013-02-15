@@ -1,0 +1,51 @@
+[
+    {
+        "id": 1,
+        "x": "8",
+        "y": "2",
+        "name": "EV-1"
+    },
+    [
+        {
+            "trigger": "action_button",
+            "frequence": 8,
+            "speed": 2,
+            "switch_1": 0,
+            "switch_2": 0,
+            "switch_3": 0,
+            "commands": [
+			  "CHANGE_STATE: {'actor': 'all','operation': 'increase','state': '2'}"
+            ],
+            "graphic": "event",
+            "graphic-params": {
+                "direction": "bottom",
+                "pattern": "",
+                "nbSequenceX": "",
+                "nbSequenceY": "",
+                "regX": "",
+                "regY": ""
+            }
+        },
+		{
+			"conditions": {"variables": 1, "equalOrAbove": 1},
+            "trigger": "action_button",
+            "frequence": 12,
+            "type": "fixed",
+            "speed": 4,
+            "switch_1": 0,
+            "switch_2": 0,
+            "switch_3": 0,
+            "commands": [
+                "SELF_SWITCH_OFF: 'A'"
+            ],
+            "graphic-params": {
+                "direction": "bottom",
+                "pattern": "",
+                "nbSequenceX": "",
+                "nbSequenceY": "",
+                "regX": "",
+                "regY": ""
+            }
+        }
+    ]
+]

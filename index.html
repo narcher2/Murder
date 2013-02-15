@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  
+  <script>
+	
+		
+	</script>
+	
+	<!--<script src="core/Utilies.js"></script>-->
+	<script src="../engine-common.js"></script>
+	<script src="../canvasengine.js"></script>
+	
+	
+	<script src="../extends/animation.js"></script>
+	<script src="../extends/input.js"></script>
+	<script src="../extends/Spritesheet.js"></script>
+	<!--<script src="../extends/bison.js"></script>-->
+	<script src="../extends/Scrolling.js"></script>
+	<script src="../extends/Marshal.js"></script>
+	<script src="../extends/Hit.js"></script>
+	<script src="../extends/Window.js"></script>
+	<script src="../extends/Text.js"></script>
+	<script src="../extends/Effect.js"></script>
+	
+	<script src="../Stats.js"></script>
+	
+	
+	
+	<script src="core/Main.js"></script>
+	
+	<script src="core/game/Interpreter.js"></script>
+	<script src="core/game/Game_System.js"></script>
+	<script src="core/game/Game_Switches.js"></script>
+	<script src="core/game/Game_Variables.js"></script>
+	<script src="core/game/Game_SelfSwitches.js"></script>
+	<script src="core/game/Game_CommonEvents.js"></script>
+
+	<script src="core/game/Game_Map.js"></script>
+	<script src="core/game/Game_Character.js"></script>
+	<script src="core/game/Game_Player.js"></script>
+	
+	<script src="core/game/Game_Event.js"></script>
+	<script src="core/game/Game_Actor.js"></script>
+	<script src="core/game/Game_Save.js"></script>
+	<script src="core/sprite/Sprite.js"></script>
+	<script src="core/sprite/Spriteset_Map.js"></script>
+	<script src="core/sprite/Sprite_Character.js"></script>
+
+	<style>
+@font-face{
+    font-family : "RPG";
+    src : url('Graphics/Fonts/Philosopher-Regular.ttf');
+}
+@font-face{
+    font-family : "Megadeth";
+    src : url('Graphics/Fonts/Elementary_Gothic_Bookhand.ttf');
+}
+	</style>
+	
+	
+	
+	
+	<script>
+	
+		RPGJS_Core.defines({
+			canvas: "canvas",
+			plugins: ["Hub"]
+		}).ready(function(rpg) {
+		
+			this.scene.call("Scene_Title");
+	
+		});
+	
+	</script>
+		
+	
+
+		
+		
+ </head>
+  <body>
+  
+	<canvas id="canvas" width="640px" height="480px"></canvas>
+	
+  </body>
+</html>
