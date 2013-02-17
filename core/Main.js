@@ -36,7 +36,7 @@ Class.create("RPGJS", {
 							else {
 								if (callback) callback.call(self, ctx);
 							}
-						});
+						}, self.params.scene_path);
 						
 					});
 				});
@@ -50,8 +50,9 @@ Class.create("RPGJS", {
 			return RPGJS.Scene.call(name, params);
 		},
 		
-		load: function(scenes, onFinish) {
+		load: function(scenes, onFinish, abs_path) {
 			var j=0;
+			abs_path = abs_path || "";
 			function finish() {
 				j++;
 				if (j == scenes.length && onFinish) {
@@ -61,7 +62,7 @@ Class.create("RPGJS", {
 			
 			for (var i=0 ; i < scenes.length ; i++) {
 				name = scenes[i];
-				RPGJS_Core.loadScript('core/scene/' + name, function() {
+				RPGJS_Core.loadScript(abs_path + 'core/scene/' + name, function() {
 					finish();
 				});
 			}
@@ -166,9 +167,15 @@ Class.create("RPGJS", {
 		
 		get: function(type, file_id, object) {
 			var obj = {}, path;
-			if (!this[type]) {
+			
+			if (!global.materials[type]) {
 				throw "[Path.get] " + type + " doesn't exist";
 			}
+			
+			if (!global.materials[type][file_id]) {
+				throw "[Path.get]" + type + " - " + file_id + " doesn't exist";
+			}
+			
 			path = this[type] + global.materials[type][file_id];
 			if (object) {
 				obj[type + "_" + file_id] = path;

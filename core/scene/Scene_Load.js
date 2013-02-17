@@ -163,9 +163,7 @@ RPGJS.Scene.New({
 		global.game_selfswitches = Marshal.load(slot);
 		global.game_actors = Marshal.load(slot);
 		global.game_player = global.game_actors.get(0);
-		
-		console.log(global.game_player);
-		
+
 		global.game_player.x /= global.game_map.tile_w;
 		global.game_player.y /= global.game_map.tile_h;
 		

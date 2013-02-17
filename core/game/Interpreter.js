@@ -222,7 +222,9 @@ THE SOFTWARE.
 			this.isRun = false;
 			this.tmpCommands = [];
 			this.currentEvent = null;
-			global.game_player.freeze = false;
+			if (this.event) {
+				this.event.finishCommands();
+			}
 			if (this._finish) this._finish.call(this);
 		}
 	},

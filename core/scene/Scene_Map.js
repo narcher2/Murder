@@ -10,7 +10,6 @@ RPGJS.Scene.New({
 	loadMaterials: function(data, callback) {
 	
 		var images = [], self = this;
-		
 		images.push({tileset: RPGJS_Core.Path.get("tilesets", data.graphics.tileset)});
 		images.push(RPGJS_Core.Path.get("characters", data.player.graphic, true));
 		images.push({window: RPGJS_Core.Path.get("windowskins", "window")});

@@ -27,13 +27,13 @@ Class.create("Game_Character", {
 	setProperties: function(prop) {
 		prop = prop || {};
 		
-		this.rect(32);
+		this.rect(3, 18, 32-3, 32);
 		
 		this.trigger = prop.trigger;
 		this.direction_fix = prop.direction_fix;   // Direction does not change ; no animation
 		this.no_animation = prop.no_animation; // no animation even if the direction changes
 		this.stop_animation = prop.stop_animation;
-		this.speed = prop.speed === undefined ? 4 : prop.speed;
+		this.speed = prop.speed === undefined ? 3 : prop.speed;
 		this.type = prop.type || 'fixed';
 		this.frequence = (prop.frequence ||  0) * 5;
 		this.nbSequenceX  = prop.nbSequenceX || 4;

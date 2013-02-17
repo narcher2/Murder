@@ -273,7 +273,6 @@ Class.create("Spriteset_Map", {
 								if (self.nb_autotiles_max * 48 <= id) {
 									
 									id -= (self.nb_autotiles_max * 48);
-
 									var pos_y = parseInt(id / (256 / self.tile_h)) * self.tile_h;
 									var pos_x = (id % (256 / self.tile_w)) * self.tile_w;
 									tile.drawImage("tileset", pos_x, pos_y, self.tile_w, self.tile_h, 0, 0, self.tile_w, self.tile_h);
@@ -291,7 +290,7 @@ Class.create("Spriteset_Map", {
 								
 								
 								if (!prop) {
-									return;
+									prop = [0, 0];
 								}
 								if (prop.length == 0) {
 									prop = [0, 0];
@@ -332,6 +331,8 @@ Class.create("Spriteset_Map", {
 		   width: this.getWidthPixel(),
 		   height: this.getHeightPixel()
 		});
+		
+		RPGJS_Core.Plugin.call("Sprite", "drawCharactersEnd", [this]);
 	},
 	
 	addCharacter: function(data) {

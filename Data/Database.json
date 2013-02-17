@@ -2228,7 +2228,7 @@
         }
     },
     "system": {
-        "start_map": 1,
+        "star": {"x": 10, "y": 2, "id": 1},
         "start_x": 10,
         "start_y": 2,
         "start_actor": 2

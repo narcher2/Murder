@@ -9,20 +9,20 @@ Class.create("Game_Player", {
 	_initialize: function() {
 	
 	   var system = global.data.system ? global.data.system : {
-			start_x: 0,
-			start_y: 0,
-			start_actor: 1,
-			start_map: 1
+			start: {x: 0, y: 0, id: 1},
+			actor: 1
 	   };
+	   
+		console.log(system);
 		
-		this.x = system.start_x;
-		this.y = system.start_y;
+		this.x = system.start.x;
+		this.y = system.start.y;
 		
 		this.setProperties({
-			graphic: global.data.actors[system.start_actor].graphic
+			graphic: global.data.actors[system.actor].graphic
 		});
 		
-		global.game_actors.add(system.start_actor, this);
+		global.game_actors.add(system.actor, this);
 	
 		this.startTime();
 	},

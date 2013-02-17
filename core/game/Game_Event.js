@@ -83,7 +83,18 @@ Class.create("Game_Event", {
 	
 	execCommands: function() {
 		global.game_player.freeze = true;
+		
+		this.old_direction = this.direction;
+		this.direction = this.directionRelativeToPlayer();
+		
+		global.game_map.callScene("refreshEvent", [this.id, this.serialize()]);
 		this.interpreter.execCommands();
+	},
+	
+	finishCommands: function() {
+		global.game_player.freeze = false;
+		this.direction = this.old_direction;
+		global.game_map.callScene("refreshEvent", [this.id, this.serialize()]);
 	},
 	
 	remove: function() {

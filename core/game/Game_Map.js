@@ -29,7 +29,7 @@ Class.create("Game_Map", {
 			this.map_id = map_id
 		}
 		else {
-			this.map_id = global.data.system ? global.data.system.start_map : 0;
+			this.map_id = global.data.system ? global.data.system.start.id : 0;
 		}
 		
 		global.game_player.map_id = this.map_id;
@@ -129,7 +129,13 @@ Class.create("Game_Map", {
 					else {
 						p = this.getPropTile(prop[j]);
 					}
-					tile_passable &= !(p[1] !== undefined && p[1] > 0);
+					
+					if (!p) {
+						tile_passable &= 1;
+					}
+					else {
+						tile_passable &= !(p[1] !== undefined && p[1] > 0);
+					}
 				}
 			}
 			if (!tile_passable) {
@@ -225,6 +231,7 @@ Class.create("Game_Map", {
 		if (!this.map.events) {
 			this.map.events = [];
 		}
+		
 		var e, 
 			j=0, 
 			nb_events = this.map.events.length, 
@@ -233,8 +240,6 @@ Class.create("Game_Map", {
 			autotiles = this.autotiles_data[this.map.autotiles_id],
 			events = [];
 			
-		
-		
 		this._tileset_name = tileset.name;
 		this._priorities = tileset.propreties;
 		this._autotiles = autotiles.propreties;
@@ -256,7 +261,7 @@ Class.create("Game_Map", {
 		}
 		
 		global.game_player.start();
-
+		
 		function call() {
 			self._callback({
 				data: self.map.data,

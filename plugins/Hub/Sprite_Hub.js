@@ -1,7 +1,10 @@
 Class.create("Sprite_Hub", {
 
-	drawMapEnd: function() {
-		console.log("pp");
+	drawMapEnd: function(spriteset_map) {
+		var stage = spriteset_map.stage;
+		
+		
+		
 	}
-
+	
 });
