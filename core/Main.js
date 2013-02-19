@@ -165,9 +165,20 @@ Class.create("RPGJS", {
 		faces: "Graphics/Faces/",
 		fonts: "Graphics/fonts/",
 		
+		getFile: function (type, filename, object) {
+			var path = this[type] + filename, obj = {};
+			if (object) {
+				obj[type + "_" + object] = path;
+				return obj;
+			}
+			else {
+				return path;
+			}
+		},
+		
 		get: function(type, file_id, object) {
 			var obj = {}, path;
-			
+
 			if (!global.materials[type]) {
 				throw "[Path.get] " + type + " doesn't exist";
 			}

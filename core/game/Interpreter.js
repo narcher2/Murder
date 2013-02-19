@@ -32,8 +32,8 @@ THE SOFTWARE.
 	currentCmd: null,
 	tmpCommands: [],
 	indent: 0,
+	_conditions: {},
 	isRun: false,
-	ignoreElse: [],
 	event: null,
 	initialize: function(event, commands) {
 		this.preprogrammedCommands();
@@ -102,7 +102,11 @@ THE SOFTWARE.
 			'WAIT': 					'cmdWait',
 			'SCRIPT': 					'cmdScript',
 			'IF': 						'cmdIf',
-			'ELSE':						'cmdElse'
+			'ELSE':						'cmdElse',
+			'ENDIF':					'cmdEndif',
+			'CHOICES':					'cmdChoices',
+			'CHOICE':					'cmdChoice',
+			'ENDCHOICES':				'cmdEndChoices'
 		};
 		
 		for (var key in commands) {
@@ -163,29 +167,41 @@ THE SOFTWARE.
 	
 	_command: function(pos) {
 		var cmd = this.tmpCommands.length > 0 ? this.tmpCommands[pos] : this.commands[pos];
+		var name, params, name_tmp, exec_cmd, match, id;
 		if (cmd) {
 			try {
-				var match = /^([A-Z0-9a-z!?_]+):(.+)$/.exec(cmd);
+				match = /^([^:]+)(:(.+))?$/.exec(cmd);
 				if (match != null) {
-					var name = match[1];
-					var params = match[2];
-					var exec_cmd = Interpreter.commandFunction[name];
+					name = match[1];
+					params = match[3];
+					
+					match = /^([^\(]+)\(([^\)]+)\)$/.exec(name)
+					
+					if (match != null) {
+						id = match[2];
+						name = match[1];
+					}
+					
+					if (/CHOICE_[0-9]+/.test(name)) {
+						exec_cmd = Interpreter.commandFunction["CHOICE"];
+					}
+					else {
+						exec_cmd = Interpreter.commandFunction[name];
+					}
+					
 					if (exec_cmd) {
 						if (params) {
 							params = params.replace(/'/g, '"');
 							params = JSON.parse(params);
-							return {name: name, params: params, callback: exec_cmd};
+							return {name: name, id: id, params: params, callback: exec_cmd};
 						}
 						else {
-							throw name + " => Settings not found";
+							return {name: name, id: id, callback: exec_cmd};
 						}
 					}
 					else {
-						throw name + " => Event commands nonexistent";
+						//this.nextCommand();
 					}
-				}
-				else if (cmd == "ELSE" || cmd == "ENDIF") {
-					return {name: cmd};
 				}
 				else {
 					throw "\"" + cmd + "\" => Invalid command";
@@ -203,6 +219,74 @@ THE SOFTWARE.
 	
 	assignCommands: function(commands) {
 		this.commands = commands;
+		this.parseCommands();
+	},
+	
+	parseCommands: function() {
+		var cmd, name, match, id, tmp_name;
+		
+		var current_if = {}, 
+			current_choice = {},
+			indent_if = 0,
+			indent_choice = 0
+			change = false;
+		
+		for (var i=0 ; i < this.commands.length ; i++) {
+			cmd = this.commands[i];
+			match = /(^[^:]+)/.exec(cmd);
+			if (match != null) {
+				name = match[1];
+				
+				if (name == "IF") {
+					id = CanvasEngine.uniqid();
+					current_if[indent_if] = id;
+					this._conditions[id] = {
+						"if": i
+					};
+					indent_if++;	
+					change = true;
+				}
+				else if (name == "ELSE") {
+					id = current_if[indent_if-1];
+					this._conditions[id]["else"] = i;
+					change = true;
+				}
+				else if (name == "ENDIF") {
+					indent_if--;
+					id = current_if[indent_if];
+					this._conditions[id]["endif"] = i;
+					change = true;
+				}
+				
+				if (name == "CHOICES") {
+					id = CanvasEngine.uniqid();
+					current_choice[indent_choice] = id;
+					this._conditions[id] = {
+						"choices": i
+					};
+					indent_choice++;	
+					change = true;
+				}
+				else if (/CHOICE_[0-9]+/.test(name)) {
+					match = /CHOICE_([0-9]+)/.exec(name);
+					id = current_choice[indent_choice-1];
+					this._conditions[id]["choice_" + match[1]] = i;
+					change = true;
+				}
+				else if (name == "ENDCHOICES") {
+					indent_choice--;
+					id = current_choice[indent_choice];
+					this._conditions[id]["endchoices"] = i;
+					change = true;
+				}
+				
+				if (change) {
+					tmp_name = name + '(' + id + ')';
+					this.commands[i] = cmd.replace(name, tmp_name);
+				}
+				change = false;
+			}
+		}
 	},
  
 	execCommands: function(finish) {
@@ -214,7 +298,7 @@ THE SOFTWARE.
 		var cmd = this._command(this.getCurrentPos());
 
 		if (cmd) {
-			var params = this[cmd.callback].call(this, cmd.params, cmd.name);
+			var params = this[cmd.callback].call(this, cmd.params, cmd.name, cmd.id);
 			this.isRun = true;
 		}
 		else  {
@@ -271,18 +355,62 @@ THE SOFTWARE.
 			this.scene_window = RPGJS_Core.scene.call("Scene_Window", {
 				overlay: true
 			});
+			this.scene_window.box();
 		}
 		
-		this.scene_window.onEnterPress(function() {
-			if (nextCmd.name != "SHOW_TEXT") {
-				RPGJS.Scene.exit("Scene_Window");
-				self.scene_window = null;
-			}
-			self.nextCommand();
-		});
+		if (nextCmd.name != "CHOICES") {
+			this.scene_window.onEnterPress(function() {
+				if (nextCmd.name != "SHOW_TEXT") {
+					RPGJS.Scene.exit("Scene_Window");
+					self.scene_window = null;
+				}
+				self.nextCommand();
+			});
+		}
+		else {
+			this.nextCommand();
+		}
 		
 		this.scene_window.text(text);
 	},
+	
+	cmdChoice: function(params, name, id) {
+		this.setCurrentPos(this._conditions[id]["endchoices"]);
+		this.nextCommand();
+	},
+	
+	/*  "CHOICES: ['Text 1', 'Text 2', 'Text 3']",
+		"CHOICE_0",
+			
+		"CHOICE_1",
+			
+		"CHOICE_2",
+			
+		"ENDCHOICES"
+	*/
+	cmdChoices: function(array, name, id) {
+		var self = this;
+		if (!this.scene_window) {
+			this.scene_window = RPGJS_Core.scene.call("Scene_Window", {
+				overlay: true
+			});
+		}
+		this.scene_window.choices(array);
+		
+		this.scene_window.onEnterPressChoice(function(index) {
+			var c = self._conditions[id];
+			self._conditions[id].val = false;
+			self.setCurrentPos(c["choice_" + index]);
+			RPGJS.Scene.exit("Scene_Window");
+			self.scene_window = null;
+			self.nextCommand();
+		});
+	},
+	
+	cmdEndChoices: function() {
+		this.nextCommand();
+	},
+	
 	
 	// ERASE_EVENT: true
 	cmdErase: function() {
@@ -418,11 +546,7 @@ THE SOFTWARE.
 	cmdBlink: function(prop, self, client) {
 		return prop;
 	},
-	
-	cmdCall: function(call, self, client) {
-		client._onEventCall[call].call(self);
-		return call;
-	},
+
 	
 	// SCREEN_FLASH: {'speed': '16', 'color': '', 'wait': '_no'}
 	// color, speed, callback
@@ -845,31 +969,34 @@ THE SOFTWARE.
 		return params.text;
 	},
 	
-	cmdIf: function(params, self) {
-		var condition = params.condition || "equal";
-		var result = false;
-		if (params["switch"]) {
-			result = self.rpg.switchesIsOn(params["switch"]);
+	// IF: '3 > 1'
+	cmdIf: function(params, name, id) {
+		var e = eval(params), c;
+		c = this._conditions[id];
+		if (!e) {
+			c.val = false;
+			if (c["else"]) {
+				this.setCurrentPos(c["else"]);
+			}
+			else {
+				this.setCurrentPos(c["endif"]);
+			}
 		}
-		self.ignoreElse.push(self.indent);
-		if (result) {
-			self.nextCommand();
-		}
-		else {
-		
-		}
+		this.nextCommand();
 	},
 	
-	cmdElse: function(params, self) {
-		var pos;
-		if (self.rpg.valueExist(self.ignoreElse, self.indent)) {
-			self.currentCmd = self._nextRealPos();
-		}
-		self.nextCommand();
+	// ELSE
+	cmdElse: function(params, name, id) {
+		this.setCurrentPos(this._conditions[id]["endif"]);
+		this.nextCommand();
+	},
 	
+	// ENDIF
+	cmdEndif: function() {
+		this.nextCommand();
 	},
 
-	
+
 	_nextRealPos: function() {
 		var pos = self.currentCmd+1;
 		var nofind = true;

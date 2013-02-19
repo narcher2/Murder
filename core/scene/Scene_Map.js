@@ -33,6 +33,8 @@ RPGJS.Scene.New({
 			});
 		}
 		
+		images.concat(RPGJS_Core.Plugin.call("Sprite", "mapLoadImages", [images, this]));
+		
 		RPGJS.Materials.load("images", images, function(img) {
 			// -- Empty
 		}, function() {

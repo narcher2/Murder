@@ -12,8 +12,6 @@
     - Blink
     - Event Location
     - Scroll Map
-    - Choices
-    - Conditions
     - Detections
 - A-RPG & Hud
 - Battle Formulas
