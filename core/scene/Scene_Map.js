@@ -29,7 +29,9 @@ RPGJS.Scene.New({
 		
 		if (data.events) {
 			CE.each(data.events, function(i, val) {
-				images.push(RPGJS_Core.Path.get("characters", val.graphic, true));
+				if (val.graphic) {
+					images.push(RPGJS_Core.Path.get("characters", val.graphic, true));
+				}
 			});
 		}
 		
@@ -45,12 +47,15 @@ RPGJS.Scene.New({
 	keysAssign: function() {
 		var self = this;
 		RPGJS.Input.reset();
+		
 		CanvasEngine.each(["Up", "Right", "Left", "Bottom"], function(i, val) {
 			RPGJS.Input.press(Input[val], function() {
 				self.spriteset.player.startMove();
 			});
 			RPGJS.Input.keyUp(Input[val], function() {
-				self.spriteset.player.stop();
+				if (!RPGJS.Input.isPressed([Input.Up, Input.Right, Input.Left, Input.Bottom])) {
+					self.spriteset.player.stop();
+				}
 			});
 		});
 		
@@ -91,9 +96,12 @@ RPGJS.Scene.New({
 		},
 		sprite_player = this.spriteset.player;
 		
+		var press = 0;
+		
 		for (var key in input) {
 			if (RPGJS.Input.isPressed(input[key][0])) {
-				global.game_player.moveDir(key);
+				press++;
+				if (press == 1) global.game_player.moveDir(key);
 			}
 		}
 		
@@ -121,6 +129,9 @@ RPGJS.Scene.New({
 		global.game_map.updateEvents();
 	},
 	
+	scrollMap: function(pos, finish) {
+		this.getSpriteset().scrollMap(pos, finish);
+	},
 	
 	getSpriteset: function() {
 		return this.spriteset;
@@ -132,6 +143,21 @@ RPGJS.Scene.New({
 	
 	moveEvent: function(id, value, dir) {
 		this.getSpriteset().moveEvent(id, value, dir);
+	},
+	
+	setEventPosition: function(id, x, y) {
+		var spriteset = this.getSpriteset();
+		if (spriteset) {
+			this.getSpriteset().getEvent(id).setPosition(x, y);
+		}
+	},
+	
+	blink: function(event_id, duration, frequence, finish) {
+		var event = this.getSpriteset().getEvent(event_id);
+		if (event) {
+			event = event.getSprite();
+			RPGJS.Effect.new(this, event).blink(duration, frequence, finish);
+		}
 	},
 	
 	removeEvent: function(id) {

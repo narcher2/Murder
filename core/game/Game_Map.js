@@ -50,6 +50,10 @@ Class.create("Game_Map", {
 		});
    },
    
+   scrollMap: function(path) {
+	  this.callScene("scrollMap", [path]);
+   },
+   
    passable: function(entity, x, y, d) {
 		
 		entity.savePosition();
@@ -152,31 +156,42 @@ Class.create("Game_Map", {
 		var e;
 		for (var id in this.events) {
 			e = this.events[id];
+			
+			if (!e.exist) continue;
+			
 			state = entity.hit(e);
-
+			
 			if (state.over >= 1) {
 				if (!testLine(state.result.coincident)) {
 					e._hit = true;
 					entity.restorePosition();
+					
 					if (state.over == 1 && e.trigger == "contact") {
 						e.execTrigger();
 					}
+					
 					if (e.through) {
 						return false;
 					}
+
 				}
 				else {
 					e._hit = false;
 				}
 			}
-			else if (state.out == 1) {
+			else {
 				e._hit = false;
 			}
+			
 		}
 
 		entity.restorePosition();
 		
 		return true;
+   },
+   
+   getEvent: function(id) {
+		return this.events[id];
    },
    
    execEvent: function() {
@@ -238,7 +253,8 @@ Class.create("Game_Map", {
 			self = this,
 			tileset = this.tileset_data[this.map.tileset_id],
 			autotiles = this.autotiles_data[this.map.autotiles_id],
-			events = [];
+			events = [],
+			data_events = [];
 			
 		this._tileset_name = tileset.name;
 		this._priorities = tileset.propreties;
@@ -311,7 +327,7 @@ Class.create("Game_Map", {
 			if (dynamic) {
 				id = data[0].id = CanvasEngine.uniqid();
 			}
-			self.events[id] = Class.New("Game_Event", [this.map_id, data]);
+			self.events[id] = Class.New("Game_Event", [self.map_id, data]);
 			if (callback) callback.call(this, id, self.events[id], data);
 		});
    },

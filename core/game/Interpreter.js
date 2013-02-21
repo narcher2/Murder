@@ -437,7 +437,7 @@ THE SOFTWARE.
 		if (!val) {
 			val = self_switches;
 		}
-		global.game.selfswitches.set(this.event.id, this.event.map_id, val, name == 'SELF_SWITCH_ON');
+		global.game_selfswitches.set(this.event.map_id, this.event.id, val, name == 'SELF_SWITCH_ON');
 		this.nextCommand();
 	},
 	
@@ -543,8 +543,23 @@ THE SOFTWARE.
 
 	},
 	
-	cmdBlink: function(prop, self, client) {
-		return prop;
+	// BLINK: {'target': 'this','duration': '12','frequence': '16','wait': '1'}
+	cmdBlink: function(params) {
+		var self = this;
+		var id;
+		switch (params.target) {
+			case "this":
+				id = this.event.id;
+			break;
+			case "player":
+				id = 0;
+			break;
+			default:
+				id = params.target
+		}
+		global.game_map.callScene("blink", [id, params.duration, params.frequence, function() {
+			self.nextCommand();
+		}]);
 	},
 
 	
@@ -620,31 +635,40 @@ THE SOFTWARE.
 	
 
 
-	
-	cmdSetEventLocation: function(param, self, client) {
-		var target = self._target(param.event, client);
+	// SET_EVENT_LOCATION: {'event': 'this','direction': '0','position-type': 'constant','appointement': {'id':'3','x':20,'y':14,'w':1,'h':1}}"]
+	cmdSetEventLocation: function(param) {
+		var target = this._target.call(param.event);
 		var x, y;
 		if (param['position-type'] == "constant" && param.appointement) {
 			x = param.appointement.x;
 			y = param.appointement.y;
 		}
 		else if (param['position-type'] == "variables") {
-			x = client.getVariable(param.x);
-			y = client.getVariable(param.y);
+			x = global.game_variables.get(param.x);
+			y = global.game_variables.get(param.y);
 		}
 		else if (param['position-type'] == "other_event") {
-			var other_event = self._target(param.other_event, client);
+			var other_event = this._target(param.other_event);
 			x = other_event.x;
 			y = other_event.y;
-			other_event.setPosition(client, target.x, target.y);
+			other_event.moveto(target.x, target.y);
 		}
 		if (param.direction) target.direction = param.direction;
-		target.setPosition(client, x, y);
+		target.moveto(x, y);
+		global.game_map.refreshEvents();
+		this.nextCommand();
 	},
 	
-	cmdScrollMap: function(param, self) {
-		self.rpg.scroll(param.x, param.y);
-		self.nextCommand();
+	// SCROLL_MAP: {'x': 23, 'y': 15}
+	cmdScrollMap: function(params) {
+		var self = this;
+		var pos = {
+			x: params.x * global.game_map.tile_w,
+			y: params.x * global.game_map.tile_h,
+		};
+		global.game_map.scrollMap(pos, function() {
+			self.nextCommand();
+		});
 	},
 	
 	// WAIT: {'frame': '5','block': '_no'}
@@ -888,9 +912,10 @@ THE SOFTWARE.
 		this.nextCommand();
 	},
 	
-	cmdDetectionEvents: function(params, self) {
-		self.detectionEvents(params.area, params.label);
-		self.nextCommand();
+	// DETECTION_EVENTS: {'id': '2','area': '6'}
+	cmdDetectionEvents: function(params) {
+		this.event.detectionEvents(params.area * global.game_map.tile_w, params.id);
+		this.nextCommand();
 	},
 	
 	//  CALL_COMMON_EVENT: {'name': '2'}
@@ -1051,26 +1076,19 @@ THE SOFTWARE.
 		return operand * (params.operation == "decrease" ? -1 : 1);
 	},
 	
-	// Private
-	_target: function(target, client) {
-		var _target = this;
-		if (target) {
-			if (target == 'Player' || target == 'player') {
-				_target = client.player;
-			}
-			if (target == 'this') {
-				_target = this;
-			}
-			else {
-				_target = client.getEventById(target);
-				if (_target) _target = _target.event;
-			}
-		}
-		return _target;
-	},
 	
 	_actor: function(target, client) {
 		return client.getDatabase("actors", target);	
+	},
+	
+	_target: function(id) {
+		if (id == "this" || id === undefined) {
+			return this.event;
+		}
+		else if (id == "player" || id == 0) {
+			return global.game_player;
+		}
+		return global.game_map.getEvent(id);
 	}
 	
  });

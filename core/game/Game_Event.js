@@ -1,5 +1,5 @@
 Class.create("Game_Event", {
-	currentPage: 0,
+	currentPage: -1,
 	_initialize: function(map_id, event) {
 		this.map_id = map_id;
 		this.pages = event[1];
@@ -18,13 +18,22 @@ Class.create("Game_Event", {
 	
 	refresh: function() {
 		this.setPage();
-		var prop = this.pages[this.currentPage];
-		this.setProperties(prop);
-		this.interpreter.assignCommands(prop.commands);
 		
-		if (this.trigger == "auto_one_time") {
-			this.execTrigger();
+		if (this.currentPage == -1) {
+			this.exist = false;
 		}
+		else {
+			this.exist = true;
+			var prop = this.pages[this.currentPage];
+			this.setProperties(prop);
+			this.interpreter.assignCommands(prop.commands);
+			
+			if (this.trigger == "auto_one_time") {
+				this.execTrigger();
+			}
+		
+		}
+		
 		
 		return this.serialize();
 	},
@@ -46,19 +55,21 @@ Class.create("Game_Event", {
 				else {
 					var valid = true;
 					var condition = this.pages[i].conditions;
-					if (condition.switches !== undefined) {
-						valid &= global.game_switches.get(condition.switches);
+					
+					for (var j=1 ; j <= 3 ; j++) {
+						if (condition["switch_" + j] !== undefined && condition["switch_" + j] != "0") {
+							valid &= global.game_switches.get(condition["switch_" + j]);
+						}
+						
 					}
-					if (condition.self_switch !== undefined) {
+					
+					if (condition.self_switch !== undefined && condition.self_switch != "0") {
 						valid &= global.game_selfswitches.get(this.map_id, this.id, condition.self_switch);
 					}
-					if (condition.variables !== undefined) {
+					if (condition.variable !== undefined && condition.variable != "0") {
 						var _var = global.game_variables.get(condition.variables);
-						var test_value = condition.equalOrAbove;
+						var test_value = condition.variable_value;
 						valid &= _var >= test_value;
-					}
-					if (condition.detection !== undefined) {
-						valid &= condition.detection == this.labelDetection;
 					}
 					if (valid) {
 						this.currentPage = i;

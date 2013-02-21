@@ -12,9 +12,7 @@ Class.create("Game_Player", {
 			start: {x: 0, y: 0, id: 1},
 			actor: 1
 	   };
-	   
-		console.log(system);
-		
+
 		this.x = system.start.x;
 		this.y = system.start.y;
 		

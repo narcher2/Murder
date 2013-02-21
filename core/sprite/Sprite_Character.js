@@ -13,9 +13,7 @@ Class.create("Sprite_Character", {
 		this.entity.setModel(model);
 		
 		this.refresh(data);
-		
 		this.setPosition(this.x, this.y);
-		
 		layer.append(this.entity.el);
 		
 	},
@@ -31,6 +29,8 @@ Class.create("Sprite_Character", {
 				this[key] = data[key];
 			}
 		}
+		
+		if (!this.exist) return;
 		
 		if (!this.initial_dir) {
 			this.initial_dir = this.direction;

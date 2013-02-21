@@ -8,11 +8,6 @@
 
 ## TODO ##
 
-- Interpreter
-    - Blink
-    - Event Location
-    - Scroll Map
-    - Detections
 - A-RPG & Hud
 - Battle Formulas
 - TouchPad compatibilitises
@@ -22,9 +17,7 @@
     - Save bug
     - Display State
     - Item use
-- Detection system
 - Hitbox Character
-- Animation move
 - Interaction event
 
 ## How does it work ? ##
@@ -212,9 +205,25 @@ Methods are called plugins. By Example :
 
 #### Sprite
 
-- drawMapEnd
+**drawMapEnd**
+
+**drawCharactersEnd**
+
+**mapLoadImages**
+
+Parameters : 
+
+- array_img {Array}
+- scene {Class.Scene_Map}
 
 #### Game
+
+**eventDetected**
+
+Parameters : 
+
+- events {Array}
+- game_character {Class.Game_Character}
 
     
 

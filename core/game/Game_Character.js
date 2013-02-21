@@ -2,6 +2,7 @@ Class.create("Game_Character", {
 	entity: null,
 	_z: null,
 	exp: [],
+	exist: true,
 	currentLevel: 1,
 	maxLevel: 99,
 	currentExp: 0,
@@ -27,7 +28,8 @@ Class.create("Game_Character", {
 	setProperties: function(prop) {
 		prop = prop || {};
 		
-		this.rect(3, 18, 32-3, 32);
+		//this.rect(3, 18, 32-3, 32);
+		this.rect(0, 0, 32, 32);
 		
 		this.trigger = prop.trigger;
 		this.direction_fix = prop.direction_fix;   // Direction does not change ; no animation
@@ -66,7 +68,8 @@ Class.create("Game_Character", {
 	moveto: function(x, y) {
 		var pos = global.game_map.tileToPixel(x, y);
 		this.position(pos.x, pos.y);
-		this.prelock_direction = 0
+		this.prelock_direction = 0;
+		global.game_map.callScene("setEventPosition", [this.id, pos.x, pos.y]);
 	},
 	
 	approachPlayer: function() {
@@ -212,7 +215,9 @@ Class.create("Game_Character", {
 		}, 1000 / 60);
 	},
 	
-	moveDir: function(dir) {
+	moveDir: function(dir, isPassable) {
+	
+		var passable;
 	
 		if (this.id == 0 && this.freeze) {
 			return {x: this.x, y: this.y};
@@ -240,23 +245,56 @@ Class.create("Game_Character", {
 		}
 		if (global.game_map.passable(this, x + this.x, y + this.y, dir) || this.alwaysOnTop) {
 			pos = this.position(this.x + x, this.y + y);
+			passable = true;
 		}
 		else {
 			pos = {x: this.x, y: this.y};
+			passable = false;
 		}
 		
 		global.game_map._scene.moveEvent(this.id, pos, dir);
 		
+		if (isPassable) {
+			return {
+				pos: pos,
+				passable: passable
+			};
+		}
+		
 		return pos;
 	},
 	
-	detectionEvents: function() {
+	detectionEvents: function(area, label) {
+		var events = global.game_map.events;
+		var events_detected = [];
+		for (var id in events) {
+			ev = events[id];
+			if (ev.x <= this.x + area && ev.x >= this.x - area && ev.y <= this.y + area && ev.y >= this.y - area && ev.id != this.id) {
+				global.game_selfswitches.set(ev.map_id, ev.id, label, true);
+				events_detected.push(ev);
+			}
+
+		}
+		RPGJS_Core.Plugin.call("Game", "eventDetected", [events_detected, this]);
+		return events_detected;
+
+	},
 	
+	/**
+     * The event detects the hero in his field of vision
+	 * @method detectionPlayer
+	 * @param {Integer} area Number of tiles around the event
+	 * @return {Boolean} true if the player is in the detection zone
+    */
+	detectionPlayer: function(area) {
+		var player = global.game_player;
+		if (player.x <= this.x + area && player.x >= this.x - area && player.y <= this.y + area && player.y >= this.y - area) return true;
+		return false;
 	},
 
 	
 	serialize: function() {
-		var data = ["id", "x", "y", "nbSequenceX", "nbSequenceY", "speedAnimation", "graphic_pattern", "graphic", "direction", "direction_fix", "no_animation", "stop_animation", "frequence", "speed", "regX", "regY", "alwaysOnBottom", "alwaysOnTop"];
+		var data = ["id", "x", "y", "nbSequenceX", "nbSequenceY", "speedAnimation", "graphic_pattern", "graphic", "direction", "direction_fix", "no_animation", "stop_animation", "frequence", "speed", "regX", "regY", "alwaysOnBottom", "alwaysOnTop", "exist"];
 		var obj = {};
 		for (var i=0; i < data.length ; i++) {
 			obj[data[i]] = this[data[i]];

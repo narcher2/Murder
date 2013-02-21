@@ -418,6 +418,19 @@ Class.create("Spriteset_Map", {
 		effect[name].apply(effect, params);
 	},
 	
+	scrollMap: function(pos, finish) {
+		var self = this;
+		this.scrolling.freeze = true;
+		
+		RPGJS.Timeline.New(this.map).to({x: -pos.x, y: -pos.y}, 120).call(function() {
+			self.scrolling.freeze = false;
+			if (finish) finish();
+		});
+	
+	},
+	
+	
+	
 	refreshCharacter: function(id, data) {
 		this.getEvent(id).refresh(data);
 	},

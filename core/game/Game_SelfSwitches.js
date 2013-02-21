@@ -10,14 +10,14 @@ Class.create("Game_SelfSwitches", {
 	   return false;
 	},
 	
-	set: function(mapt_id, event_id, key, value) {
+	set: function(map_id, event_id, key, value) {
 		if (!this.data[map_id]) {
 			this.data[map_id] = {};
 		}
 		if (!this.data[map_id][event_id]) {
 			this.data[map_id][event_id] = {};
 		}
-	   this.data[map_id][event_id] = value;
+	   this.data[map_id][event_id][key] = value;
 	   global.game_map.refreshEvents();
 	}
 
