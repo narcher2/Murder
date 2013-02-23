@@ -54,7 +54,7 @@ Class.create("Game_Map", {
 	  this.callScene("scrollMap", [path]);
    },
    
-   passable: function(entity, x, y, d) {
+   passable: function(entity, old_x, old_y, x, y, d) {
 		
 		entity.savePosition();
 		
@@ -63,36 +63,22 @@ Class.create("Game_Map", {
 		var ret = this.grid.getEntityCells(entity), 
 			prop, k, id, p;
 		var state;
-		
-		function testLine(lines, ignoreLine) {
-			for (var i=0 ; i < lines.length ; i++) {
-				if (d == "left" && lines[i][0] == 3 && lines[i][1] == 1) {
-					return false;
-				}
-				else if (d == "right" && lines[i][0] == 1 && lines[i][1] == 3) {
-					return false;
-				}
-				else if (d == "bottom" && lines[i][0] == 2 && lines[i][1] == 0 ) {
-					return false;
-				}
-				else if (d == "up" && lines[i][0] == 0 && lines[i][1] == 2) {
-					return false;
-				}
-			} 
-			return true;
-		}
+		var self = this;
+	
 		
 		function testLineTile(lines) {
 			var l, face, points;
 			
-
 			for (var i=0 ; i < lines.length ; i++) {
 				l = lines[i];
 				if (l[0] != undefined) {
+				
 					face = l[0].sides;
-					points = l[0].points;
+
 					var c1 = (i == 0 || i == 2) && face != i,
 						c2 = (i == 1 || i == 3) && face != i;
+						
+						
 					if (d == "left" && ((face == 3 && i == 1) || c1)) {
 						return true;
 					}
@@ -111,6 +97,55 @@ Class.create("Game_Map", {
 			return false;
 		}
 		
+		function diffPx(_entity) {
+		
+			var point, diff, poly = entity.getPolygon().points,
+				new_x = x, new_y = y;
+			
+			function toPx(x, y) {
+				return {x: x * self.tile_w, y: y * self.tile_h};
+			}
+
+			if (!(_entity instanceof Class)) {
+				point = [
+					toPx(_entity.col, _entity.row),
+					toPx(_entity.col + 1, _entity.row),
+					toPx(_entity.col + 1, _entity.row + 1),
+					toPx(_entity.col, _entity.row + 1)		
+				];
+			}
+			else {
+				var poly2 = _entity.getPolygon().points;
+				point = [
+					{x: _entity.x + poly2[0].x, y: _entity.y + poly2[0].y},
+					{x: _entity.x + poly2[1].x, y: _entity.y + poly2[1].y},
+					{x: _entity.x + poly2[2].x, y: _entity.y + poly2[2].y},
+					{x: _entity.x + poly2[3].x, y: _entity.y + poly2[3].y}
+				];
+			}
+			
+			switch (d) {
+				case "left":
+					diff = Math.abs(point[1].x - (old_x + poly[0].x));
+					new_x = old_x - diff;
+				break;
+				case "right":
+					diff = Math.abs(point[0].x - (old_x + poly[1].x));
+					new_x = old_x + diff;
+				break;
+				case "up":
+					diff = Math.abs(point[3].y - (old_y + poly[0].y));
+					new_y = old_y - diff;
+				break;
+				case "bottom":
+					diff = Math.abs(point[0].y - (old_y + poly[2].y));
+					new_y = old_y + diff;
+				break;
+			}
+			return {passable: false, x: new_x, y: new_y};
+		
+		}
+		
 		var cells = ret.cells,
 			_passable = true,
 			_testLine = true;
@@ -118,10 +153,9 @@ Class.create("Game_Map", {
 
 		for (var i=0 ; i < cells.length ; i++) {
 			prop = this.grid.getPropertyByCell(cells[i].col,cells[i].row);
-			
 			if (!prop) {
 				entity.restorePosition();
-				return false;
+				return {passable: false, x: old_x, y: old_y};
 			}
 			
 			var tile_passable = 0x1;
@@ -143,13 +177,13 @@ Class.create("Game_Map", {
 				}
 			}
 			if (!tile_passable) {
-
 				_testLine = testLineTile(this.grid.testCell(cells[i], entity, {
 					ignoreTypeLine: true
 				}));
 				if (!_testLine) {
 					entity.restorePosition();
-					return false;
+					var diff = diffPx.call(this, cells[i]); //
+					return diff;
 				}
 			}
 		}
@@ -162,7 +196,7 @@ Class.create("Game_Map", {
 			state = entity.hit(e);
 			
 			if (state.over >= 1) {
-				if (!testLine(state.result.coincident)) {
+				if (!testLineTile(state.result.coincident)) {
 					e._hit = true;
 					entity.restorePosition();
 					
@@ -171,7 +205,7 @@ Class.create("Game_Map", {
 					}
 					
 					if (e.through) {
-						return false;
+						return diffPx.call(this, e);
 					}
 
 				}
@@ -187,7 +221,7 @@ Class.create("Game_Map", {
 
 		entity.restorePosition();
 		
-		return true;
+		return {passable: true, x: x, y: y};
    },
    
    getEvent: function(id) {

@@ -14,11 +14,8 @@
 - Menu
     - Equipment bug
     - Equippable Armors and Weapons
-    - Save bug
     - Display State
     - Item use
-- Hitbox Character
-- Interaction event
 
 ## How does it work ? ##
 

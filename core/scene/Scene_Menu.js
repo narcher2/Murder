@@ -231,6 +231,17 @@ RPGJS.Scene.New({
 				obj_actor.box.cursor.enable(true);
 				obj_actor.set.children()[0].x = 0;
 				current_index = id;
+				
+				self._esc(function() {
+					obj_actor.box.cursor.enable(false);
+					box.cursor.enable(true);
+					var children = obj_actor.set.children();
+					for (var i=0 ; i < children.length ; i++) {
+						children[i].x = 20;
+					}
+				});
+
+				
 				return;
 			}
 
@@ -582,6 +593,18 @@ RPGJS.Scene.New({
 			box.cursor.enable(true);
 			box.cursor.setIndex(0, true);
 		});
+		
+		this._esc(function() {
+			self.transitionExit([{
+				el: help,
+				to: {x: _canvas.width}
+			}, {
+				el: body,
+				to: {x: -350}
+			}], function() {
+				self.openWindow('index');
+			});
+		});
 
 	},
 	
@@ -886,8 +909,6 @@ RPGJS.Scene.New({
 		
 		stage.append(info, help);
 		
-		box_equipment.cursor.setIndex(0, true);
-		
 		this.transitionStart([{
 			el: help,
 			to: {x: _canvas.width - 300}
@@ -900,7 +921,9 @@ RPGJS.Scene.New({
 		}, {
 			el: items,
 			to: {x: _canvas.width - 300}
-		}]);
+		}], function() {
+			box_equipment.cursor.setIndex(0, true);
+		});
 		
 		back.call(this);
 		
@@ -1022,6 +1045,7 @@ RPGJS.Scene.New({
 		cursor.fillStyle = "#7778AA";
 		cursor.fillRect(-10, -10, width-10, 40);
 		cursor.opacity = .5;
+		cursor.hide();
 		
 		stage.append(cursor);
 		box.open(stage);
@@ -1041,6 +1065,7 @@ RPGJS.Scene.New({
 	},
 	
 	exit: function() {
+		RPGJS.Scene.get("Scene_Map").pause(false);
 		RPGJS.Scene.get("Scene_Map").keysAssign();
 	}
 });

@@ -49,6 +49,7 @@ RPGJS.Scene.New({
 		RPGJS.Input.reset();
 		
 		CanvasEngine.each(["Up", "Right", "Left", "Bottom"], function(i, val) {
+
 			RPGJS.Input.press(Input[val], function() {
 				self.spriteset.player.startMove();
 			});
@@ -82,11 +83,10 @@ RPGJS.Scene.New({
 
 	},
 	render: function(stage) {
-
+	
 		if (!this.spriteset) {
 			return;
 		}
-		
 	
 		var input = {
 			"left": [Input.Left, "x"],

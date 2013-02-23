@@ -28,8 +28,8 @@ Class.create("Game_Character", {
 	setProperties: function(prop) {
 		prop = prop || {};
 		
-		//this.rect(3, 18, 32-3, 32);
-		this.rect(0, 0, 32, 32);
+		this.rect(4, 16, 32-8, 16);
+		// this.rect(32);
 		
 		this.trigger = prop.trigger;
 		this.direction_fix = prop.direction_fix;   // Direction does not change ; no animation
@@ -243,14 +243,17 @@ Class.create("Game_Character", {
 				y = speed;
 			break;
 		}
-		if (global.game_map.passable(this, x + this.x, y + this.y, dir) || this.alwaysOnTop) {
-			pos = this.position(this.x + x, this.y + y);
+		
+		var game_map = global.game_map.passable(this, this.x, this.y, x + this.x, y + this.y, dir);
+		
+		if (game_map.passable || this.alwaysOnTop) {
 			passable = true;
 		}
 		else {
-			pos = {x: this.x, y: this.y};
 			passable = false;
 		}
+		
+		pos = this.position(game_map.x, game_map.y);
 		
 		global.game_map._scene.moveEvent(this.id, pos, dir);
 		

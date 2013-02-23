@@ -444,8 +444,8 @@ Class.create("Spriteset_Map", {
 		var axis = dir == "left" || dir == "right" ? "x" : "y";
 		this.getEvent(id).move(axis, value[axis], dir);
 		this.layer[3].children().sort(function(a, b) {
-			var za = a._z !== null ? a._z : a.y;
-			var zb = b._z !== null ? b._z : b.y;
+			var za = a._z ? a._z : a.y;
+			var zb = b._z ? b._z : b.y;
 			return za - zb;
 		});
 		

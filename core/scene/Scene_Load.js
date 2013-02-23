@@ -84,13 +84,21 @@ RPGJS.Scene.New({
 	},
 	
 	refresh: function(type) {
+		var back, self = this;
 		this.type = type;
 		if (type == "save") {
 			this.select = this._execSave;
+			back = function() {
+				RPGJS.Scene.exit("Scene_Load");
+			};
 		}
 		else {
 			this.select = this._execLoad;
+			back = function() {
+				RPGJS_Core.scene.call("Scene_Title");
+			};
 		}
+		RPGJS.Input.press([Input.Esc], back);
 	},
 	
 	refreshSlot: function(el, data) {
