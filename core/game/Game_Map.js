@@ -8,7 +8,9 @@ Class.create("Game_Map", {
 	_callback: null,
 	initialize: function() {
 		this.tileset_data = global.data.tilesets;
+		this.actions_data = global.data.actions;
 		this.autotiles_data = global.data.autotiles;
+		this.tick();
 	},
 	
 	transfer_player: function(x, y) {
@@ -191,7 +193,7 @@ Class.create("Game_Map", {
 		for (var id in this.events) {
 			e = this.events[id];
 			
-			if (!e.exist) continue;
+			if (!e.exist || id == entity.id) continue;
 			
 			state = entity.hit(e);
 			
@@ -199,9 +201,14 @@ Class.create("Game_Map", {
 				if (!testLineTile(state.result.coincident)) {
 					e._hit = true;
 					entity.restorePosition();
-					
-					if (state.over == 1 && e.trigger == "contact") {
-						e.execTrigger();
+				
+					if (state.over == 1) {
+						if (e.trigger == "contact") {
+							e.execTrigger();
+						}
+						else {
+							RPGJS_Core.Plugin.call("Game", "eventContact", [e, this]);
+						}
 					}
 					
 					if (e.through) {
@@ -218,6 +225,15 @@ Class.create("Game_Map", {
 			}
 			
 		}
+		
+		if (entity.id != 0) {
+			state = entity.hit(global.game_player);
+			
+			if (state.over >= 1 && !testLineTile(state.result.coincident)) {
+				RPGJS_Core.Plugin.call("Game", "contactPlayer", [entity, this]);
+				return {passable: false, x: old_x, y: old_y};
+			}
+		}
 
 		entity.restorePosition();
 		
@@ -233,6 +249,7 @@ Class.create("Game_Map", {
 		for (var id in this.events) {
 			e = this.events[id];
 			if (e._hit && e.trigger == "action_button") {
+				RPGJS_Core.Plugin.call("Game", "execEvent", [e, this]);
 				e.execTrigger();
 			}
 		}
@@ -284,6 +301,7 @@ Class.create("Game_Map", {
 		var e, 
 			j=0, 
 			nb_events = this.map.events.length, 
+			total_events = this.map.dynamic_event.length + nb_events, 
 			self = this,
 			tileset = this.tileset_data[this.map.tileset_id],
 			autotiles = this.autotiles_data[this.map.autotiles_id],
@@ -294,25 +312,17 @@ Class.create("Game_Map", {
 		this._priorities = tileset.propreties;
 		this._autotiles = autotiles.propreties;
 		
+		
+		
+		function call(id, event) {
+		
+			j++;
+			events.push(event.serialize());
+
+			if (j != total_events) {
+				return;
+			}	
 			
-		for (var i=0 ; i < nb_events ; i++) {
-			e = this.map.events[i];
-			this.loadEvent(e, function(id, event) {
-				j++;
-				events.push(event.serialize());
-				if (j == nb_events) {
-					call();
-				}			
-			});
-		}
-		
-		if (nb_events == 0) {
-			call();
-		}
-		
-		global.game_player.start();
-		
-		function call() {
 			self._callback({
 				data: self.map.data,
 				propreties: self._priorities,
@@ -322,10 +332,29 @@ Class.create("Game_Map", {
 				},
 				autotiles: self._autotiles,
 				player: global.game_player.serialize(),
-				events: events
+				events: events,
+				actions: self.actionSerialize()
 			});
+			
 		}
-   
+		
+		for (var i=0 ; i < nb_events ; i++) {
+			e = this.map.events[i];
+			this.loadEvent(e, call);
+		}
+		
+		for (var i=0 ; i < this.map.dynamic_event.length ; i++) {
+			e = this.map.dynamic_event[i];
+			this.addDynamicEvent(e.name, e, call, false);
+		}
+		
+		if (total_events == 0) {
+			call();
+		}
+		
+		global.game_player.start();
+		RPGJS_Core.Plugin.call("Game", "loadMap", [this]);
+		
    },
    
    getSize: function() {
@@ -362,15 +391,16 @@ Class.create("Game_Map", {
 				id = data[0].id = CanvasEngine.uniqid();
 			}
 			self.events[id] = Class.New("Game_Event", [self.map_id, data]);
+			RPGJS_Core.Plugin.call("Game", "addEvent", [self.events[id], self.map_id, data, dynamic, this]);
 			if (callback) callback.call(this, id, self.events[id], data);
 		});
    },
    
-   addDynamicEvent: function(name, pos, callback) {
+   addDynamicEvent: function(name, pos, callback, refresh) {
 		var self = this;
 		this.loadEvent(name, true, function(id, event) {
 			event.moveto(pos.x, pos.y);
-			self._scene.addEvent(event.serialize());
+			if (refresh) self.callScene("addEvent", [event.serialize()]);
 			if (callback) callback.call(this, id, event);
 		});
    },
@@ -382,6 +412,40 @@ Class.create("Game_Map", {
    
 	callScene: function(method, params) {
 		this._scene[method].apply(this._scene, params);
+	},
+	
+	actionSerialize: function() {
+		var obj = {}, a, 
+			serialize = {
+				"keypress":"", 
+				"animation_up":"", 
+				"animation_bottom":"", 
+				"animation_right":"", 
+				"animation_left":"", 
+				"graphic": "",
+				"speed": ""
+			};
+		for (var id in this.actions_data) {
+			a = this.actions_data[id];
+			obj[id] = {};
+			for (var key in a) {
+				if (key in serialize) {
+					obj[id][key] = a[key];
+				}
+			}
+		}
+		return obj;
+	},
+	
+	execAction: function(id) {
+		 RPGJS_Core.Plugin.call("Game", "action", [this.actions_data[id], id, this]);
+	},
+	
+	tick: function() {
+		var self = this;
+		var interval = setInterval(function() {
+			 RPGJS_Core.Plugin.call("Game", "tick", [self]);
+		}, 1000 / 60);
 	}
 
 }).attr_accessor([

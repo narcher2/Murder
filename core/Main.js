@@ -1,4 +1,5 @@
 Class.create("RPGJS", {
+	
 	defines: function(params) {
 		this.params = params;
 		return this;
@@ -27,7 +28,7 @@ Class.create("RPGJS", {
 						global.game_actors = Class.New("Game_Actors");
 						global.game_player = Class.New("Game_Player");
 						
-						self.scene.load(["Scene_Map", "Scene_Window", "Scene_Title", "Scene_Menu", "Scene_Load"], function() {
+						self.scene.load(["Scene_Map", "Scene_Window", "Scene_Title", "Scene_Menu", "Scene_Load", "Scene_Gameover"], function() {
 							if (self.params.plugins) {
 								self.Plugin.add(self.params.plugins, function() {
 									if (callback) callback.call(self, ctx);
@@ -107,7 +108,11 @@ Class.create("RPGJS", {
 
 					data[type] = Class.New(type + "_" + name);
 					data.name = name;
+					
 					if (i == 2 && callback) {
+						data["Game"]._class_ = data["Sprite"];
+						data["Sprite"]._class_ = data["Game"];
+						data["Sprite"].scene = RPGJS.Scene.get("Scene_Map");
 						self.list.push(data);
 						callback();
 					}

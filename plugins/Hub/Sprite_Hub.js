@@ -1,5 +1,7 @@
 Class.create("Sprite_Hub", {
 
+	hp: 0,
+	max_hp: 0,
 
 	mapLoadImages: function(array) {
 		array.push(RPGJS_Core.Path.getFile("pictures", "hub.png", "hub"));
@@ -10,8 +12,8 @@ Class.create("Sprite_Hub", {
 	},
 
 	drawMapEnd: function(spriteset_map) {
-		var stage = spriteset_map.stage,
-			scene = spriteset_map.scene,
+		var stage = this.scene.getStage(),
+			scene = this.scene,
 			hub = scene.createElement(["content", "hp_meter", "hero_face", "text"]);
 			
 		hub.content.drawImage("pictures_hub");
@@ -22,12 +24,11 @@ Class.create("Sprite_Hub", {
 		hub.hero_face.x = -10;
 		hub.hero_face.y = -10;
 		
-		hub.hp_meter.drawImage("pictures_hp_meter", 0, 0, 192, 8, 0, 0, 186, 8);
 		hub.hp_meter.x = 84;
 		hub.hp_meter.y = 17;
 		
-		var text = RPGJS.Text.new(scene, "6 2 2")
-		text.style({
+		this.text = RPGJS.Text.new(scene, this.hp)
+		this.text.style({
 			family: "Aubrey",
 			size: "40px",
 			color: "#8CA1C0",
@@ -38,12 +39,60 @@ Class.create("Sprite_Hub", {
 			
 		hub.content.append(hub.hero_face, hub.hp_meter, hub.text);
 		
-		text.draw(hub.text, 90, 30);
+		this.text.draw(hub.text, 90, 30);
+		this.hub = hub;
 		
+		this.refreshHubMeter();
+
 		stage.append(hub.content);
 		
 	},
 	
+	_loadMap: function(hp, max_hp) {
+		this.hp = hp;
+		this.max_hp = max_hp;
+	},
 	
+	_changeHp: function(new_hp, max_hp) {
+		this.text.refresh(new_hp);
+		this.hp = new_hp;
+		this.max_hp = max_hp;
+		this.refreshHubMeter();
+	},
 	
+	refreshHubMeter: function() {
+		this.hub.hp_meter.drawImage("pictures_hp_meter", 0, 0, 192, 8, 0, 0, this.hp * 186 / this.max_hp, 8);
+	},
+	
+	sceneMapRender: function() {
+	
+		if (CanvasEngine.mobileUserAgent() && typeof(VirtualJoystick) != "undefined") {
+			
+			var joystick	= new VirtualJoystick({
+				container	: document.getElementById(RPGJS_Core.params.canvas),
+				mouseSupport	: true			
+			});
+			
+
+			if (joystick.down()) {
+				RPGJS.Input.trigger(Input.Bottom, "down");
+			}
+			else if (joystick.up()) {
+				RPGJS.Input.trigger(Input.Up, "down");
+			}
+			else if (joystick.right()) {
+				RPGJS.Input.trigger(Input.Right, "down");
+			}
+			else if (joystick.left()) {
+				RPGJS.Input.trigger(Input.Left, "down");
+			}
+			else {
+				RPGJS.Input.trigger(Input.Left, "up");
+				RPGJS.Input.trigger(Input.Right, "up");
+				RPGJS.Input.trigger(Input.Bottom, "up");
+				RPGJS.Input.trigger(Input.Up, "up");
+			}
+			
+		}
+	}
 });

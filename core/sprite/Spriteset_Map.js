@@ -320,6 +320,7 @@ Class.create("Spriteset_Map", {
 		}
 		
 		this.player = Class.New("Sprite_Character", [this.scene, this.data.player, layer, global.game_player]);
+		this.player.initAnimationActions(this.data.actions);
 		
 		this.scrolling = RPGJS.Scrolling.New(this.scene, this.tile_w, this.tile_h);
 		this.scrolling.setMainElement(this.player.getSprite());
@@ -338,6 +339,7 @@ Class.create("Spriteset_Map", {
 	addCharacter: function(data) {
 		var sprite = Class.New("Sprite_Character", [this.scene, data, this.layer[3], global.game_map.getEvent(data.id)]);
 		this.events[data.id] = sprite;
+		RPGJS_Core.Plugin.call("Sprite", "addCharacter", [sprite, data, this]);
 	},
 	
 	addPicture: function(id, params, load) {

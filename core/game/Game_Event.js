@@ -110,7 +110,19 @@ Class.create("Game_Event", {
 	
 	remove: function() {
 		global.game_map.removeEvent(this.id);
-	}
+	},
+	
+	/**
+     * The event detects the hero in his field of vision
+	 * @method detectionPlayer
+	 * @param {Integer} area Number of tiles around the event
+	 * @return {Boolean} true if the player is in the detection zone
+    */
+	detectionPlayer: function(area) {
+		var player = global.game_player;
+		if (player.x <= this.x + area && player.x >= this.x - area && player.y <= this.y + area && player.y >= this.y - area) return true;
+		return false;
+	},
 	
 }).attr_reader([
 	"trigger",

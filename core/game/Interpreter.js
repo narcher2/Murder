@@ -218,6 +218,7 @@ THE SOFTWARE.
 	},
 	
 	assignCommands: function(commands) {
+		commands = commands || [];
 		this.commands = commands;
 		this.parseCommands();
 	},
@@ -230,7 +231,6 @@ THE SOFTWARE.
 			indent_if = 0,
 			indent_choice = 0
 			change = false;
-		
 		for (var i=0 ; i < this.commands.length ; i++) {
 			cmd = this.commands[i];
 			match = /(^[^:]+)/.exec(cmd);

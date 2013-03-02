@@ -1,14 +1,15 @@
 RPGJS.Scene.New({
 	name: "Scene_Map",
+	data: {},
 	ready: function(stage, el, params) {
 		var self = this;
 		this.stage = stage;
 		global.game_map.load(params.map_id, function(data) {
+			self.data = data;
 			self.loadMaterials(data);
 		}, this);
 	},
 	loadMaterials: function(data, callback) {
-	
 		var images = [], self = this;
 		images.push({tileset: RPGJS_Core.Path.get("tilesets", data.graphics.tileset)});
 		images.push(RPGJS_Core.Path.get("characters", data.player.graphic, true));
@@ -35,8 +36,18 @@ RPGJS.Scene.New({
 			});
 		}
 		
+		var action;
+		for (var id in this.data.actions) {
+			action = this.data.actions[id];
+			if (action.graphic) {
+				images.push(RPGJS_Core.Path.get("characters", action.graphic, true));
+			}
+		}
+		
 		images.concat(RPGJS_Core.Plugin.call("Sprite", "mapLoadImages", [images, this]));
 		
+		
+
 		RPGJS.Materials.load("images", images, function(img) {
 			// -- Empty
 		}, function() {
@@ -61,6 +72,7 @@ RPGJS.Scene.New({
 		});
 		
 		RPGJS.Input.press([Input.Enter, Input.Space], function() {
+			RPGJS_Core.Plugin.call("Sprite", "pressAction", [self]);
 			global.game_map.execEvent();
 		});
 		
@@ -70,16 +82,34 @@ RPGJS.Scene.New({
 				overlay: true
 			});
 		});
-	},
-	load: function(data) {
 		
-		this.spriteset = Class.New("Spriteset_Map", [this, this.stage, data, {
-			autotiles: data.autotiles_img
+		function _action(action, id) {
+			if (action.keypress) {
+				RPGJS.Input.press(Input[action.keypress], function() {
+					self.spriteset.player.playAnimationAction(id);
+					global.game_map.execAction(id);
+				});
+			}
+		}
+		
+		var action;
+		for (var id in this.data.actions) {
+			action = this.data.actions[id];
+			_action(action, id);
+		}
+		
+		
+	},
+	load: function() {
+		
+		this.spriteset = Class.New("Spriteset_Map", [this, this.stage, this.data, {
+			autotiles: this.data.autotiles_img,
+			actions: this.data.actions
 		}]);
 		
 		this.keysAssign();
 		
-		//if (params.onload) params.onload.call(this, data);
+		RPGJS_Core.Plugin.call("Sprite", "loadMap", [this]);
 
 	},
 	render: function(stage) {
@@ -107,6 +137,8 @@ RPGJS.Scene.New({
 		
 		this.spriteset.scrollingUpdate();
 		this.updateEvents();
+		
+		RPGJS_Core.Plugin.call("Sprite", "sceneMapRender", [this]);
 
 		stage.refresh();
 
@@ -142,7 +174,10 @@ RPGJS.Scene.New({
 	},
 	
 	moveEvent: function(id, value, dir) {
-		this.getSpriteset().moveEvent(id, value, dir);
+		var spriteset = this.getSpriteset();
+		if (spriteset) {
+			spriteset.moveEvent(id, value, dir);
+		}
 	},
 	
 	setEventPosition: function(id, x, y) {

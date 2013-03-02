@@ -87,9 +87,9 @@ RPGJS.Scene.New({
 				continue;
 			}
 			
-			hp_bar = this.displayBar(actor, "hp_max", "hp");
+			hp_bar = this.displayBar(actor, "maxhp", "hp");
 			hp_bar.y = 35;
-			sp_bar = this.displayBar(actor, "sp_max", "sp");
+			sp_bar = this.displayBar(actor, "maxsp", "sp");
 			sp_bar.y = 60;
 			
 			sprite_b.attr('id', actor._id);
@@ -970,7 +970,7 @@ RPGJS.Scene.New({
 		var params = data_actor.getCurrentParam(), pos2 = 1;
 		
 		for (var name in params) {
-			if (name != "hp_max" && name != "sp_max") {
+			if (name != "maxhp" && name != "maxsp") {
 				this.drawText(name.toUpperCase() + " :   " + data_actor.getCurrentParam(name), body, 20, 30 * pos2 + 250, {
 					size: "18px"
 				});
@@ -982,9 +982,9 @@ RPGJS.Scene.New({
 		battler.drawImage("battler");
 		battler.x = _canvas.width;
 		
-		hp_bar = this.displayBar(data_actor, "hp_max", "hp");
+		hp_bar = this.displayBar(data_actor, "maxhp", "hp");
 		hp_bar.y = 65;
-		sp_bar = this.displayBar(data_actor, "sp_max", "sp");
+		sp_bar = this.displayBar(data_actor, "maxsp", "sp");
 		sp_bar.y = 90;
 		
 		hp_bar.x = 20;

@@ -8,7 +8,7 @@
 
 ## TODO ##
 
-- A-RPG & Hud
+- A-RPG
 - Battle Formulas
 - TouchPad compatibilitises
 - Menu
@@ -162,14 +162,14 @@ Example :
     Class.create("Sprite_[Folder Name]", {
     
     
-    });
+    }).extend("Sprite_Plugin");
 
 Example :
 
     Class.create("Sprite_Foo", {
     
     
-    });
+    }).extend("Sprite_Plugin");
 
 
 #### Game_[Folder Name].js
@@ -177,14 +177,14 @@ Example :
     Class.create("Game_[Folder Name]", {
     
     
-    });
+    }).extend("Game_Plugin");;
 
 Example :
 
     Class.create("Game_Foo", {
     
     
-    });
+    }).extend("Game_Plugin");
 
 Methods are called plugins. By Example :
 
@@ -194,9 +194,19 @@ Methods are called plugins. By Example :
 
         }
     
-    });
+    }).extend("Sprite_Plugin");
 
 `drawMapEnd` method is called when the display of the map is completed
+
+### Add Hook in your code
+
+    RPGJS_Core.Plugin.call("Sprite", "drawCharactersEnd", [this]);
+
+Parameters
+
+- `Sprite` or `Game` {String}
+- method name {String}
+- parameters of method {Array}
 
 ### List of methods called
 
@@ -204,7 +214,16 @@ Methods are called plugins. By Example :
 
 **drawMapEnd**
 
+Parameters : 
+
+- spriteset_map {Class.Spriteset_Map}
+
+
 **drawCharactersEnd**
+
+Parameters : 
+
+- spriteset_map {Class.Spriteset_Map}
 
 **mapLoadImages**
 
@@ -213,7 +232,29 @@ Parameters :
 - array_img {Array}
 - scene {Class.Scene_Map}
 
+**addCharacter**
+
+Parameters : 
+
+- sprite {Class.Sprite_Character}
+- data {Object}
+- spriteset_map {Class.Spriteset_Map}
+
+**pressAction**
+
+- scene {Class.Scene_Map}
+
+
 #### Game
+
+**addEvent**
+
+Parameters : 
+
+- event {Class.Game_Event}
+- map_id {Integer}
+- data {Object}
+- isDynamic {Boolean}
 
 **eventDetected**
 
@@ -221,6 +262,49 @@ Parameters :
 
 - events {Array}
 - game_character {Class.Game_Character}
+
+
+**eventContact**
+
+Parameters : 
+
+- event {Class.Game_Event}
+- game_map {Class.Game_Map}
+
+**serializeCharacter**
+
+Parameters : 
+
+- obj {Object}
+- game_character {Class.Game_Character}
+
+
+**execEvent**
+
+Parameters : 
+
+- event {Class.Game_Event}
+- game_map {Class.Game_Map}
+
+**contactPlayer**
+
+- current_event {Class.Game_Event}
+
+**changeParamPoints**
+
+Parameters : 
+
+- type {String}
+- nb {Integer}
+- operation {String}
+- game_character {Class.Game_Character}
+
+**tick**
+
+Parameters : 
+
+- game_map {Class.Game_Map}
+
 
     
 

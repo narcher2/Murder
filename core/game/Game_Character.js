@@ -17,6 +17,9 @@ Class.create("Game_Character", {
 	sp: 0,
 	items: {},
 	paramPoints: {},
+	typeMove: [],
+	removeMove: {},
+	timeMove: {},
 	initialize: function() {
 		
 		this.id = 0;
@@ -45,6 +48,8 @@ Class.create("Game_Character", {
 		this.through =  !prop.graphic ? prop.through : true;
 		this.alwaysOnTop = prop.alwaysOnTop !== undefined ? prop.alwaysOnTop : false;
 		this.alwaysOnBottom = prop.alwaysOnBottom !== undefined ? prop.alwaysOnBottom : false;
+		this.regX = prop.regX !== undefined ? prop.regX : 0;
+		this.regY = prop.regY !== undefined ? prop.regY : 0;
 		if (this.alwaysOnBottom) {
 			this._z = 0;
 		}
@@ -53,6 +58,7 @@ Class.create("Game_Character", {
 		}
 		this.direction = prop.direction || "bottom";
 		this.graphic = prop.graphic;
+		this.graphic_params = prop["graphic_params"];
 		
 		switch (this.type) {
 			case "random":
@@ -72,19 +78,44 @@ Class.create("Game_Character", {
 		global.game_map.callScene("setEventPosition", [this.id, pos.x, pos.y]);
 	},
 	
+	lastTypeMove: function() {
+		return this.typeMove[this.typeMove.length-1];
+	},
+	
+	removeTypeMove: function(type) {
+		for (var i=0 ; i < this.typeMove.length ; i++) {
+			if (this.typeMove[i] == type) {
+				this.removeTypeMove[type] = true;
+				delete this.typeMove[i];
+			}
+		}
+	},
+	
 	approachPlayer: function() {
 	
 		var self = this;
+		this.typeMove.push("approach");
 		approach();
 		function approach() {
+		
+			if (self.removeTypeMove["approach"]) {
+				self.removeTypeMove["approach"] = false;
+				return;
+			}
+		
 			var dir = self.directionRelativeToPlayer();
 			if (dir) {
-				self.moveOneTile(dir, function() {
-					if (self.frequence != 0) {
-						global.game_map._scene.stopEvent(self.id);
-					}
+				if (self.lastTypeMove != "approach") {
+					self.moveOneTile(dir, function() {
+						if (self.frequence != 0) {
+							global.game_map._scene.stopEvent(self.id);
+						}
+						setTimeout(approach, self.frequence * 60);
+					});
+				}
+				else {
 					setTimeout(approach, self.frequence * 60);
-				});
+				}
 			}
 		}
 	
@@ -155,9 +186,16 @@ Class.create("Game_Character", {
 	
 	moveRandom: function() {
 		var self = this;
+		this.typeMove.push("random");
 		rand();
 		function rand() {
-			var dir_id = (Math.floor(Math.random()*4)),
+		
+			if (self.removeTypeMove["random"]) {
+				self.removeTypeMove["random"]= false;
+				return;
+			}
+		
+			var dir_id = CE.random(0, 3),
 				dir;
 			switch (dir_id) {
 				case 0:
@@ -173,12 +211,20 @@ Class.create("Game_Character", {
 					dir = "bottom";
 				break;
 			}
-			self.moveOneTile(dir, function() {
-				if (self.frequence != 0) {
-					global.game_map._scene.stopEvent(self.id);
-				}
+			
+			if (self.lastTypeMove != "random") {
+				self.moveOneTile(dir, function() {
+					if (self.frequence != 0) {
+						global.game_map._scene.stopEvent(self.id);
+					}
+					setTimeout(rand, self.frequence * 60);
+				});
+			}
+			else {
 				setTimeout(rand, self.frequence * 60);
-			});
+			}
+			
+			
 		}
 	},
 	
@@ -205,7 +251,8 @@ Class.create("Game_Character", {
 	moveOneTile: function(dir, callback) {
 		var distance = global.game_map.tile_w / this.speed,
 			i = 0, self = this, current_freq = this.frequence;
-		var interval = setInterval(function() {
+		var interval = setInterval(function loop() {
+			
 			self.moveDir(dir);
 			i++;	
 			if (i >= distance) {
@@ -213,10 +260,11 @@ Class.create("Game_Character", {
 				if (callback) callback.call(this);
 			}
 		}, 1000 / 60);
+		
 	},
 	
 	moveDir: function(dir, isPassable) {
-	
+		
 		var passable;
 	
 		if (this.id == 0 && this.freeze) {
@@ -255,7 +303,7 @@ Class.create("Game_Character", {
 		
 		pos = this.position(game_map.x, game_map.y);
 		
-		global.game_map._scene.moveEvent(this.id, pos, dir);
+		global.game_map.callScene("moveEvent", [this.id, pos, dir]);
 		
 		if (isPassable) {
 			return {
@@ -283,25 +331,16 @@ Class.create("Game_Character", {
 
 	},
 	
-	/**
-     * The event detects the hero in his field of vision
-	 * @method detectionPlayer
-	 * @param {Integer} area Number of tiles around the event
-	 * @return {Boolean} true if the player is in the detection zone
-    */
-	detectionPlayer: function(area) {
-		var player = global.game_player;
-		if (player.x <= this.x + area && player.x >= this.x - area && player.y <= this.y + area && player.y >= this.y - area) return true;
-		return false;
-	},
+	
 
 	
 	serialize: function() {
-		var data = ["id", "x", "y", "nbSequenceX", "nbSequenceY", "speedAnimation", "graphic_pattern", "graphic", "direction", "direction_fix", "no_animation", "stop_animation", "frequence", "speed", "regX", "regY", "alwaysOnBottom", "alwaysOnTop", "exist"];
+		var data = ["id", "x", "y", "nbSequenceX", "nbSequenceY", "speedAnimation", "graphic_pattern", "graphic", "graphic_params", "direction", "direction_fix", "no_animation", "stop_animation", "frequence", "speed", "regX", "regY", "alwaysOnBottom", "alwaysOnTop", "exist"];
 		var obj = {};
 		for (var i=0; i < data.length ; i++) {
 			obj[data[i]] = this[data[i]];
 		}
+		RPGJS_Core.Plugin.call("Game", "serializeCharacter", [obj, this]);
 		return obj;
 	},
 	
@@ -487,11 +526,17 @@ Class.create("Game_Character", {
 		if (!name) {
 			return this.params;
 		}
+		if (!this.params[name]) {
+			throw "getCurrentParam - parameter " + name + " doesn't exist";
+		}
 		return this.params[name][this.currentLevel];
 	},
 	
 	
 	setParamLevel: function(name, level, value) {
+		if (!this.params[name]) {
+			throw "setParamLevel - parameter " + name + " doesn't exist";
+		}
 		if (this.params[name][level]) {
 			this.params[name][level] = value;
 		}
@@ -542,6 +587,9 @@ Class.create("Game_Character", {
 		else if (operation == "add") {
 			current += +nb;
 		}
+		else if (operation == "sub") {
+			current -= +nb;
+		}
 		else {
 			current = +nb;
 		}
@@ -554,6 +602,7 @@ Class.create("Game_Character", {
 			if (callbacks.onMax) callbacks.onMax.call(this);
 		}
 		this.paramPoints[type].current = current;
+		RPGJS_Core.Plugin.call("Game", "changeParamPoints", [type, nb, operation, this]);
 		return current;
 	},
 

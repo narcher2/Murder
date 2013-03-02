@@ -9,22 +9,30 @@ Class.create("Game_Actors", {
 		actor._id = id;
 	
 		actor.maxLevel = data.level_max;
-		actor.makeExpList(25, 30);
-			
-		actor.setParam("hp_max", 622, 1545, "proportional");
-		actor.setParam("sp_max", 622, 1545, "proportional");
-		actor.setParam("str", 622, 1545, "proportional");
-		actor.setParam("dex", 622, 1545, "proportional");
-		actor.setParam("agi", 622, 1545, "proportional");
-		actor.setParam("int", 622, 1545, "proportional");
+		
+		if (data.params.exp) {
+			actor.makeExpList(data.params.exp);
+		}
+		else {
+			actor.makeExpList(25, 30);
+		}
+		
+		CE.each(["maxhp", "maxsp", "str", "dex", "agi", "int"], function(i, type) {
+			if (data.params[type]) {
+				actor.setParam(type, data.params[type]);
+			}
+			else {
+				actor.setParam(type, 622, 1545, "proportional");
+			}
+		});
 		
 		actor.setClass(data['class']);
 		
 		actor.setLevel(data.level_min);
 		
-		var max_hp =  actor.getCurrentParam("hp_max");
+		var max_hp =  actor.getCurrentParam("maxhp");
 		actor.initParamPoints("hp", max_hp, 0, max_hp);
-		var max_sp =  actor.getCurrentParam("sp_max");
+		var max_sp =  actor.getCurrentParam("maxsp");
 		actor.initParamPoints("sp", max_sp, 0, max_sp);
 		
 		actor.initParamPoints("atk", 0, 0, 99999);

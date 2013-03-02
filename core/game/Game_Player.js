@@ -11,13 +11,15 @@ Class.create("Game_Player", {
 	   var system = global.data.system ? global.data.system : {
 			start: {x: 0, y: 0, id: 1},
 			actor: 1
-	   };
+	   },
+	   actor = global.data.actors[system.actor];
 
 		this.x = system.start.x;
 		this.y = system.start.y;
 		
 		this.setProperties({
-			graphic: global.data.actors[system.actor].graphic
+			graphic: actor.graphic,
+			graphic_params: actor["graphic-params"]
 		});
 		
 		global.game_actors.add(system.actor, this);

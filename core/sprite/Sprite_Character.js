@@ -28,7 +28,16 @@ Class.create("Sprite_Character", {
 			for (var key in data) {
 				this[key] = data[key];
 			}
+			
+			this.graphic_params = this.graphic_params || {};
+		
+			for (var key in this.graphic_params) {
+				this[key] = this.graphic_params[key] != "" ? this.graphic_params[key] : this[key];
+			}
 		}
+		
+		if (this.regY) this.regY = +this.regY;
+		if (this.regX) this.regX = +this.regX;
 		
 		if (!this.exist) return;
 		
@@ -37,10 +46,11 @@ Class.create("Sprite_Character", {
 		}
 		
 		if (this.graphic) {
-			this.entity.el.drawImage("characters_" + this.graphic, 0, 0, this.width, this.height, 0, 0, this.width, this.height);
-			this.width = this.entity.el.img.width / this.nbSequenceX;
-			this.height = this.entity.el.img.height / this.nbSequenceY;
-			
+			var img = RPGJS.Materials.get("characters_" + this.graphic);
+			this.width = img.width / this.nbSequenceX;
+			this.height = img.height / this.nbSequenceY;
+			this.entity.el.drawImage("characters_" + this.graphic, 0, 0, this.width, this.height, -this.regX, -this.regY, this.width, this.height);
+
 			this.setAnimation();
 			this.setSpritesheet();
 			this.stop();
@@ -82,18 +92,19 @@ Class.create("Sprite_Character", {
 			size: [this.nbSequenceX, this.nbSequenceY],
 			tile: [this.width, this.height],
 			set: array,
-			reg: [0, 18]
+			reg: [0 + this.regX, 18 + this.regY]
 		  }]
 		});
 	},
 	setAnimation: function() {
 		var seq_x = this.nbSequenceX-1,
 			seq_y = this.nbSequenceY-1;
-		var frequence = this.speed * 3;
+		var frequence = Math.abs(-18 + (this.speed * 3));
 		var position = {
-			left: 0,
-			top: -18
+			left: 0 - this.regX,
+			top: -18 - this.regY
 		};
+		
 		this.animation = RPGJS.Animation.New({
 		   images: "characters_" + this.graphic,
 		   animations: {
@@ -138,14 +149,89 @@ Class.create("Sprite_Character", {
 		this.animation.add(this.entity.el);
 	},
 	
+	initAnimationActions: function(data) {
+
+		var seq_x, seq_y, frequence, position, animation, self = this;
+		
+		function finish() {
+			self.stop();
+		}
+		
+		var action;
+		for (var id in data) {
+			action = data[id];
+			seq_x = this.nbSequenceX-1,
+			seq_y = this.nbSequenceY-1;
+			frequence = action.speed;
+			position = {
+				left: 0 - this.regX,
+				top: -18 - this.regY
+			};
+			animation = {};
+			animation[id + "_bottom"] =  {
+				frames : [0, seq_x],
+				 size: {
+					width: this.width,
+					height: this.height
+				  },
+				  position: position,
+				 frequence: frequence,
+				 finish: finish
+			 };
+			 animation[id + "_left"] = {
+				frames : [seq_x+1, seq_x*2+1],
+				 size: {
+					width: this.width,
+					height: this.height
+				  },
+				  position: position,
+				 frequence: frequence,
+				 finish: finish
+			 };
+			 animation[id + "_right"] = {
+				frames : [seq_x*2+2, seq_x*3+2],
+				 size: {
+					width: this.width,
+					height: this.height
+				  },
+				  position: position,
+				 frequence: frequence,
+				 finish: finish
+			 };
+			  animation[id + "_up"] = {
+				frames : [seq_x*3+3, seq_x*4+3],
+				 size: {
+					width: this.width,
+					height: this.height
+				  },
+				  position: position,
+				 frequence: frequence,
+				 finish: finish
+			 };
+
+			this.action_animation = RPGJS.Animation.New({
+			   images: "characters_" + action.graphic,
+			   animations: animation
+			});
+			this.action_animation.add(this.entity.el);
+			
+		}
+	},
+	
+	playAnimationAction: function(id) {
+		this.action_animation.play(id + "_" + this.getDisplayDirection(), "stop");
+	},
+	
 	
 	setPosition: function(x, y) {
 		this.entity.position(x, y);
 	},
+	
 	stop: function() {
 		this.animation.stop();
 		this.spritesheet.draw(this.entity.el, this.getDisplayDirection());
 	},
+	
 	startMove: function() {
 		this.animation.play(this.getDisplayDirection(), "loop");
 	},
