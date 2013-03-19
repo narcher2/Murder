@@ -1,16 +1,20 @@
-Class.create("Sprite_Arpg", {
+Class.create("Sprite_Enemy", {
 
 	bar: null,
-	character: null,
+	hp: 0,
 
-	addCharacter: function(character, data) {
+	initialize: function(scene, enemy, character, data) {
 		
+		this.scene = scene;
 		this.character = character;
-		var enemy = this.callModel("getEnemy", [data.id]);
+		this.enemy = enemy;
+		this.data = data;
+		
 		if (enemy) {
-			
+			this.hp = enemy.hp;
 			this.displayBar(enemy.hp, enemy.maxhp, 40, 3);
 		}
+		
 	},
 	
 	displayBar: function(min, max, width, height, point, params) {
@@ -52,19 +56,43 @@ Class.create("Sprite_Arpg", {
 		bar.empty.y = y;
 		
 		bar.full.fillStyle = params.fill;
-		bar.full.fillRect(0, 0, width, height);
+		bar.full.fillRect(0, 0, width * pourcent, height);
 		
-		bar.empty.append(bar.full);
-		this.character.getSprite().append(bar.empty);
+		if (!this.bar) {
+			bar.empty.append(bar.full);
+			this.character.getSprite().append(bar.empty);
+		}
 		
 		this.bar = bar;
 
 	},
 	
-	_drawAttack: function(nb) {
+	drawHit: function(hp) {
+		this.hp -= hp;
+		this.displayBar(this.hp, this.enemy.maxhp, 40, 3);
+	},
+	
+	dead: function() {
+	
+	}
+
+});
+
+Class.create("Sprite_Arpg", {
+
+	characters: {},
+
+	addCharacter: function(character, data) {
+		
+		var enemy = this.callModel("getEnemy", [data.id]);
+		this.characters[data.id] = Class.New("Sprite_Enemy", [this.scene, enemy, character, data]);
+	
+	},
+	
+	_drawAttack: function(nb, event) {
 		var text = RPGJS.Text.new(this.scene, nb);
 		
-		var player = this.scene.getSpriteset().player;
+		var player = event ? event : this.scene.getSpriteset().player;
 	
 		text.style({
 			size: "22px",
@@ -75,6 +103,16 @@ Class.create("Sprite_Arpg", {
 		RPGJS.Timeline.New(text.el).add({y: -35}, 40,  Ease.easeOutElastic).call(function() {
 			this.remove();
 		});
+	},
+	
+	
+	_ennemyHit: function(id, hp) {
+		this._drawAttack(hp, this.characters[id].character);
+		this.characters[id].drawHit(hp);
+	},
+	
+	_ennemyDead: function(id) {
+		this.characters[id].dead();
 	},
 	
 	_playerDead: function() {

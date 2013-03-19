@@ -71,11 +71,14 @@ Class.create("Game_Character", {
 		
 	},
 
-	moveto: function(x, y) {
-		var pos = global.game_map.tileToPixel(x, y);
+	moveto: function(x, y, params) {
+		params = params || {};
+		if (params.tileToPixel === undefined) {
+			params.tileToPixel = true;
+		}
+		var pos = params.tileToPixel ? global.game_map.tileToPixel(x, y) : {x: x, y: y};
 		this.position(pos.x, pos.y);
-		this.prelock_direction = 0;
-		global.game_map.callScene("setEventPosition", [this.id, pos.x, pos.y]);
+		if (params.refresh) global.game_map.callScene("setEventPosition", [this.id, pos.x, pos.y]);
 	},
 	
 	lastTypeMove: function() {
@@ -102,6 +105,10 @@ Class.create("Game_Character", {
 				self.removeTypeMove["approach"] = false;
 				return;
 			}
+			if (!global.game_map.getEvent(self.id)) {
+				return;
+			}
+		
 		
 			var dir = self.directionRelativeToPlayer();
 			if (dir) {
@@ -194,6 +201,9 @@ Class.create("Game_Character", {
 				self.removeTypeMove["random"]= false;
 				return;
 			}
+			if (!global.game_map.getEvent(self.id)) {
+				return;
+			}
 		
 			var dir_id = CE.random(0, 3),
 				dir;
@@ -252,6 +262,10 @@ Class.create("Game_Character", {
 		var distance = global.game_map.tile_w / this.speed,
 			i = 0, self = this, current_freq = this.frequence;
 		var interval = setInterval(function loop() {
+		
+			if (!global.game_map.getEvent(self.id)) {
+				return;
+			}
 			
 			self.moveDir(dir);
 			i++;	
@@ -332,6 +346,23 @@ Class.create("Game_Character", {
 	},
 	
 	
+	jumpa: function(x_plus, y_plus, high) {
+		var dir, new_x, new_y, distance;
+		if (x_plus != 0 || y_plus != 0) {
+		  if (Math.abs(x_plus) > Math.abs(y_plus)) {
+			x_plus < 0 ? dir = "left" : dir = "right";
+			}
+		  else {
+			y_plus < 0 ? dir = "up" : dir = "down";
+		  }
+		}
+		new_x = this.x + x_plus
+		new_y = this.y + y_plus
+		if ((x_plus == 0 && y_plus == 0) || global.game_map.passable(this, this.x, this.y, new_x, new_y, dir)) {
+			this.position(new_x, new_y);
+			global.game_map.callScene("jumpEvent", [this.id, x_plus, y_plus, high]);
+		}
+	 },  
 
 	
 	serialize: function() {

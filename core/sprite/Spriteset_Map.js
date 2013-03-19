@@ -431,8 +431,6 @@ Class.create("Spriteset_Map", {
 	
 	},
 	
-	
-	
 	refreshCharacter: function(id, data) {
 		this.getEvent(id).refresh(data);
 	},

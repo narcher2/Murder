@@ -345,7 +345,9 @@ Class.create("Game_Map", {
 		
 		for (var i=0 ; i < this.map.dynamic_event.length ; i++) {
 			e = this.map.dynamic_event[i];
-			this.addDynamicEvent(e.name, e, call, false);
+			this.addDynamicEvent(e.name, e, call, {
+				refresh: false
+			});
 		}
 		
 		if (total_events == 0) {
@@ -396,11 +398,12 @@ Class.create("Game_Map", {
 		});
    },
    
-   addDynamicEvent: function(name, pos, callback, refresh) {
+   addDynamicEvent: function(name, pos, callback, params) {
 		var self = this;
+		params = params || {};
 		this.loadEvent(name, true, function(id, event) {
-			event.moveto(pos.x, pos.y);
-			if (refresh) self.callScene("addEvent", [event.serialize()]);
+			event.moveto(pos.x, pos.y, params);
+			if (params.add) self.callScene("addEvent", [event.serialize()]);
 			if (callback) callback.call(this, id, event);
 		});
    },

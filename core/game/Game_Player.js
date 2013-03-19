@@ -39,7 +39,7 @@ Class.create("Game_Player", {
 	},
 	
 	addGold: function(val) {
-		this.gold += val;
+		this.gold += +val;
 		if (this.gold < 0) {
 			this.gold = 0;
 		}

@@ -45,6 +45,7 @@ Class.create("Sprite_Character", {
 			this.initial_dir = this.direction;
 		}
 		
+
 		if (this.graphic) {
 			var img = RPGJS.Materials.get("characters_" + this.graphic);
 			this.width = img.width / this.nbSequenceX;
@@ -225,6 +226,14 @@ Class.create("Sprite_Character", {
 	
 	setPosition: function(x, y) {
 		this.entity.position(x, y);
+	},
+	
+	jumpCharacter: function(x_plus, y_plus, hight) {
+		 var distance = Math.sqrt(x_plus * x_plus + y_plus * y_plus),
+			self = this;
+		 this.getSprite().on("canvas:render", function() {
+			 //self.entity.move(this.speed);
+		 });
 	},
 	
 	stop: function() {

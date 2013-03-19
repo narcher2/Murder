@@ -180,6 +180,15 @@ RPGJS.Scene.New({
 		}
 	},
 	
+	jumpEvent: function(id, x_plus, y_plus, high) {
+		var spriteset = this.getSpriteset();
+		if (spriteset) {
+			this.getSpriteset().getEvent(id).jumpCharacter(x_plus, y_plus, high);
+		}
+		
+		
+	},
+	
 	setEventPosition: function(id, x, y) {
 		var spriteset = this.getSpriteset();
 		if (spriteset) {
