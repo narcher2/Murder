@@ -9,7 +9,6 @@
 ## TODO ##
 
 - A-RPG
-- Battle Formulas
 - TouchPad compatibilitises
 - Menu
     - Equipment bug
@@ -76,6 +75,7 @@ Using CanvasEngine is done with the variable RPGJS. For example, to use the Twee
     - Tilesets
     - Titles
     - Windowskins
+    - Gameovers
 - core
 _ plugins
 - Data

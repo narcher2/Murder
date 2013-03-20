@@ -10,9 +10,13 @@ Class.create("Game_Enemy", {
 		var _data = data.action_battle;
 		this.data = _data;
 			
-		CE.each(["maxhp", "maxsp", "str", "dex", "agi", "int", "pdef", "mdef"], function(i, type) {
+		CE.each(["maxhp", "maxsp", "str", "dex", "agi", "int"], function(i, type) {
 			enemy.setParam(type,[0, +_data[type]]);
 		});
+		
+		enemy.initParamPoints("atk", +_data["atk"], 0, 99999);
+		enemy.initParamPoints("pdef", +_data["pdef"], 0, 99999);
+		enemy.initParamPoints("mdef", +_data["mdef"], 0, 99999);
 		
 		enemy.setLevel(1);
 		
@@ -39,9 +43,9 @@ Class.create("Game_Enemy", {
 			return;
 		}
 		
-		var lost_hp = arpg.battleFormulas(this.event);
+		var formulas = arpg.battleFormulas(this.event);
 		
-		global.game_player.changeParamPoints("hp", lost_hp, "sub");
+		global.game_player.changeParamPoints("hp", formulas.damage, "sub");
 		
 		var current_hp = global.game_player.getParamPoint("hp");
 		
@@ -51,15 +55,15 @@ Class.create("Game_Enemy", {
 		}
 		
 		this.state = "attack";
-		arpg.callSprite("drawAttack", [lost_hp]);
+		arpg.callSprite("drawAttack", [formulas]);
 		setTimeout(function() {
 			self.state = "passive";
 		}, 1000);
 	},
 	
 	hit: function(arpg) {
-		var lost_hp = arpg.battleFormulas(this.event);
-		this.event.changeParamPoints("hp", lost_hp, "sub");
+		var formulas = arpg.battleFormulas(this.event, true);
+		this.event.changeParamPoints("hp", formulas.damage, "sub");
 		
 		var current_hp = this.event.getParamPoint("hp");
 		
@@ -83,7 +87,7 @@ Class.create("Game_Enemy", {
 			return;
 		}
 		
-		arpg.callSprite("ennemyHit", [this.event.id, lost_hp]);
+		arpg.callSprite("ennemyHit", [this.event.id, formulas]);
 		this.event.jumpa(-32, 0, 32);
 
 	},
@@ -111,6 +115,7 @@ Class.create("Game_Enemy", {
 Class.create("Game_Arpg", {
 
 	enemies: {},
+	playerIsDead: false,
 
 	addEvent: function(event, map_id, data) {
 		var id, game_enemy;
@@ -270,9 +275,49 @@ Class.create("Game_Arpg", {
 		Defense modifier: Equals 1/2 when the damage is positive and B is defending. 
 	</cite>
 */
-	battleFormulas: function(enemy) {
-		var player = global.game_player;
-		return 300;
+	battleFormulas: function(enemy, playerAttack) {
+		var power, rate, variance, damage = 0, critical, isCritical, weapon, elements = 100, armor, miss = false,
+			a, b;
+		
+		if (playerAttack) {
+			a = global.game_player;
+			b = enemy;
+		}
+		else {
+			b = global.game_player;
+			a = enemy;
+		}
+		
+		if (b.getCurrentParam("dex") < CE.random(0, 1000)) {
+	
+			power = a.getParamPoint("atk") - b.getParamPoint("pdef") / 2;
+			rate = 20 + a.getCurrentParam("str");
+			variance = 15;
+			
+			critical = 4 * a.getCurrentParam("dex") / b.getCurrentParam("agi");
+			isCritical = 5 >= CE.random(0, 100);
+			
+			weapon = global.data.weapons[a.getItemsEquipedByType("weapons")];
+			armor = global.data.armors[a.getItemsEquipedByType("armors")];
+			
+			if (weapon && weapon._elements) {
+				elements = 0;
+				for (var i=0 ; i < weapon._elements.length ; i++) {
+					elements += b.getElement(weapon._elements[i]);
+				}
+				elements /= weapon._elements.length;
+			}
+		
+			damage = power * rate / 20 * (100 / elements) * (isCritical ? critical : 1) + ((CE.random(0, 1) ? 1 : -1) * CE.random(0, variance));
+		}
+		else {
+			miss = true;
+		}
+		return {
+			damage: Math.round(damage),
+			critical: isCritical,
+			miss: miss
+		};
 	},
 	
 	contactPlayer: function(event) {
@@ -284,13 +329,17 @@ Class.create("Game_Arpg", {
 	},
 	
 	tick: function() {
+		if (this.playerIsDead) {
+			return;
+		}
 		for (var id in this.enemies) {
 			this.enemies[id].update();
 		}
 	},
 
 	playerDead: function() {
-		//this.callSprite("playerDead");
+		this.playerIsDead = true;
+		this.callSprite("playerDead");
 	}
 
 }).extend("Game_Plugin");

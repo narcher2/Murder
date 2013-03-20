@@ -17,12 +17,21 @@ Class.create("Game_Actors", {
 			actor.makeExpList(25, 30);
 		}
 		
+		var _defaultVal = {
+			"maxhp": [741, 7467],
+			"maxsp": [534, 5500],
+			"str": [67, 635],
+			"dex": [54, 564],
+			"agi": [58, 582],
+			"int": [36, 349]
+		};
+		
 		CE.each(["maxhp", "maxsp", "str", "dex", "agi", "int"], function(i, type) {
 			if (data.params[type]) {
 				actor.setParam(type, data.params[type]);
 			}
 			else {
-				actor.setParam(type, 622, 1545, "proportional");
+				actor.setParam(type, _defaultVal[type][0], _defaultVal[type][1], "proportional");
 			}
 		});
 		

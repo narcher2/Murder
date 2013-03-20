@@ -89,26 +89,48 @@ Class.create("Sprite_Arpg", {
 	
 	},
 	
-	_drawAttack: function(nb, event) {
-		var text = RPGJS.Text.new(this.scene, nb);
+	_drawAttack: function(formulas, event) {
+		var t = "", text, text_info, player;
 		
-		var player = event ? event : this.scene.getSpriteset().player;
-	
-		text.style({
-			size: "22px",
-			color:"white",
+		if (formulas.critical) {
+			t = "Critical";
+		}
+		else if (formulas.miss) {
+			t = "Miss";
+		}
+		
+		text = RPGJS.Text.new(this.scene, formulas.damage);
+		text_info = RPGJS.Text.new(this.scene, t);
+		
+		player = event ? event : this.scene.getSpriteset().player;
+		
+		text_info.style({
+			size: "16px",
+			color: "#71ABD7",
 			textBaseline: "top"
-		}).draw(player.getSprite(), 2, -15);
+		}).draw(player.getSprite(), 0, 0);
 		
-		RPGJS.Timeline.New(text.el).add({y: -35}, 40,  Ease.easeOutElastic).call(function() {
+		RPGJS.Timeline.New(text_info.el).add({y: -35}, 40,  Ease.easeOutElastic).call(function() {
 			this.remove();
 		});
+	
+		if (!formulas.miss) {
+			text.style({
+				size: "22px",
+				color:"white",
+				textBaseline: "top"
+			}).draw(player.getSprite(), 2, -15);
+			
+			RPGJS.Timeline.New(text.el).add({y: -35}, 40,  Ease.easeOutElastic).call(function() {
+				this.remove();
+			});
+		}
 	},
 	
 	
-	_ennemyHit: function(id, hp) {
-		this._drawAttack(hp, this.characters[id].character);
-		this.characters[id].drawHit(hp);
+	_ennemyHit: function(id, formulas) {
+		this._drawAttack(formulas, this.characters[id].character);
+		this.characters[id].drawHit(formulas);
 	},
 	
 	_ennemyDead: function(id) {

@@ -109,6 +109,15 @@ RPGJS.Scene.New({
 		
 		this.keysAssign();
 		
+		this.gamepad = RPGJS.Input.Gamepad.init();
+		this.gamepad.addListener("faceButton0", Input.A);
+		this.gamepad.addListener("faceButton1", Input.Esc);
+		this.gamepad.addListener("faceButton2", Input.Enter);
+		this.gamepad.addListener("dpadLeft", Input.Left);
+		this.gamepad.addListener("dpadRight", Input.Right);
+		this.gamepad.addListener("dpadDown", Input.Bottom);
+		this.gamepad.addListener("dpadUp", Input.Up);
+		
 		RPGJS_Core.Plugin.call("Sprite", "loadMap", [this]);
 
 	},
@@ -141,6 +150,7 @@ RPGJS.Scene.New({
 		RPGJS_Core.Plugin.call("Sprite", "sceneMapRender", [this]);
 
 		stage.refresh();
+		this.gamepad.update();
 
 	},
 	

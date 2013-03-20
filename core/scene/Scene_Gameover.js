@@ -3,15 +3,7 @@ RPGJS.Scene.New({
 	
 	materials: {
 		images: {
-			background: "Graphics/Titles/picture11.jpg",
-			face: "Graphics/Faces/Aluxes.png",
-			cursor_on: "Graphics/Pictures/Mn_Sel.png",
-			cursor_off: "Graphics/Pictures/Mn_Sel_Off.png"
-		},
-		sounds: {
-			cursor: "Audio/SE/001-System01.ogg",
-			cursor_select: "Audio/SE/002-System02.ogg",
-			cursor_disable: "Audio/SE/004-System04.ogg"
+			background: "Graphics/Gameovers/gameover.jpg"
 		}
 	},
 	
@@ -19,6 +11,12 @@ RPGJS.Scene.New({
 	
 		var background = this.createElement();
 		background.drawImage("background");
+		
+		stage.append(background);
+		
+		RPGJS.Input.press([Input.Enter, Input.Space], function() {
+			RPGJS_Core.scene.call("Scene_Title");
+		});
 		
 	}
 });

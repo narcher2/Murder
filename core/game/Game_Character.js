@@ -839,7 +839,7 @@ Class.create("Game_Character", {
 			if (data.skills) {
 				this.skillsToLearn(data.skills);
 			}
-			if (data.elements) this.setElements(data.elements);
+			if (data.elements) this.setElements(data._elements);
 			if (data.states) this.setDefStates(data.states);
 		}
 	},
@@ -853,7 +853,20 @@ Class.create("Game_Character", {
 	 </pre>
     */
 	setElements: function(elements) {
-		this.elements = elements;
+		var obj = {};
+		if (elements instanceof Array) {
+			for (var i=0 ; i < elements.length ; i++) {
+				obj[elements[i][0]] = elements[i][1];
+			}
+		}
+		else {
+			obj = elements;
+		}
+		this.elements = obj;
+	},
+	
+	getElement: function(id) {
+		return this.elements[id];
 	},
 	
 	setDefStates: function(states) {

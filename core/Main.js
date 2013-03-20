@@ -169,6 +169,7 @@ Class.create("RPGJS", {
 		tiles: "Graphics/Tiles/",
 		faces: "Graphics/Faces/",
 		fonts: "Graphics/fonts/",
+		gameovers: "Graphics/Gameovers/",
 		
 		getFile: function (type, filename, object) {
 			var path = this[type] + filename, obj = {};
@@ -200,6 +201,13 @@ Class.create("RPGJS", {
 			else {
 				return path;
 			}
+		},
+		
+		loadMaterial: function(type, id, callback) {
+			var obj= {};
+			var path = this.get(type, id);
+			obj[type + "_" + id] = path;
+			RPGJS.Materials.load("images", obj, callback);
 		},
 		
 		load: function(type, file, id, callback) {

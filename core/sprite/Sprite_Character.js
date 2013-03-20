@@ -23,7 +23,7 @@ Class.create("Sprite_Character", {
 	},
 	
 	refresh: function(data) {
-	
+		var self = this;
 		if (data) {
 			for (var key in data) {
 				this[key] = data[key];
@@ -47,16 +47,26 @@ Class.create("Sprite_Character", {
 		
 
 		if (this.graphic) {
-			var img = RPGJS.Materials.get("characters_" + this.graphic);
-			this.width = img.width / this.nbSequenceX;
-			this.height = img.height / this.nbSequenceY;
-			this.entity.el.drawImage("characters_" + this.graphic, 0, 0, this.width, this.height, -this.regX, -this.regY, this.width, this.height);
+		
+			function load() {
+				var img = RPGJS.Materials.get("characters_" + self.graphic);
+				self.width = img.width / self.nbSequenceX;
+				self.height = img.height / self.nbSequenceY;
+			
+				self.entity.el.drawImage("characters_" + self.graphic, 0, 0, self.width, self.height, -self.regX, -self.regY, self.width, self.height);
+				self.setAnimation();
+				self.setSpritesheet();
+				self.stop();
+				if (self.stop_animation) {
+					self.startMove();
+				}
+			}
 
-			this.setAnimation();
-			this.setSpritesheet();
-			this.stop();
-			if (this.stop_animation) {
-				this.startMove();
+			if (this.id != 0) { // if not player
+				RPGJS_Core.Path.loadMaterial("characters", this.graphic, load);
+			}
+			else {
+				load();
 			}
 		}
 		else {
@@ -251,7 +261,7 @@ Class.create("Sprite_Character", {
 	},
 	changeDirection: function(anim, dir) {
 		var display_direction = this.getDisplayDirection();
-		if (this.direction != this.old_direction && this.graphic) {
+		if (this.spritesheet && this.direction != this.old_direction && this.graphic) {
 			this.spritesheet.draw(this.entity.el, display_direction);
 			if (!this.no_animation) {
 				this.animation.play(display_direction, "loop");
