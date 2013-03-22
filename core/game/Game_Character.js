@@ -346,7 +346,7 @@ Class.create("Game_Character", {
 	},
 	
 	
-	jumpa: function(x_plus, y_plus, high) {
+	jumpa: function(x_plus, y_plus, high, callback) {
 		var dir, new_x, new_y, distance;
 		if (x_plus != 0 || y_plus != 0) {
 		  if (Math.abs(x_plus) > Math.abs(y_plus)) {
@@ -360,7 +360,10 @@ Class.create("Game_Character", {
 		new_y = this.y + y_plus
 		if ((x_plus == 0 && y_plus == 0) || global.game_map.passable(this, this.x, this.y, new_x, new_y, dir)) {
 			this.position(new_x, new_y);
-			global.game_map.callScene("jumpEvent", [this.id, x_plus, y_plus, high]);
+			console.log(new_x, new_y);
+			this.removeTypeMove("approach");
+			this.removeTypeMove("random");
+			global.game_map.callScene("jumpEvent", [this.id, x_plus, y_plus, high, callback]);
 		}
 	 },  
 

@@ -119,12 +119,42 @@ RPGJS.Scene.New({
 		this.gamepad.addListener("dpadUp", Input.Up);
 		
 		RPGJS_Core.Plugin.call("Sprite", "loadMap", [this]);
+		
 
 	},
 	render: function(stage) {
 	
 		if (!this.spriteset) {
 			return;
+		}
+		
+		if (typeof(VirtualJoystick) != "undefined") {
+			
+			var joystick	= new VirtualJoystick({
+				container	: document.getElementById(RPGJS_Core.params.canvas),
+				mouseSupport	: true			
+			});
+		
+			if (joystick.down()) {
+				RPGJS.Input.trigger(Input.Bottom, "down");
+				console.log("down");
+			}
+			else if (joystick.up()) {
+				//RPGJS.Input.trigger(Input.Up, "down");
+			}
+			else if (joystick.right()) {
+				//RPGJS.Input.trigger(Input.Right, "down");
+			}
+			else if (joystick.left()) {
+				//RPGJS.Input.trigger(Input.Left, "down");
+			}
+			else {
+				// RPGJS.Input.trigger(Input.Left, "up");
+				// RPGJS.Input.trigger(Input.Right, "up");
+				// RPGJS.Input.trigger(Input.Bottom, "up");
+				// RPGJS.Input.trigger(Input.Up, "up");
+			}
+			
 		}
 	
 		var input = {
@@ -148,6 +178,8 @@ RPGJS.Scene.New({
 		this.updateEvents();
 		
 		RPGJS_Core.Plugin.call("Sprite", "sceneMapRender", [this]);
+		
+		
 
 		stage.refresh();
 		this.gamepad.update();
@@ -190,10 +222,10 @@ RPGJS.Scene.New({
 		}
 	},
 	
-	jumpEvent: function(id, x_plus, y_plus, high) {
+	jumpEvent: function(id, x_plus, y_plus, high, callback) {
 		var spriteset = this.getSpriteset();
 		if (spriteset) {
-			this.getSpriteset().getEvent(id).jumpCharacter(x_plus, y_plus, high);
+			this.getSpriteset().getEvent(id).jumpCharacter(x_plus, y_plus, high, callback);
 		}
 		
 		

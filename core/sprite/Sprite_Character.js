@@ -120,7 +120,7 @@ Class.create("Sprite_Character", {
 		   images: "characters_" + this.graphic,
 		   animations: {
 				 bottom: {
-					frames : [0, seq_x],
+					frames: [0, seq_x],
 					 size: {
 						width: this.width,
 						height: this.height
@@ -129,7 +129,7 @@ Class.create("Sprite_Character", {
 					 frequence: frequence
 				 },
 				 left: {
-					frames : [seq_x+1, seq_x*2+1],
+					frames: [seq_x+1, seq_x*2+1],
 					 size: {
 						width: this.width,
 						height: this.height
@@ -138,7 +138,7 @@ Class.create("Sprite_Character", {
 					 frequence: frequence
 				 },
 				 right: {
-					frames : [seq_x*2+2, seq_x*3+2],
+					frames: [seq_x*2+2, seq_x*3+2],
 					 size: {
 						width: this.width,
 						height: this.height
@@ -147,7 +147,7 @@ Class.create("Sprite_Character", {
 					 frequence: frequence
 				 },
 				 up: {
-					frames : [seq_x*3+3, seq_x*4+3],
+					frames: [seq_x*3+3, seq_x*4+3],
 					 size: {
 						width: this.width,
 						height: this.height
@@ -180,7 +180,7 @@ Class.create("Sprite_Character", {
 			};
 			animation = {};
 			animation[id + "_bottom"] =  {
-				frames : [0, seq_x],
+				frames: [0, seq_x],
 				 size: {
 					width: this.width,
 					height: this.height
@@ -190,7 +190,7 @@ Class.create("Sprite_Character", {
 				 finish: finish
 			 };
 			 animation[id + "_left"] = {
-				frames : [seq_x+1, seq_x*2+1],
+				frames: [seq_x+1, seq_x*2+1],
 				 size: {
 					width: this.width,
 					height: this.height
@@ -200,7 +200,7 @@ Class.create("Sprite_Character", {
 				 finish: finish
 			 };
 			 animation[id + "_right"] = {
-				frames : [seq_x*2+2, seq_x*3+2],
+				frames: [seq_x*2+2, seq_x*3+2],
 				 size: {
 					width: this.width,
 					height: this.height
@@ -210,7 +210,7 @@ Class.create("Sprite_Character", {
 				 finish: finish
 			 };
 			  animation[id + "_up"] = {
-				frames : [seq_x*3+3, seq_x*4+3],
+				frames: [seq_x*3+3, seq_x*4+3],
 				 size: {
 					width: this.width,
 					height: this.height
@@ -238,12 +238,26 @@ Class.create("Sprite_Character", {
 		this.entity.position(x, y);
 	},
 	
-	jumpCharacter: function(x_plus, y_plus, hight) {
+	jumpCharacter: function(x_plus, y_plus, hight, callback) {
+		 this.jumping = true;
 		 var distance = Math.sqrt(x_plus * x_plus + y_plus * y_plus),
 			self = this;
-		 this.getSprite().on("canvas:render", function() {
-			 //self.entity.move(this.speed);
-		 });
+		this.stop();
+		 var i=1, render = function() {
+			 var speed = self.speed * 4;
+			 if ((x_plus != 0 && Math.abs(x_plus) / speed) < i || (y_plus != 0 && Math.abs(y_plus) / speed)) {
+				self.getSprite().off("canvas:render", render);
+				self.jumping = false;
+				self.startMove();
+				if (callback) callback();
+			 }
+			 else {
+				if (x_plus != 0) self.entity.el.x += x_plus < 0 ? -speed : speed;
+				if (y_plus != 0) self.entity.el.y += y_plus < 0 ? -speed : speed;
+			 }
+			 i++;
+		 };
+		 this.getSprite().on("canvas:render", render);
 	},
 	
 	stop: function() {
@@ -255,6 +269,9 @@ Class.create("Sprite_Character", {
 		this.animation.play(this.getDisplayDirection(), "loop");
 	},
 	move: function(axis, value, dir) {
+		if (this.jumping) {
+			return;
+		}
 		this.direction = dir;
 		this.changeDirection(dir);
 		this.entity.el[axis] = value;

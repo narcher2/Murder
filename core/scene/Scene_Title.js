@@ -7,12 +7,12 @@ RPGJS.Scene.New({
 			face: "Graphics/Faces/Aluxes.png",
 			cursor_on: "Graphics/Pictures/Mn_Sel.png",
 			cursor_off: "Graphics/Pictures/Mn_Sel_Off.png"
-		},
+		}/*,
 		sounds: {
 			cursor: "Audio/SE/001-System01.ogg",
 			cursor_select: "Audio/SE/002-System02.ogg",
 			cursor_disable: "Audio/SE/004-System04.ogg"
-		}
+		}*/
 	},
 	
 	ready: function(stage) {
@@ -79,13 +79,13 @@ RPGJS.Scene.New({
 		box.cursor.init(btns);
 		
 		box.cursor.select(function(el) {
-			var id = el.attr('id')
+			var id = el.attr('id');
 			if (el.attr('enable')) {
 				self[id].call(self);
-				global.game_system.sePlay("cursor_select");
+				// global.game_system.sePlay("cursor_select");
 			}
 			else {
-				global.game_system.sePlay("cursor_disable");
+				// global.game_system.sePlay("cursor_disable");
 			}
 		});
 		
@@ -95,7 +95,7 @@ RPGJS.Scene.New({
 				cursors[i].drawImage("cursor_off", -75, 10);
 			}
 			cursors[index].drawImage("cursor_on", -75, 10);
-			global.game_system.sePlay("cursor");
+			// global.game_system.sePlay("cursor");
 		});
 		
 		box.cursor.enable(true);

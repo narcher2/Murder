@@ -18,5 +18,9 @@ RPGJS.Scene.New({
 			RPGJS_Core.scene.call("Scene_Title");
 		});
 		
+		stage.on("touch", function() {
+			RPGJS_Core.scene.call("Scene_Title");
+		});
+		
 	}
 });
