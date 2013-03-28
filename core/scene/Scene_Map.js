@@ -78,9 +78,11 @@ RPGJS.Scene.New({
 		
 		RPGJS.Input.press([Input.Esc], function() {
 			self.pause(true);
-			RPGJS_Core.scene.call("Scene_Menu", {
+			RPGJS_Core.Plugin.call("Sprite", "pressEsc", [self]);
+			var menu = RPGJS_Core.scene.call("Scene_Menu", {
 				overlay: true
 			});
+			//menu.zIndex(1); // after scene map
 		});
 		
 		function _action(action, id) {
@@ -101,6 +103,8 @@ RPGJS.Scene.New({
 		
 	},
 	load: function() {
+	
+		
 		
 		this.spriteset = Class.New("Spriteset_Map", [this, this.stage, this.data, {
 			autotiles: this.data.autotiles_img,
@@ -127,35 +131,7 @@ RPGJS.Scene.New({
 		if (!this.spriteset) {
 			return;
 		}
-		
-		if (typeof(VirtualJoystick) != "undefined") {
-			
-			var joystick	= new VirtualJoystick({
-				container	: document.getElementById(RPGJS_Core.params.canvas),
-				mouseSupport	: true			
-			});
-		
-			if (joystick.down()) {
-				RPGJS.Input.trigger(Input.Bottom, "down");
-				console.log("down");
-			}
-			else if (joystick.up()) {
-				//RPGJS.Input.trigger(Input.Up, "down");
-			}
-			else if (joystick.right()) {
-				//RPGJS.Input.trigger(Input.Right, "down");
-			}
-			else if (joystick.left()) {
-				//RPGJS.Input.trigger(Input.Left, "down");
-			}
-			else {
-				// RPGJS.Input.trigger(Input.Left, "up");
-				// RPGJS.Input.trigger(Input.Right, "up");
-				// RPGJS.Input.trigger(Input.Bottom, "up");
-				// RPGJS.Input.trigger(Input.Up, "up");
-			}
-			
-		}
+	
 	
 		var input = {
 			"left": [Input.Left, "x"],

@@ -218,6 +218,12 @@ Parameters :
 
 - spriteset_map {Class.Spriteset_Map}
 
+**drawMapBegin**
+
+Parameters : 
+
+- spriteset_map {Class.Spriteset_Map}
+
 
 **drawCharactersEnd**
 
@@ -243,6 +249,14 @@ Parameters :
 **pressAction**
 
 - scene {Class.Scene_Map}
+
+**pressEsc**
+
+- scene {Class.Scene_Map}
+
+
+**loadBeforeGame**
+
 
 
 #### Game

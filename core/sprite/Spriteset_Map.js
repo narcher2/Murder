@@ -31,6 +31,8 @@ Class.create("Spriteset_Map", {
 		this.tilemap({});
 	},
 	tilemap: function(propreties) {
+	
+		RPGJS_Core.Plugin.call("Sprite", "drawMapBegin", [this]);
 		
 		var self = this, autotiles_array = [];
 		

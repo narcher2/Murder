@@ -17,6 +17,11 @@ Class.create("Game_CommonEvents", {
 		}
 
 		if (commands) {
+		
+			for (var i=0 ; i < commands.commands.length ; i++) {
+				commands.commands[i] = commands.commands[i].replace(/&apos;/g, "'");
+			}
+			
 			interpreter = Class.New('Interpreter', [this.event, commands.commands]);
 			interpreter.execCommands(finish);
 		}

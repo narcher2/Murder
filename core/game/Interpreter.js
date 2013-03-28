@@ -995,7 +995,81 @@ THE SOFTWARE.
 	},
 	
 	// IF: '3 > 1'
+	// IF: 'switch[1]'
+	// IF: 'self_switch[A]'
+	// IF: 'variable[1] > 0'
+	// IF: 'variable[1] == variable[2]'
+	// IF: 'actor_in_party[1]'
+	// IF: 'actor_name[1] == "Foo"'
+	// IF: 'actor_skill_learned[1,3]'
+	// IF: 'actor_weapon_equiped[1,1]'
+	// IF: 'actor_armor_equiped[1,1]'
+	// IF: 'actor_state_inflicted[1,1]'
+	// IF: 'character_facing[1] == "left"'
+	// IF: 'gold > 10'
+	// IF: 'item_possessed[1]'
+	// IF: 'weapon_possessed[1]'
+	// IF: 'armor_possessed[1]'
 	cmdIf: function(params, name, id) {
+	
+		var this_event = this.event;
+		
+		function actor(id, method, params) {
+			var _actor = global.game_actors.getById(id);
+			if (_actor) {
+				if (params == "isParameter") {
+					return _actor[method];
+				}
+				else {
+					if (!(params instanceof Array)) {
+						params = [params];
+					}
+					return _actor[method].apply(_actor, params);
+				}
+			}
+		}
+		
+		function event(id) {
+			if (id == 0) {
+				return global.game_player;
+			}
+			else {
+				return global.game_map.getEvent(id);
+			}
+		}
+		
+	
+		var _var = {
+			'switch[%1]'					: 'global.game_switches.get(%1)',
+			'self_switch[%1]'				: 'global.game_selfswitches.get(this_event.map_id, this_event.id, "%1")',
+			'variable[%1]'					: 'global.game_variables.get(%1)',
+			'actor_in_party[%1]'			: 'global.game_actors.getById(%1)',
+			'actor_name[%1]'				: 'actor(%1, "name", "isParameter")',
+			'actor_skill_learned[%1,%2]'	: 'actor(%1, "getSkill", %2)',
+			'actor_state_inflicted[%1,%2]'	: 'actor(%1, "stateInflicted", %2)',
+			'actor_weapon_equiped[%1,%2]'	: 'actor(%1, "itemIsEquiped", ["weapons", %2])',
+			'actor_armor_equiped[%1,%2]'	: 'actor(%1, "itemIsEquiped", ["armors", %2])',
+			'character_facing[%1]'			: 'event(%1).direction',
+			'gold'							: 'global.game_player.gold',
+			'item_possessed[%1]'			: 'global.game_player.getItem("items", %1)',
+			'weapon_possessed[%1]'			: 'global.game_player.getItem("weapons", %1)',
+			'armor_possessed[%1]'			: 'global.game_player.getItem("armors", %1)'
+		}, patt, new_key, n;
+		
+		for (var key in _var) {
+			new_key = key.replace(/\[/g, "\\[");
+			new_key = new_key.replace(/\]/g, "\\]");
+			new_key = new_key.replace(/%[0-9]+/g, "([0-9A-Z]+)");
+			patt = new RegExp(new_key, "gi");
+			n = patt.exec(params);
+			params = params.replace(patt, _var[key]);
+			if (n) {
+				for (var i=1 ; i <= 10 ; i++) {
+					if (n[i]) params = params.replace("%" + i, n[i]);
+				}
+			}
+		}
+		
 		var e = eval(params), c;
 		c = this._conditions[id];
 		if (!e) {

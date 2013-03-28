@@ -4,6 +4,7 @@ Class.create("Game_Enemy", {
 	event: null,
 	state: "passive",
 	detection: false,
+	jumping: false,
 	
 	initialize: function(enemy, data) {
 	
@@ -62,6 +63,7 @@ Class.create("Game_Enemy", {
 	},
 	
 	hit: function(arpg) {
+		var self = this;
 		var formulas = arpg.battleFormulas(this.event, true);
 		this.event.changeParamPoints("hp", formulas.damage, "sub");
 		
@@ -88,11 +90,40 @@ Class.create("Game_Enemy", {
 		}
 		
 		arpg.callSprite("ennemyHit", [this.event.id, formulas]);
-		this.event.jumpa(-32, 0, 32);
+		
+		var x_plus = 0, y_plus = 0, val = 64;
+		switch (global.game_player.direction) {
+			case "left":
+				x_plus = -val;
+			break;
+			case "right":
+				x_plus = val;
+			break;
+			case "up":
+				y_plus = -val;
+			break;
+			case "bottom":
+				y_plus = val;
+			break;
+		}
+		
+		this.event.jumpa(x_plus, y_plus, 32, function() {
+			self.jumping = false;
+			self.wait = true;
+			setTimeout(function() {
+				self.wait = false;
+			}, 2000);
+		});
+		this.jumping = true;
 
 	},
 	
 	update: function() {
+	
+		if (this.jumping || this.wait) {
+			return;
+		}
+		
 		var detect = this.event.detectionPlayer(this.data.area),
 			self = this;
 			

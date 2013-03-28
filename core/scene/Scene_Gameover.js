@@ -22,5 +22,7 @@ RPGJS.Scene.New({
 			RPGJS_Core.scene.call("Scene_Title");
 		});
 		
+		RPGJS_Core.Plugin.call("Sprite", "gameover", [this]);
+		
 	}
 });

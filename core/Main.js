@@ -28,9 +28,10 @@ Class.create("RPGJS", {
 						global.game_actors = Class.New("Game_Actors");
 						global.game_player = Class.New("Game_Player");
 						
-						self.scene.load(["Scene_Map", "Scene_Window", "Scene_Title", "Scene_Menu", "Scene_Load", "Scene_Gameover"], function() {
+						self.scene.load(["Scene_Map", "Scene_Window", "Scene_Title", "Scene_Menu", "Scene_Load", "Scene_Gameover", "Scene_Generated"], function() {
 							if (self.params.plugins) {
 								self.Plugin.add(self.params.plugins, function() {
+									RPGJS_Core.Plugin.call("Sprite", "loadBeforeGame");
 									if (callback) callback.call(self, ctx);
 								});
 							}

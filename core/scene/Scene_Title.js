@@ -1,6 +1,5 @@
 RPGJS.Scene.New({
 	name: "Scene_Title",
-	
 	materials: {
 		images: {
 			background: "Graphics/Titles/picture11.jpg",
