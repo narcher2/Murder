@@ -50,7 +50,7 @@ Class.create("Game_Variables", {
 			_var = this.get(key[i]);
 			switch (operation) {
 				case 'add':
-					_var += operand;
+					_var += +operand;
 				break;
 				case 'sub':
 					_var -= operand;

@@ -10,7 +10,7 @@ RPGJS.Scene.New({
 		}, this);
 	},
 	loadMaterials: function(data, callback) {
-		var images = [], self = this;
+		var images = [], sounds = [], load_i = 0, self = this;
 		images.push({tileset: RPGJS_Core.Path.get("tilesets", data.graphics.tileset)});
 		images.push(RPGJS_Core.Path.get("characters", data.player.graphic, true));
 		images.push({window: RPGJS_Core.Path.get("windowskins", "window")});
@@ -46,14 +46,32 @@ RPGJS.Scene.New({
 		
 		images.concat(RPGJS_Core.Plugin.call("Sprite", "mapLoadImages", [images, this]));
 		
+		if (data.musics.bgm) {
+			sounds.push(RPGJS_Core.Path.get("bgms", data.musics.bgm, true));
+		}
+		if (data.musics.bgs) {
+			sounds.push(RPGJS_Core.Path.get("bgss", data.musics.bgs, true));
+		}
 		
-
+		sounds.concat(RPGJS_Core.Plugin.call("Sprite", "mapLoadSounds", [sounds, this]));
+		
+		function finish() {
+			if (load_i){
+				self.load(data);
+				if (callback) callback();
+			}
+			load_i++;
+		}
+		
 		RPGJS.Materials.load("images", images, function(img) {
 			// -- Empty
-		}, function() {
-			self.load(data);
-			if (callback) callback();
-		});
+		}, finish);
+		
+		RPGJS.Materials.load("sounds", sounds, function(snd) {
+			// -- Empty
+		}, finish);
+		
+		
 	},
 	keysAssign: function() {
 		var self = this;
@@ -104,12 +122,17 @@ RPGJS.Scene.New({
 	},
 	load: function() {
 	
-		
-		
 		this.spriteset = Class.New("Spriteset_Map", [this, this.stage, this.data, {
 			autotiles: this.data.autotiles_img,
 			actions: this.data.actions
 		}]);
+		
+		if (this.data.musics.bgm) {
+			global.game_system.bgmPlay(this.data.musics.bgm);
+		}
+		if (this.data.musics.bgs) {
+			global.game_system.bgsPlay(this.data.musics.bgs);
+		}
 		
 		this.keysAssign();
 		

@@ -34,7 +34,6 @@ Class.create("Game_Event", {
 		
 		}
 		
-		
 		return this.serialize();
 	},
 	

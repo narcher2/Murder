@@ -25,8 +25,8 @@ RPGJS.Scene.New({
 		box.open(stage);
 		
 		var choice = {
-			new_game: "Nouvelle Partie", 
-			load_game: "Continuer"
+			new_game: "New Game", 
+			load_game: "Load"
 		},
 			btns_set = this.createElement(),
 			btn, text,

@@ -12,8 +12,6 @@
 - TouchPad compatibilitises
 - Menu
     - Equipment bug
-    - Equippable Armors and Weapons
-    - Display State
     - Item use
 
 ## How does it work ? ##
@@ -236,6 +234,13 @@ Parameters :
 Parameters : 
 
 - array_img {Array}
+- scene {Class.Scene_Map}
+
+**mapLoadSounds**
+
+Parameters : 
+
+- array_snd {Array}
 - scene {Class.Scene_Map}
 
 **addCharacter**

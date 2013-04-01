@@ -211,7 +211,7 @@ Class.create("Game_Map", {
 						}
 					}
 					
-					if (e.through) {
+					if (!e.through) {
 						return diffPx.call(this, e);
 					}
 
@@ -311,9 +311,7 @@ Class.create("Game_Map", {
 		this._tileset_name = tileset.name;
 		this._priorities = tileset.propreties;
 		this._autotiles = autotiles.propreties;
-		
-		
-		
+
 		function call(id, event) {
 		
 			j++;
@@ -326,6 +324,10 @@ Class.create("Game_Map", {
 			self._callback({
 				data: self.map.data,
 				propreties: self._priorities,
+				musics: {
+					bgm: self.map.bgm,
+					bgs: self.map.bgs
+				},
 				graphics: {
 					tileset: tileset.graphic,
 					autotiles: autotiles.autotiles,

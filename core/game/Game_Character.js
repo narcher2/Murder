@@ -25,13 +25,21 @@ Class.create("Game_Character", {
 		this.id = 0;
 		this.position(0, 0);
 		
+		this.rect(4, 16, 32-8, 16);
+		
 		if (this._initialize) this._initialize.apply(this, arguments);
+		
 	},
 	
 	setProperties: function(prop) {
 		prop = prop || {};
 		
-		this.rect(4, 16, 32-8, 16);
+		if (prop.options) {
+			for (var i=0 ; i < prop.options.length ; i++) {
+				prop[prop.options[i]] = true;
+			}
+		}
+		
 		// this.rect(32);
 		
 		this.trigger = prop.trigger;

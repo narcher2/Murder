@@ -171,6 +171,10 @@ Class.create("RPGJS", {
 		faces: "Graphics/Faces/",
 		fonts: "Graphics/fonts/",
 		gameovers: "Graphics/Gameovers/",
+		bgms: "Audio/BGM/",
+		bgss: "Audio/BGS/",
+		mes: "Audio/ME/",
+		ses: "Audio/SE/",
 		
 		getFile: function (type, filename, object) {
 			var path = this[type] + filename, obj = {};
@@ -204,17 +208,24 @@ Class.create("RPGJS", {
 			}
 		},
 		
+		isSound: function(type) {
+			return type == "bgms" || 
+				type == "bgss" || 
+				type == "mes" || 
+				type == "ses";
+		},
+		
 		loadMaterial: function(type, id, callback) {
-			var obj= {};
+			var obj= {}, global_type = this.isSound(type) ? "sounds" : "images";
 			var path = this.get(type, id);
 			obj[type + "_" + id] = path;
-			RPGJS.Materials.load("images", obj, callback);
+			RPGJS.Materials.load(global_type, obj, callback);
 		},
 		
 		load: function(type, file, id, callback) {
-			var obj= {};
+			var obj= {}, global_type = this.isSound(type) ? "sounds" : "images";
 			obj[type + "_" + id] = this[type] + file;
-			RPGJS.Materials.load("images", obj, callback);
+			RPGJS.Materials.load(global_type, obj, callback);
 		}
 	
 	}

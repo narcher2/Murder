@@ -48,29 +48,29 @@ Class.create("Game_System", {
 		
 	},
 
-	fadeOutMusic: function() {
+	fadeOutMusic: function(frame) {
 		var self = this;
 		if (this._current.bgm) {
-			RPGJS.Sound.get(this._current.bgm).fadeOut(function() {
+			RPGJS.Sound.fadeOut("bgms_" + this._current.bgm, frame, function() {
 				self._stopAudio(self._current.bgm, "bgm");
 			});
 		}
 		if (this._current.bgs) {
-			RPGJS.Sound.get(this._current.bgs).fadeOut(function() {
+			RPGJS.Sound.fadeOut("bgss_" + this._current.bgs, frame, function() {
 				self._stopAudio(self._current.bgs, "bgs");
 			});
 		}
 	},
 	
-	fadeOutSound: function() {
+	fadeOutSound: function(frame) {
 		var self = this;
 		if (this._current.me) {
-			RPGJS.Sound.get(this._current.me).fadeOut(function() {
+			RPGJS.Sound.fadeOut("bgms_" + this._current.me, frame, function() {
 				self._stopAudio(self._current.me, "me");
 			});
 		}
 		if (this._current.se) {
-			RPGJS.Sound.get(this._current.se).fadeOut(function() {
+			RPGJS.Sound.fadeOut("bgss_" + this._current.se, frame, function() {
 				self._stopAudio(self._current.se, "se");
 			});
 		}
@@ -78,12 +78,14 @@ Class.create("Game_System", {
 
 	_playAudio: function(id, type) {
 		this._current[type] = id;
-		RPGJS.Sound.get(id).play();
+		RPGJS_Core.Path.loadMaterial(type + "s", id, function() {
+			RPGJS.Sound.get(type + "s_" + id).play();
+		});
 	},
 	
 	_stopAudio: function(id, type) {
 		this._current[type] = null;
-		RPGJS.Sound.get(id).stop();
+		RPGJS.Sound.get(type + "s_" + id).pause();
 	}
 
 })

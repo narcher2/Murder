@@ -192,6 +192,7 @@ THE SOFTWARE.
 					if (exec_cmd) {
 						if (params) {
 							params = params.replace(/'/g, '"');
+							params = params.replace(/&quote;/g, "'");
 							params = JSON.parse(params);
 							return {name: name, id: id, params: params, callback: exec_cmd};
 						}
@@ -389,6 +390,14 @@ THE SOFTWARE.
 		"ENDCHOICES"
 	*/
 	cmdChoices: function(array, name, id) {
+		var tmp_array = [];
+		if (!(array instanceof Array)) {
+			for (var key in array) {
+				if (array[key] != "") tmp_array.push(array[key]);
+			}
+			array = tmp_array;
+		}
+	
 		var self = this;
 		if (!this.scene_window) {
 			this.scene_window = RPGJS_Core.scene.call("Scene_Window", {
@@ -704,13 +713,13 @@ THE SOFTWARE.
 		this.nextCommand();
 	},
 	
-	cmdFadeOutMusic: function() {
-		global.game_system.fadeOutMusic();
+	cmdFadeOutMusic: function(params) {
+		global.game_system.fadeOutMusic(params.frame);
 		this.nextCommand();
 	},
 	
 	cmdFadeOutSound: function() {
-		global.game_system.fadeOutSound();
+		global.game_system.fadeOutSound(params.frame);
 		this.nextCommand();
 	},
 	
@@ -1014,6 +1023,11 @@ THE SOFTWARE.
 	
 		var this_event = this.event;
 		
+		if (params.command) {
+			params = params.command;
+		}
+		
+	
 		function actor(id, method, params) {
 			var _actor = global.game_actors.getById(id);
 			if (_actor) {
@@ -1030,6 +1044,9 @@ THE SOFTWARE.
 		}
 		
 		function event(id) {
+			if (id === undefined || id == "NULL") {
+				return this_event;
+			}
 			if (id == 0) {
 				return global.game_player;
 			}

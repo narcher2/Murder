@@ -107,14 +107,14 @@ Class.create("Game_Enemy", {
 			break;
 		}
 		
-		this.event.jumpa(x_plus, y_plus, 32, function() {
+		/*this.event.jumpa(x_plus, y_plus, 32, function() {
 			self.jumping = false;
 			self.wait = true;
 			setTimeout(function() {
 				self.wait = false;
 			}, 2000);
 		});
-		this.jumping = true;
+		this.jumping = true;*/
 
 	},
 	
