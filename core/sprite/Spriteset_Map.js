@@ -409,7 +409,7 @@ Class.create("Spriteset_Map", {
 	
 	effect: function(name, params, finish) {
 		var self = this;
-		var effect = RPGJS.Effect.new(this.scene, this.map);
+		var effect = RPGJS.Effect.New(this.scene, this.map);
 		
 		this.scrolling.freeze = true;
 		

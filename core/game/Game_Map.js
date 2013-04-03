@@ -17,9 +17,12 @@ Class.create("Game_Map", {
 		global.game_player.moveto(x, y);
 	},
 	
-	load: function(map_id, callback, scene) {
-		var self = this, tmp;
-		
+	load: function(params, callback, scene) {
+		var self = this, tmp,
+			map_id = params.map_id;
+			
+		this.events = {};
+			
 		if (typeof map_id == "function") {
 			tmp = callback;
 			callback = map_id;
@@ -35,6 +38,10 @@ Class.create("Game_Map", {
 		}
 		
 		global.game_player.map_id = this.map_id;
+		if (params.pos) {
+			global.game_player.x = params.pos.x;
+			global.game_player.y = params.pos.y;
+		}
 		
 		this.map = global.data.map_infos[this.map_id];
 		if (callback) {
@@ -211,7 +218,7 @@ Class.create("Game_Map", {
 						}
 					}
 					
-					if (!e.through) {
+					if (e.through) {
 						return diffPx.call(this, e);
 					}
 
@@ -310,17 +317,18 @@ Class.create("Game_Map", {
 			
 		this._tileset_name = tileset.name;
 		this._priorities = tileset.propreties;
-		this._autotiles = autotiles.propreties;
+		this._autotiles = autotiles ? autotiles.propreties : {};
 
 		function call(id, event) {
 		
 			j++;
-			events.push(event.serialize());
-
-			if (j != total_events) {
-				return;
-			}	
 			
+			if (event) {
+				events.push(event.serialize());
+				if (j != total_events) {
+					return;
+				}	
+			}
 			self._callback({
 				data: self.map.data,
 				propreties: self._priorities,
@@ -330,7 +338,7 @@ Class.create("Game_Map", {
 				},
 				graphics: {
 					tileset: tileset.graphic,
-					autotiles: autotiles.autotiles,
+					autotiles: autotiles ? autotiles.autotiles : {},
 				},
 				autotiles: self._autotiles,
 				player: global.game_player.serialize(),

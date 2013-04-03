@@ -266,6 +266,12 @@ Parameters :
 
 #### Game
 
+**loadMap**
+
+Paramters
+
+- game_map {Class.Game_Map}
+
 **addEvent**
 
 Parameters : 
@@ -322,6 +328,14 @@ Parameters :
 
 Parameters : 
 
+- game_map {Class.Game_Map}
+
+**action**
+
+Parameters
+
+- action_data {Object}
+- action_id {Integer}
 - game_map {Class.Game_Map}
 
 

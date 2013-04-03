@@ -88,4 +88,4 @@ Class.create("Game_System", {
 		RPGJS.Sound.get(type + "s_" + id).pause();
 	}
 
-})
+});

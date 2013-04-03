@@ -288,7 +288,7 @@ Class.create("Game_Character", {
 	moveDir: function(dir, isPassable) {
 		
 		var passable;
-	
+		
 		if (this.id == 0 && this.freeze) {
 			return {x: this.x, y: this.y};
 		}

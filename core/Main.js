@@ -104,6 +104,8 @@ Class.create("RPGJS", {
 			function addPlugin(name, callback) {
 				var data = {}, i=0;
 				
+				name = name + ".js";
+				
 				function finish(type, name) {
 					i++;
 
@@ -119,11 +121,28 @@ Class.create("RPGJS", {
 					}
 				}
 				
-				RPGJS_Core.loadScript('plugins/' + name + '/' + "Game_" + name, function() {
-					finish("Game", name);
+				var base_path = RPGJS.Materials.getBasePath(name),
+					filename_path = RPGJS.Materials.getFilename(name),
+					new_path = ["", ""];
+					
+				function constructPath(base, _name, type) {
+					return base + '/' + _name + "/" + type + "_" + _name;
+				}
+				
+				if (base_path) {
+					new_path[0] = constructPath(base_path, filename_path, "Game");
+					new_path[1] = constructPath(base_path, filename_path, "Sprite");
+				}
+				else {
+					new_path[0] = constructPath('plugins', filename_path, "Game");
+					new_path[1] = constructPath('plugins', filename_path, "Sprite");
+				}
+				
+				RPGJS_Core.loadScript(new_path[0], function() {
+					finish("Game", filename_path);
 				});
-				RPGJS_Core.loadScript('plugins/' + name + '/' + "Sprite_" + name, function() {
-					finish("Sprite", name);
+				RPGJS_Core.loadScript(new_path[1], function() {
+					finish("Sprite", filename_path);
 				});
 			}
 			

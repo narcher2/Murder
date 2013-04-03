@@ -261,11 +261,13 @@ Class.create("Sprite_Character", {
 	},
 	
 	stop: function() {
+		if (!this.animation) return;
 		this.animation.stop();
 		this.spritesheet.draw(this.entity.el, this.getDisplayDirection());
 	},
 	
 	startMove: function() {
+		if (!this.animation) return;
 		this.animation.play(this.getDisplayDirection(), "loop");
 	},
 	move: function(axis, value, dir) {

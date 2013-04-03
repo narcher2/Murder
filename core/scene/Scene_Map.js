@@ -1,10 +1,15 @@
 RPGJS.Scene.New({
 	name: "Scene_Map",
 	data: {},
+	materials: {
+		images: {
+			"window": "../materials/Graphics/Windowskins/window.png"
+		}
+	},
 	ready: function(stage, el, params) {
 		var self = this;
 		this.stage = stage;
-		global.game_map.load(params.map_id, function(data) {
+		global.game_map.load(params, function(data) {
 			self.data = data;
 			self.loadMaterials(data);
 		}, this);
@@ -13,7 +18,7 @@ RPGJS.Scene.New({
 		var images = [], sounds = [], load_i = 0, self = this;
 		images.push({tileset: RPGJS_Core.Path.get("tilesets", data.graphics.tileset)});
 		images.push(RPGJS_Core.Path.get("characters", data.player.graphic, true));
-		images.push({window: RPGJS_Core.Path.get("windowskins", "window")});
+		//images.push({window: RPGJS_Core.Path.get("windowskins", "window")});
 	
 		data.autotiles_img = [];
 		
@@ -155,7 +160,6 @@ RPGJS.Scene.New({
 			return;
 		}
 	
-	
 		var input = {
 			"left": [Input.Left, "x"],
 			"right": [Input.Right, "x"],
@@ -178,8 +182,6 @@ RPGJS.Scene.New({
 		
 		RPGJS_Core.Plugin.call("Sprite", "sceneMapRender", [this]);
 		
-		
-
 		stage.refresh();
 		this.gamepad.update();
 

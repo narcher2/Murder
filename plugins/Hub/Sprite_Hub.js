@@ -16,6 +16,7 @@ Class.create("Sprite_Hub", {
 	drawMapEnd: function(spriteset_map) {
 		var stage = this.scene.getStage(),
 			scene = this.scene,
+			self = this,
 			_canvas = scene.getCanvas(),
 			hub = scene.createElement(["content", "hp_meter", "hero_face", "text"]),
 			btn = scene.createElement(["rightPanel", "A", "B"]);
@@ -76,7 +77,15 @@ Class.create("Sprite_Hub", {
 		if (typeof(VirtualJoystick) != "undefined") {
 			this.joystick = new VirtualJoystick({
 				container	: document.getElementById(RPGJS_Core.params.canvas),
-				mouseSupport	: true			
+				mouseSupport	: true,
+				onDown: function(e) {
+					var canvas = self.scene.getCanvas();
+					var pos = canvas.getMousePosition(e);
+					if (pos.x < canvas.width / 2) {
+						return true;
+					}
+					return false;
+				}
 			});
 		}
 		
@@ -101,6 +110,7 @@ Class.create("Sprite_Hub", {
 	
 	sceneMapRender: function() {
 	
+		
 		if (CE.mobileUserAgent() && this.joystick) {
 			if (this.joystick.down()) {
 				RPGJS.Input.trigger(Input.Bottom, "down");

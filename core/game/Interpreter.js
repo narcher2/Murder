@@ -545,10 +545,11 @@ THE SOFTWARE.
 		}
 		RPGJS_Core.scene.call("Scene_Map", {
 			params: {
-				map_id: pos.id
+				map_id: pos.id,
+				pos: pos
 			}
 		});
-		global.game_map.transfer_player(pos.x, pos.y);
+		global.game_player.freeze = false;
 
 	},
 	
