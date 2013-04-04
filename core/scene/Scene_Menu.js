@@ -2,15 +2,15 @@ RPGJS.Scene.New({
 	name: "Scene_Menu",
 	materials: {
 		images: {
-			background: "Graphics/Pictures/Layer00.png",
-			button: "Graphics/Pictures/Sprite_Button.png",
-			party: "Graphics/Pictures/Sprite_Status.png",
-			hp: "Graphics/Pictures/HP.png",
-			sp: "Graphics/Pictures/SP.png",
-			face: "Graphics/Faces/Aluxes.png",
-			battler: "Graphics/Battlers/Aluxes.png",
-			gold: "Graphics/Icons/gold.png",
-			icon: "Graphics/Icons/time.png"
+			background: "../materials/Graphics/Pictures/Layer00.png",
+			button: "../materials/Graphics/Pictures/Sprite_Button.png",
+			party: "../materials/Graphics/Pictures/Sprite_Status.png",
+			hp: "../materials/Graphics/Pictures/HP.png",
+			sp: "../materials/Graphics/Pictures/SP.png",
+			/*face: "Graphics/Faces/Aluxes.png",
+			battler: "Graphics/Battlers/Aluxes.png",*/
+			gold: "../materials/Graphics/Icons/gold.png",
+			icon: "../materials/Graphics/Icons/time.png"
 		}
 	},
 	
@@ -46,7 +46,7 @@ RPGJS.Scene.New({
 	
 		var el_empty = this.createElement(), 
 			el = this.createElement(),
-			val = actor.getCurrentParam(type);
+			val = Math.floor(actor.getCurrentParam(type));
 			
 		el_empty.strokeStyle = "black";
 		el_empty.strokeRect(0, 0, 112, 18);
@@ -57,7 +57,7 @@ RPGJS.Scene.New({
 		this.drawText(param.toUpperCase(), el_empty, 10, -2, {
 			size: "20px"
 		});
-		this.drawText(actor.getParamPoint(param) + " / " + val, el_empty, 120, 2, {
+		this.drawText(Math.floor(actor.getParamPoint(param)) + " / " + val, el_empty, 120, 2, {
 			size: "10px"
 		});
 		return el_empty;
@@ -93,11 +93,22 @@ RPGJS.Scene.New({
 			sp_bar.y = 60;
 			
 			sprite_b.attr('id', actor._id);
+			
+			var img = RPGJS.Materials.get("characters_" + actor.graphic), margin = 20;
+			
+			actor.graphic_params = actor.graphic_params || {
+				regX: 0,
+				regY: 0
+			};
 
-
-			face.drawImage("face", 0, 0, 100, 100, 0, 0, 100, 94);
-			face.x = 25;
+			face.drawImage("characters_" + actor.graphic, 0, 0, img.width / actor.nbSequenceX, img.height / actor.nbSequenceY, -actor.graphic_params.regX, -actor.graphic_params.regY, img.width / actor.nbSequenceX, img.height / actor.nbSequenceY);
+			face.x = 40;
+			face.y = 30;
 			sprite_b.append(face);
+			
+			/*face.drawImage("face", 0, 0, 100, 100, 0, 0, 100, 94);
+			face.x = 25;
+			sprite_b.append(face);*/
 			
 			sprite_b.append(hp_bar);
 			sprite_b.append(sp_bar);
@@ -164,8 +175,8 @@ RPGJS.Scene.New({
 			skills: "Skills",
 			equip: "Equip",
 			status: "Status",
-			save: "Save",
-			exit: "Exit"
+			save: "Save"
+			//exit: "Exit"
 		
 		};
 		
@@ -979,7 +990,7 @@ RPGJS.Scene.New({
 		}
 		
 		
-		battler.drawImage("battler");
+		//battler.drawImage("battler");
 		battler.x = _canvas.width;
 		
 		hp_bar = this.displayBar(data_actor, "maxhp", "hp");

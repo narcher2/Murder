@@ -1,7 +1,7 @@
 /*
 Visit http://rpgjs.com for documentation, updates and examples.
 
-Copyright (C) 2012 by Samuel Ronce
+Copyright (C) 2013 by Samuel Ronce
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -23,11 +23,12 @@ THE SOFTWARE.
 */
 
 /**
- * @class Interpreter Create and interpret orders for events. The commands are in a array and read from left to right. You must use the method "nextCommand()" to move to the next command.
- * @author Samuel Ronce
- */
- 
- 
+@doc interpreter
+@class Interpreter Interpreter commands events
+
+@param {Game_Character} event Event concerned
+@param {Array} commands Array containing the commands to be executed
+*/
  Class.create("Interpreter", {
 	currentCmd: null,
 	tmpCommands: [],
@@ -114,29 +115,29 @@ THE SOFTWARE.
 		}
 	},
 	
-	/**
-     * Get the next command from the command running
-	 * @method getNextCommand
-     * @return  Object Command data : {name: "....", params: "...."}. false if the command does not exist
-    */
+/**
+@doc interpreter/
+@method getNextCommand Get the next command from the command running
+@return  {Object} Command data : {name: "....", params: "...."}. false if the command does not exist
+*/
 	getNextCommand: function() {
 		return this.getCommand(this.getCurrentPos()+1);
 	},
 	
-	/**
-     * Get the previous command from the command running
-	 * @method getPrevCommand
-     * @return  Object Command data : {name: "....", params: "...."}. false if the command does not exist
-    */
+/**
+@doc interpreter/
+@method getPrevCommand  Get the previous command from the command running
+@return  {Object} Command data : {name: "....", params: "...."}. false if the command does not exist
+*/
 	getPrevCommand: function() {
 		return this.getCommand(this.getCurrentPos()-1);
 	},
 	
-	/**
-     * Get the command running
-	 * @method getCurrentCommand
-     * @return  Object Command data : {name: "....", params: "...."}. false if the command does not exist
-    */
+/**
+@doc interpreter/
+@method getCurrentCommand Get the command running
+@return  {Object} Command data : {name: "....", params: "...."}. false if the command does not exist
+*/
 	getCurrentCommand: function() {
 		return this.getCommand(this.getCurrentPos());
 	},
@@ -151,12 +152,12 @@ THE SOFTWARE.
 	},
 
 	
-	/**
-     * Get an command depending on its position
-	 * @method getCommand
-	 * @param  {Integer} pos Position in the array of command
-     * @return  Object Command data : {name: "....", params: "...."}. false if the command does not exist
-    */
+/**
+@doc interpreter/
+@method getCommand Get an command depending on its position
+@param  {Integer} pos Position in the array of command
+@return  {Object} Command data : {name: "....", params: "...."}. false if the command does not exist
+*/
 	getCommand: function(pos) {
 		var cmd = this._command(pos);
 		if (cmd) {
@@ -218,6 +219,11 @@ THE SOFTWARE.
 		return false;
 	},
 	
+/**
+@doc interpreter/
+@method assignCommands Assigns commands
+@param  {Array} commands Array containing the commands to be executed
+*/
 	assignCommands: function(commands) {
 		commands = commands || [];
 		this.commands = commands;
@@ -290,6 +296,11 @@ THE SOFTWARE.
 		}
 	},
  
+/**
+@doc interpreter/
+@method execCommands Execute commands event
+@param {Function} finish (optional) Callback when command execution is complete
+*/
 	execCommands: function(finish) {
 	
 		if (!this._finish) {
@@ -314,24 +325,20 @@ THE SOFTWARE.
 		}
 	},
 	
-	/*executeCommands: function(commands, client) {
-		this.tmpCommands = commands;
-		this.execCommands(client);
-	},*/
  
-	/**
-     * Execute the next command
-	 * @method nextCommand
-    */
+/**
+@doc interpreter/
+@method nextCommand Execute the next command
+*/
 	nextCommand: function() {
 		this.setCurrentPos(this.getCurrentPos()+1);
 		this.execCommands();
 	},
 	
-	/**
-     * Stop playback controls event
-	 * @method commandsExit
-    */
+/**
+@doc interpreter/
+@method commandsExit  Stop playback controls event
+*/
 	commandsExit: function(rpg) {
 		this.currentCmd = -2;
 	},
@@ -1189,56 +1196,50 @@ THE SOFTWARE.
  
  Interpreter.commandFunction = {};
 /**
- * Add (or change) a command of events. The command is a string. The command in the event must be of the form:
-	<pre>
-		"name: json value"
-	</pre>
-	Example 1 :<br />
-	<pre>
-		"FOO: {'bar': 'hello'}"
-	</pre>
-	Example 2 :<br />
-	<pre>
-		"BAR: 10"
-	</pre>
-	Example 3 :<br />
-	<pre>
-		"TEST: {'one': 5, 'two': [9, 5], 'three': {'a': 10, 'b': 'yep'}}"
-	</pre>
-	<br />
-	Note that single quotes are replaced by double quotes to have a valid JSON.
- * @method setCommand (alias addCommand)
- * @static
- * @param {String} name Command Name. Alphanumeric character, "?", "!" and "_"
- * @param {Function} _function Function called when the command is executed. The function of 3 parameters: <br />
-	<ul>
-		<li>params {Object} : The parameters sent when calling the command.</li>
-		<li>event {Event} : The event in question</li>
-		<li>name {String} : The command name</li>
-	</ul>
-	<br >
-	The function should contain a line that calls the method "nextCommand()" on object "event"<br />
-	<pre>
-		event.nextCommand();
-	</pre>
-	<br />
-	<br />
-	<u>Example :</u> <br />
-	A command in the event : <br />
-	<pre>
-		"commands": [
-			"FOO: {'bar': 'hello'}"
-         ]
-	</pre>
-	<br />Adding the command :<br />
-	<pre>
-		Interpreter.addCommand('FOO', function(params, event, name) {
-			console.log(params.bar); 	// =>  "hello"
-			console.log(name); 			// =>  "FOO"
-			event.nextCommand();		// Always put the following line to jump to the next command
-		});
-	</pre>
+@doc interpreter/
+@method setCommand (alias addCommand) Add (or change) a command of events. The command is a string. The command in the event must be of the form
+ 
+	"name: json value"
+
+Example 1 :
 	
+	"FOO: {'bar': 'hello'}"
+	
+Example 2 :
+	
+	"BAR: 10"
+	
+	Example 3 :
+
+	"TEST: {'one': 5, 'two': [9, 5], 'three': {'a': 10, 'b': 'yep'}}"
+
+Note that single quotes are replaced by double quotes to have a valid JSON.
+ 
+@static
+@param {String} name Command Name. Alphanumeric character, "?", "!" and "_"
+@param {Function} callback Function called when the command is executed. The function of 3 parameters: <br />
+
+* params {Object} : The parameters sent when calling the command.
+* event {Event} : The event in question
+* name {String} : The command name
+	
+The function should contain a line that calls the method "nextCommand()"
+	
+Example. A command in the event :
+
+	"commands": [
+		"FOO: {'bar': 'hello'}"
+	 ]
+
+Adding the command :
+
+	Interpreter.addCommand('FOO', function(params, name) {
+		console.log(params.bar); 	// =>  "hello"
+		console.log(name); 			// =>  "FOO"
+		console.log(this.event);	// => Game_Character Class
+		this.nextCommand();			// Always put the following line to jump to the next command
+	});
+
 */
  Interpreter.setCommand = function(name, _function) {
 	Interpreter.commandFunction[name] = _function;

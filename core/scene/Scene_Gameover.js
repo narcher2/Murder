@@ -3,7 +3,7 @@ RPGJS.Scene.New({
 	
 	materials: {
 		images: {
-			background: "Graphics/Gameovers/gameover.jpg"
+			background: "../materials/Graphics/Gameovers/gameover.jpg"
 		}
 	},
 	

@@ -1,3 +1,27 @@
+/*
+Visit http://rpgjs.com for documentation, updates and examples.
+
+Copyright (C) 2013 by WebCreative5, Samuel Ronce
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+*/
+
 Class.create("Game_Character", {
 	entity: null,
 	_z: null,
@@ -102,6 +126,10 @@ Class.create("Game_Character", {
 		}
 	},
 	
+/**
+@doc game_character/
+@method approachPlayer The event is approaching the player.
+*/
 	approachPlayer: function() {
 	
 		var self = this;
@@ -135,12 +163,12 @@ Class.create("Game_Character", {
 		}
 	
 	},
-	
-	/**
-     * The event will start in the opposite direction of the player. He moves from one tile
-	 * @method moveAwayFromPlayer
-	 * @param onFinish {Function} Callback when the movement is finished
-    */
+
+/**
+@doc game_character/
+@method moveAwayFromPlayer The event is approaching the player.
+@param {Function} onFinish (optional) Callback when the movement is finished
+*/	
 	moveAwayFromPlayer: function(onFinish) {
 		var dir;
 		var player = global.game_player;
@@ -161,12 +189,13 @@ Class.create("Game_Character", {
 		}
 		
 	},
-	
-	/**
-     * Return the direction of the event relative to the player. For example, if the player is right for the event, direction of the event will be on the right
-	 * @method directionRelativeToPlayer
-	 * @return {Integer|Boolean} Value direction (2: Up, 4: left; 6: right; 8: bottom). Return false if the player does not exist
-    */
+
+/**
+@doc game_character/
+@method moveAwayFromPlayer  the direction of the event relative to the player. For example, if the player is right for the event, direction of the event will be on the right
+@return {String|Boolean} Value direction (up, right, left, bottom). Return false if the player does not exist
+*/		
+
 	directionRelativeToPlayer: function() {
 		var player = global.game_player;
 		
@@ -199,6 +228,10 @@ Class.create("Game_Character", {
 			
 	},
 	
+/**
+@doc game_character/
+@method moveRandom Random walk in 4 directions
+*/	
 	moveRandom: function() {
 		var self = this;
 		this.typeMove.push("random");
@@ -246,6 +279,11 @@ Class.create("Game_Character", {
 		}
 	},
 	
+/**
+@doc game_character/
+@method moveTilePath Movement per tile. The array gives a path
+@param {Array} array_dir Array with different directions. Example : `["left", "left", "up", "up", "right"]`
+*/
 	moveTilePath: function(array_dir) {
 		var self = this, i=0;
 		path();
@@ -263,9 +301,13 @@ Class.create("Game_Character", {
 			});
 		}
 	},
-	
-	
-	
+		
+/**
+@doc game_character/
+@method moveOneTile Movement per tile.
+@param {String} dir Direction : up, bottom, left or right
+@param {Function} callback (optional) Function called at the end of the movement
+*/
 	moveOneTile: function(dir, callback) {
 		var distance = global.game_map.tile_w / this.speed,
 			i = 0, self = this, current_freq = this.frequence;
@@ -285,6 +327,25 @@ Class.create("Game_Character", {
 		
 	},
 	
+/**
+@doc game_character/
+@method moveDir Displacement in the direction. The character is moved by `1 pixel * speed`. Returns the new position of the character :
+
+	{x: Integer, y: Integer}
+	
+- Sprites on the scene are automatically refreshed. 
+- This method is not executed for player if the `freeze` property is `true`
+
+@param {String} dir Direction : up, bottom, left or right
+@param {boolean} isPassable (optional) Function called at the end of the movement. If true, returns an object containing the tile passibility :
+
+	{
+		pos: {x: Integer, y: Integer},
+		passable: Boolean
+	}
+	
+@return {Object}
+*/
 	moveDir: function(dir, isPassable) {
 		
 		var passable;
@@ -336,7 +397,14 @@ Class.create("Game_Character", {
 		
 		return pos;
 	},
-	
+
+/**
+@doc game_character/
+@method detectionEvents Detects events around this event. Events are refreshed to activate a page with the self switch trigger
+@param {Integer} area Number of pixels around the event
+@param {String} label The name of the label to activate the pages with the same name
+@return {Array}
+*/	
 	detectionEvents: function(area, label) {
 		var events = global.game_map.events;
 		var events_detected = [];
@@ -375,7 +443,33 @@ Class.create("Game_Character", {
 		}
 	 },  
 
-	
+/**
+@doc game_character/
+@method serialize Transforms useful properties to an object for display :
+
+- id 
+- x
+- y
+- nbSequenceX
+- nbSequenceY
+- speedAnimation
+- graphic_pattern
+- graphic
+- graphic_params
+- direction
+- direction_fix
+- no_animation
+- stop_animation
+- frequence
+- speed
+- regX
+- regY
+- alwaysOnBottom
+- alwaysOnTop
+- exist
+
+@return {Object}
+*/	
 	serialize: function() {
 		var data = ["id", "x", "y", "nbSequenceX", "nbSequenceY", "speedAnimation", "graphic_pattern", "graphic", "graphic_params", "direction", "direction_fix", "no_animation", "stop_animation", "frequence", "speed", "regX", "regY", "alwaysOnBottom", "alwaysOnTop", "exist"];
 		var obj = {};
@@ -387,37 +481,35 @@ Class.create("Game_Character", {
 	},
 	
 	
-	/**
-     * Experience points necessary for each level.
-	 * @method makeExpList
-	 * @param {Array} exp Array with the total experience required for each level. Example
-	 * 	<pre>
-			rpg.player.makeExpList([0, 0, 25, 65, 127, 215, 337, 449, 709, 974, 1302]);
-		</pre>
-		The first is the level 0. It is always 0. Level 1 is always 0 also. In the example, the maximum level is 10 and you have 1302 Exp.
-    */
-	/**
-     * Experience points necessary for each level.
-	 * @method makeExpList
-	 * @param {Integer} basis Base value for calculing necessary EXP
-	 * @param {Integer} inflation Percentage increase of necessary EXP
-	 * @param {Integer} max_level (optional) Maximum level. Attribute "maxLevel" by default
-	 * @return Array Array of experiences generated. Example :
-	 * 	<pre>
-			rpg.player.makeExpList(25, 30, 10);
-		</pre>
-		Returns : <br />
-		<pre>
-			[0, 0, 25, 65, 127, 215, 337, 499, 709, 974, 1302]
-		</pre>
-		Here is the calculation : <br />
-		L(n) : level<br />
-		B : basis<br />
-		I : inflation<br />
-		<br />
-		pow = 2.4 * I / 100<br />
-		L(n) = (B * ((n + 3) ^ pow) / (5 ^ pow)) + L(n-1)
-    */
+/**
+@doc game_character/
+@method makeExpList Experience points necessary for each level.
+@param {Integer|Array} basis Base value for calculing necessary EXP
+
+If Array : Array with the total experience required for each level
+
+	global.game_player.makeExpList([0, 0, 25, 65, 127, 215, 337, 449, 709, 974, 1302]);
+
+@param {Integer} inflation Percentage increase of necessary EXP
+@param {Integer} max_level (optional) Maximum level. Attribute "maxLevel" by default
+@return {Array}
+@example
+
+	global.game_player.makeExpList(25, 30, 10);
+
+Returns 
+
+	[0, 0, 25, 65, 127, 215, 337, 499, 709, 974, 1302]
+	
+Here is the calculation :
+	
+L(n) : level
+B : basis
+I : inflation
+
+pow = 2.4 * I / 100
+L(n) = (B * ((n + 3) ^ pow) / (5 ^ pow)) + L(n-1)
+*/
 	makeExpList: function(expOrBasis, inflation, max_level) {
 		max_level = max_level || this.maxLevel;
 		if (expOrBasis instanceof Array) {
@@ -435,22 +527,22 @@ Class.create("Game_Character", {
 		return this.exp;
 	},
 	
-	/**
-	 * Adds experience points. Changes level according to the experience points given. makeExpList() must be called before addExp()
-	 * @method addExp
-	 * @param {Integer} exp Experience points
-	 * @return Integer see setExp()
-    */
+/**
+@doc game_character/
+@method addExp Adds experience points. Changes level according to the experience points given. makeExpList() must be called before addExp()
+@param {Integer} exp Experience points
+@return {Integer}
+*/
 	addExp: function(exp) {
 		return this.setExp(this.currentExp + exp);
 	},
 
-	/**
-     * Fixed experience points. Changes level according to the experience points given. makeExpList() must be called before setExp()
-	 * @method setExp
-	 * @param {Unsigned Integer} exp Experience points. If EXP exceed the maximum level, they will be set at maximum
-	 * @return Integer Difference between two levels gained or lost. For example, if the return is 2, this means that the event has gained 2 levels after changing its EXP
-    */
+/**
+@doc game_character/
+@method setExp Fixed experience points. Changes level according to the experience points given. makeExpList() must be called before setExp(). Return difference between two levels gained or lost. For example, if the return is 2, this means that the event has gained 2 levels after changing its EXP
+@param {Unsigned Integer} exp Experience points. If EXP exceed the maximum level, they will be set at maximum
+@return Integer 
+*/
 	setExp: function(exp) {
 		if (this.exp.length == 0) {
 			throw "makeExpList() must be called before setExp()";
@@ -477,12 +569,12 @@ Class.create("Game_Character", {
 		return diff_level;
 	},
 
-	/**
-     * Sets the level of the event. Fixed points depending on the level of experience assigned
-	 * @method setLevel
-	 * @param {Unsigned Integer} level Level
-	 * @return Integer Difference between two levels gained or lost.
-    */
+/**
+@doc game_character/
+@method setLevel Sets the level of the event. Fixed points depending on the level of experience assigned. Returns difference between two levels gained or lost.
+@param {Unsigned Integer} level Level
+@return Integer
+*/
 	setLevel: function(level) {
 		var old_level = this.currentLevel;
 		this.currentLevel = level;
@@ -491,6 +583,11 @@ Class.create("Game_Character", {
 		return level - old_level;
 	},
 	
+/**
+@doc game_character/
+@method nextExp Returns the number of experience points the next level as the character must achieve to increase to a level
+@return Integer
+*/
 	nextExp: function() {
 		return this.exp[+this.currentLevel+1];
 	},
@@ -505,39 +602,36 @@ Class.create("Game_Character", {
 		}
 	},
 
-	/**
-     * Sets a parameter for each level
-	 * @method setParam
-	 * @param {String} name Parameter name
-	 * @param {Array} array Level Array with the parameter values for each level. The first element is always 0. Example:
-		<pre>
-			rpg.player.setParam("attack", [0, 622, 684, 746, 807, 869, 930, 992, 1053, 1115, 1176, 1238, 1299, 1361, 1422, 1484, 1545]);
-		</pre>
-		At Level 4, the player will have 807 points of attack
-    */
-	/**
-     * Sets a parameter for each level
-	 * @method setParam
-	 * @param {String} name Parameter name
-	 * @param {Integer} valueOneLevel Value at the first level
-	 * @param {Integer} valueMaxLevel Value at the last level
-	 * @param {String} curveType Type Curve :
-		<ul>
-			<li>proportional : Parameter increases in a manner proportional</li>
-		</ul>
-	 * @return {Array} Array generated. The array will be the size of "this.maxLevel + 1". Example :
-	 <pre>
-		rpg.player.maxLevel = 16; // Limits the maximum level to 16 for this example
-		var param = rpg.player.setParam("attack", 622, 1545, "proportional");
-		console.log(param);
-	 </pre>
-	 Displays :<br />
-	 <pre>
-		[0, 622, 684, 746, 807, 869, 930, 992, 1053, 1115, 1176, 1238, 1299, 1361, 1422, 1484, 1545, 1545]
-	 </pre>
-	 <br />
-	 The first element is always 0
-    */
+/**
+@doc game_character/
+@method setParam Sets a parameter for each level
+@param {String|Array} name Parameter name
+
+if array :  array with the parameter values for each level. The first element is always 0. Example:
+
+	rpg.player.setParam("attack", [0, 622, 684, 746, 807, 869, 930, 992, 1053, 1115, 1176, 1238, 1299, 1361, 1422, 1484, 1545]);
+
+At Level 4, the player will have 807 points of attack
+
+@param {Integer} valueOneLevel Value at the first level
+@param {Integer} valueMaxLevel Value at the last level
+@param {String} curveType Type Curve :
+
+* proportional : Parameter increases in a manner proportional
+
+@return {Array}
+@example
+
+	global.game_player.maxLevel = 16; // Limits the maximum level to 16 for this example
+	var param = global.game_player.setParam("attack", 622, 1545, "proportional");
+	console.log(param);
+
+Displays :
+
+	[0, 622, 684, 746, 807, 869, 930, 992, 1053, 1115, 1176, 1238, 1299, 1361, 1422, 1484, 1545, 1545]
+
+ The first element is always 0
+*/
 	setParam: function(name, arrayOrLevelOne, valueMaxLevel, curveType) {
 		if (!this.params[name]) {
 			this.params[name] = [0];
@@ -558,12 +652,12 @@ Class.create("Game_Character", {
 		return this.params[name];
 	},
 
-	/**
-     * Get the value of a parameter at the current level of the event
-	 * @method getCurrentParam
-	 * @param {String} name Parameter name
-	 * @return {Integer} Value
-    */
+/**
+@doc game_character/
+@method getCurrentParam Get the value of a parameter at the current level of the event
+@param {String} name Parameter name
+@return {Integer}
+*/
 	getCurrentParam: function(name) {
 		if (!name) {
 			return this.params;
@@ -648,24 +742,15 @@ Class.create("Game_Character", {
 		return current;
 	},
 
-	/**
-     * Equipping the event of an object. Useful for calculations of fighting
-	 * @method equipItem
-	 * @param {String} type Name type
-	 * @param {String} name Item Name. Example :
-	 <pre>
-		Database.items = {
-			"sword": {
-				name: "Sword",
-				type: "weapons", 
-				id: 1,
-				atk: 112
-			}
-		};
-		rpg.addItem(Database.items["sword"]);
-		rpg.player.equipItem("weapons", "sword");
-	 </pre>
-    */
+/**
+@doc game_character/
+@method equipItem Equipping the event of an object. Useful for calculations of fighting
+@param {String} type Name type
+@param {Integer} id Item id
+@example
+
+	global.game_player.equipItem("weapons", 2);
+*/
 	equipItem: function(type, id) {
 	
 		var item = this.removeItem(type, id);
@@ -701,13 +786,13 @@ Class.create("Game_Character", {
 		this._setState(data.states);
 	},
 
-	/**
-     * Whether an item is equipped
-	 * @method itemIsEquiped
-	 * @param {String} type Name type (See Rpg.addItem())
-	 * @param {String} name Item Name
-	 * @return {Boolean} true if equipped
-    */
+/**
+@doc game_character/
+@method itemIsEquiped  Whether an item is equipped
+@param {String} type Name type
+@param {Integer} id Item id
+@return {Boolean}
+*/
 	itemIsEquiped: function(type, name) {
 		if (this.itemEquiped[type][name]) {
 			return true;
@@ -717,13 +802,13 @@ Class.create("Game_Character", {
 		}
 	},
 
-	/**
-     * Remove an item equipped
-	 * @method removeItemEquiped
-	 * @param {String} type Name type (See Rpg.addItem())
-	 * @param {String} name Item Name
-	 * @return {Boolean} false if the object does not exist
-    */
+/**
+@doc game_character/
+@method removeItemEquiped  Whether an item is equipped. Return false if the object does not exist
+@param {String} type Name type
+@param {Integer} id Item id
+@return {Boolean}
+*/
 	removeItemEquiped: function(type, id) {
 		if (!this.itemEquiped[type]) return false;
 		
@@ -751,12 +836,12 @@ Class.create("Game_Character", {
 		return true;
 	},
 
-	/**
-     * Get all items equiped in a type
-	 * @method getItemsEquipedByType
-	 * @param {String} type Name type (See Rpg.addItem())
-	 * @return {Array|Boolean} Returns an array of items. false if the type does not exist
-    */
+/**
+@doc game_character/
+@method getItemsEquipedByType Get all items equiped in a type
+@param {String} type Name type
+@return {Object}
+*/
 	getItemsEquipedByType: function(type) {
 		if (!this.itemEquiped[type]) return false;
 		return this.itemEquiped[type];
@@ -788,60 +873,37 @@ Class.create("Game_Character", {
 		return false;
 	},
 
-	/**
-     * Skills mastered at level-up for event
-	 * @method skillsToLearn
-	 * @param {Object|String} skills Skills. Key is the level and value is the identifier of skill. Example :
-	 <pre>
-		Database.skills = {
-			"fire": {
-				name: "Fire",
-				id: 1,
-				sp_cost: 75,
-				power: 140,
-				mdef_f: 100
-				// [...]
-			}
-		};
-		rpg.player.skillsToLearn({
-			2: Database.skills["fire"] // Learn the skill #1 in level 2
-		});
-		// or 
-		// rpg.player.skillsToLearn({
-		// 		2:	"fire"
-		// });
-	 // </pre>
-    */
+/**
+@doc game_character/
+@method skillsToLearn Skills mastered at level-up for event
+@param {Object} skills Skills. Key is the level and value is the identifier of skill. Example :
+
+	global.game_player.skillsToLearn({
+		2:	6
+	});
+*/
 	skillsToLearn: function(skills) {
 		this.skillsByLevel = skills;
 	},
 
-	/**
-     * Change the skill to learn for a specific level
-	 * @method setSkillToLearn
-	 * @param {Integer} level Level
-	 * @param {Object|String} skill Properties of the skill or the name of the skill in "Database.skills"
-    */
+/**
+@doc game_character/
+@method setSkillToLearn  Change the skill to learn for a specific level
+@param {Integer} level Level
+@param {Integer} skill_id Skill ID
+@example
+
+	global.game_player.setSkillToLearn(3, 10);
+*/
 	setSkillToLearn: function(level, skill) {
 		this.skillsByLevel[level] = skill;
 	},
 
-	/**
-     * Change the class of the event
-	 * @method setClass
-	 * @param {String} name Class Name. If the class exists in "Database.classes" skills and elements can change. Example :
-	 <pre>
-		Database.classes = {
-			"fighter": {
-				name: "Fighter",
-				id: 1,
-				skills: {1: "fire", 3: "water"},	// See skillsToLearn()
-				elements: {"thunder": 200}			// See setElements()
-			}
-		};
-		rpg.player.setClass("Fighter");
-	 </pre>
-    */
+/**
+@doc game_character/
+@method setClass Change the class of the event
+@param {Integer} id Class ID in database
+*/
 	setClass: function(id) {
 		var data = global.data.classes[id];
 		this.className = data.name;
@@ -1149,10 +1211,6 @@ Class.create("Game_Character", {
 		return true;
 	},
 	
-	/*
-			"items":{"2":{"name":"Potion","description":"Restores HP to one ally","graphic":"0","price":"50","consumable":"0","parameter":"0","recvr_hp_pourcent":"0","recvr_hp":"100","recvr_sp_pourcent":"0","recvr_sp":"0","hit_rate":"100","pdef":"0","mdef":"0","states":[["2",0],["3",0]],"id":"2"}
-			
-		*/
 	useItem: function(type, id) {
 		var data = global.data[type][id];
 		if (data && +data.consumable) {

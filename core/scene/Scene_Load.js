@@ -3,9 +3,9 @@ RPGJS.Scene.New({
 	
 	materials: {
 		images: {
-			background: "Graphics/Pictures/Layer00.png",
-			face: "Graphics/Faces/Aluxes.png",
-			box: "Graphics/Pictures/Sprite_Status.png"
+			background: "../materials/Graphics/Pictures/Layer00.png",
+			//face: "Graphics/Faces/Aluxes.png",
+			box: "../materials/Graphics/Pictures/Sprite_Status.png"
 		}
 	},
 	
@@ -108,11 +108,21 @@ RPGJS.Scene.New({
 		date.setTime(+data.date);
 		
 		var face = this.createElement();
-		face.drawImage("face", 0, 0, 100, 100, 0, 0, 100, 94);
-		face.x = 20;
+		/*face.drawImage("face", 0, 0, 100, 100, 0, 0, 100, 94);
+		face.x = 20;*/
 		
-		this.drawText(data.actor_name, el, 150, 10);
-		this.drawText("LV " + data.level, el, 150, 35);
+		RPGJS_Core.Path.loadMaterial("characters" , data.actor_face, function() {
+			var img = RPGJS.Materials.get("characters_" + data.actor_face);
+			face.drawImage("characters_" + data.actor_face, 0, 0, img.width / data.actor_nbSequenceX, img.height / data.actor_nbSequenceY, -data.actor_regX, -data.actor_regY, img.width / data.actor_nbSequenceX, img.height / data.actor_nbSequenceY);
+			face.x = 50;
+			face.y = 25;
+			el.append(face);
+		});
+		
+		var marginleft = - 30;
+		
+		this.drawText(data.actor_name, el, 150 + marginleft, 10);
+		this.drawText("LV " + data.level, el, 150 + marginleft, 35);
 		
 		function toDate(total_sec) {
 			var hour = "" + Math.floor(total_sec / 60 / 60),
@@ -124,13 +134,13 @@ RPGJS.Scene.New({
 			return hour + " : " + min + " : " + sec;
 		}
 		
-		this.drawText(data.actor_name, el, 150, 10);
-		this.drawText("LV " + data.level, el, 150, 35);
+		this.drawText(data.actor_name, el, 150 + marginleft, 10);
+		this.drawText("LV " + data.level, el, 150 + marginleft, 35);
 		
-		this.drawText(toDate(data.time), el, 200, 10);
-		this.drawText(date.toLocaleString(), el, 200, 35);
+		this.drawText(toDate(data.time), el, 200 + marginleft, 10);
+		this.drawText(date.toLocaleString(), el, 200 + marginleft, 35);
 		
-		el.append(face);
+		
 	},
 	
 	_execSave: function(el) {
@@ -140,12 +150,16 @@ RPGJS.Scene.New({
 		
 				time: player.time,
 				date: "" + (new Date().getTime()),
-				actor_face: 0,
+				actor_face: player.graphic,
 				actor_name: player.name,
+				actor_nbSequenceX : player.nbSequenceX,
+				actor_nbSequenceY : player.nbSequenceY,
+				actor_regX : player.graphic_params.regX,
+				actor_regY : player.graphic_params.regY,
 				level: player.currentLevel
 			
 			};
-
+			
 		global.game_save.set(el.attr('index'), data);
 		
 		this.refreshSlot(el, data)

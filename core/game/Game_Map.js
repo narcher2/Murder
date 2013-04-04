@@ -18,6 +18,7 @@ Class.create("Game_Map", {
 	},
 	
 	load: function(params, callback, scene) {
+		params = params || {};
 		var self = this, tmp,
 			map_id = params.map_id;
 			

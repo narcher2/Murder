@@ -18,6 +18,7 @@ RPGJS.Scene.New({
 	
 		var self = this;
 		this.window = RPGJS.Window.new(this, 500, 200, "window");
+		this.window.setBackground("#32343A", 6, .7);
 		this.window.position("bottom");
 		this.window.open(this.stage);
 		

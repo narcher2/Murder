@@ -1,9 +1,28 @@
 var Menu_Generated = {
 
 	scenes: [],
+	scenes_id: {},
+	elements: {},
 
 	ready: function(stage) {
 		this.refresh(stage);
+	},
+	
+	get: function(menu_id, element_id) {
+		var menu = this.scenes_id[menu_id], el;
+		if (!element_id) {
+			return menu;
+		}
+		for (var id in menu._elements) {
+			el = menu._elements[id];
+			if (el.element.id == element_id) {
+				return el;
+			}
+		}
+	},
+	
+	getElement: function(id) {
+		return this.elements[id];
 	},
 	
 	refresh: function(stage, elements) {
@@ -58,6 +77,8 @@ var Menu_Generated = {
 			}
 			
 			stage.append(div);
+			
+			this.elements[el.element.id] = div;
 		}
 
 	},
@@ -109,9 +130,12 @@ for (var id in scenes) {
 	RPGJS.Scene.New({
 		name: s.menu_id,
 		data: s,
+		elements: Menu_Generated.elements,
 		ready: Menu_Generated.ready,
 		refresh: Menu_Generated.refresh,
-		getCss: Menu_Generated.getCss
+		getCss: Menu_Generated.getCss,
+		getElement: Menu_Generated.getElement
 	});
 	Menu_Generated.scenes.push(s);
+	Menu_Generated.scenes_id[s.menu_id] = s;
 }

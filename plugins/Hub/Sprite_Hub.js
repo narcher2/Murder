@@ -89,7 +89,7 @@ Class.create("Sprite_Hub", {
 			});
 		}
 		
-		
+			
 	},
 	
 	_loadMap: function(hp, max_hp) {
