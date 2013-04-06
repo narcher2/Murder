@@ -2,17 +2,8 @@
 
 > ### Warning ! RPG JS use [CanvasEngine](http://canvasengine.net) dev. Think integrate CanvasEngine and all extensions before RPG JS
 
-> Only tested with Google Chrome
 
 > Uses http://localhost for to test
-
-## TODO ##
-
-- A-RPG
-- TouchPad compatibilitises
-- Menu
-    - Equipment bug
-    - Item use
 
 ## How does it work ? ##
 

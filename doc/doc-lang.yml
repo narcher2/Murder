@@ -1,0 +1,9 @@
+game: Core
+
+map: Map
+character: Character
+event: Event
+player: Player
+switches: Switches
+self_switches: Self Switches
+variables: Variables
