@@ -1,6 +1,40 @@
+/*
+Visit http://rpgjs.com for documentation, updates and examples.
+
+Copyright (C) 2013 by WebCreative5, Samuel Ronce
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+*/
+
+/**
+@doc game_actors
+@class Game_Actors Different players in the game
+*/
 Class.create("Game_Actors", {
 	actors: [],
 	
+/**
+@doc game_actors/
+@method add Add an actor and initializes its parameters
+@param {Integer} id Actor ID
+@param {Object} actor Parameters
+*/	
 	add: function(id, actor) {
 		var data 			= global.data.actors[id],
 			data_class		= global.data.classes[data['class']];
@@ -63,6 +97,12 @@ Class.create("Game_Actors", {
 		this.actors.push(actor);
 	},
 	
+/**
+@doc game_actors/
+@method get Retrieves a player in the array. The first is always `Game_Player` class
+@param {Integer} index Index in array
+@return {Game_Character|Game_Player}
+*/	
 	get: function(actor_id) {
 		if (actor_id == undefined) {
 			return this.actors;
@@ -70,6 +110,13 @@ Class.create("Game_Actors", {
 		return this.actors[actor_id]
 	},
 	
+/**
+@doc game_actors/
+@method getById Retrieves a player by ID. false if absent
+@param {Integer} id actor ID
+@param {Game_Character} actor
+@return {Game_Character|Game_Player|Boolean}
+*/	
 	getById: function(id) {
 		for (var i=0 ; i < this.actors.length ; i++) {
 			if (this.actors[i]._id == id) {

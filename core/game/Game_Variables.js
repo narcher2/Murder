@@ -22,6 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+/**
+@doc game_variables
+@class Game_Variables Important concept in RPG JS to trigger events
+*/
 Class.create("Game_Variables", {
 	initialize: function() {
 		this.data = {};

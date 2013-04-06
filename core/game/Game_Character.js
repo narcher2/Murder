@@ -22,6 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+/**
+@doc game_character
+@class Game_Character Properties and methods for game characters: event, player or other. This class inherits to EntityModel from CanvasEngine API
+*/
 Class.create("Game_Character", {
 	entity: null,
 	_z: null,
@@ -55,6 +59,44 @@ Class.create("Game_Character", {
 		
 	},
 	
+/**
+@doc game_character/
+@method setProperties Assigns the character properties
+@param {Object} prop The properties are defined in the following manner:
+
+`Name: Default value` :
+
+	{
+	
+		trigger: false,
+		direction_fix: false,
+		no_animation: false,
+		stop_animation: false,
+		speed: 3,
+		type: "fixed"
+		frequence: 0,
+		nbSequenceX: 4,
+		nbSequenceY: 4,
+		speedAnimation: 5,
+		pattern: 0,
+		through: false,
+		alwaysOnTop: false,
+		alwaysOnBottom: false,
+		regX: 0,
+		regY: 0,
+		direction: "bottom",
+		graphic: false,
+		graphic_params: {}
+	}
+	
+* Frequency is multiplied by 5
+* `through` is true if the `graphic` property is not defined 
+* `type` can have the values :
+ * `fixed` : default value
+ * `random` : `moveRandom` method is called
+ * `approach` : `approachPlayer` method is called
+
+*/	
 	setProperties: function(prop) {
 		prop = prop || {};
 		
@@ -103,6 +145,13 @@ Class.create("Game_Character", {
 		
 	},
 
+/**
+@doc game_character/
+@method moveto Moves the character to a location on the map
+@param {Integer} x Position X
+@param {Integer} y Position Y
+@param {Object} params Additional parameters
+*/	
 	moveto: function(x, y, params) {
 		params = params || {};
 		if (params.tileToPixel === undefined) {
@@ -112,11 +161,21 @@ Class.create("Game_Character", {
 		this.position(pos.x, pos.y);
 		if (params.refresh) global.game_map.callScene("setEventPosition", [this.id, pos.x, pos.y]);
 	},
-	
+
+/**
+@doc game_character/
+@method lastTypeMove The type of movement being from executing
+@return {String}
+*/	
 	lastTypeMove: function() {
 		return this.typeMove[this.typeMove.length-1];
 	},
 	
+/**
+@doc game_character/
+@method removeTypeMove By calling `approachPlayer` method and after `randomMethod` method, only the latest movement type is executed. This method remove a type.
+@param {String} type Type : `random` or `approach`
+*/
 	removeTypeMove: function(type) {
 		for (var i=0 ; i < this.typeMove.length ; i++) {
 			if (this.typeMove[i] == type) {
@@ -421,7 +480,7 @@ Class.create("Game_Character", {
 
 	},
 	
-	
+	// TODO
 	jumpa: function(x_plus, y_plus, high, callback) {
 		var dir, new_x, new_y, distance;
 		if (x_plus != 0 || y_plus != 0) {
@@ -668,7 +727,13 @@ Displays :
 		return this.params[name][this.currentLevel];
 	},
 	
-	
+/**
+@doc game_character/
+@method setParamLevel Assigns a value to a parameter to a specific level
+@param {String} name Parameter name
+@param {Integer} level Level
+@param {Integer} value Value
+*/
 	setParamLevel: function(name, level, value) {
 		if (!this.params[name]) {
 			throw "setParamLevel - parameter " + name + " doesn't exist";
@@ -677,7 +742,14 @@ Displays :
 			this.params[name][level] = value;
 		}
 	},
-	
+
+/**
+@doc game_character/
+@method setParamLevel Add a value to a parameter to a specific level
+@param {String} name Parameter name
+@param {Integer} value Value
+@param {Integer} level Level
+*/
 	addCurrentParam: function(name, value, level) {
 		var current = this.getCurrentParam(name);
 		if (this.params[name][level]) {
@@ -685,6 +757,23 @@ Displays :
 		}
 	},
 
+/**
+@doc game_character/
+@method initParamPoints Initializes a point type
+@param {String} type Point type
+@param {Integer} current initial value
+@param {Integer} min minimum value
+@param {Integer} max maximum value
+@param {Object} callbacks (optional) Various callbacks :
+
+* onMin : Call function when the minimum is reached
+* onMax : Call function when the maximum is reached
+
+@example
+
+	global.game_player.initParamPoints("attack_pt", 10, 0, 100);
+
+*/
 	initParamPoints: function(type, current, min, max, callbacks) {
 		this.paramPoints[type] = {
 			current: current,
@@ -694,6 +783,12 @@ Displays :
 		};
 	},
 	
+/**
+@doc game_character/
+@method getParamPoint Retrieves the current points of a type. Call the `initParamPoints` before
+@param {String} type Point type
+@return {Integer}
+*/
 	getParamPoint: function(type) {
 		if (!this.paramPoints[type]) {
 			throw "Call the 'initParamPoints' before";
@@ -701,10 +796,36 @@ Displays :
 		return this.paramPoints[type].current;
 	},
 	
+/**
+@doc game_character/
+@method getAllParamsPoint Returns all the types of points
+@return {Object}
+*/
 	getAllParamsPoint: function() {
 		return this.paramPoints;
 	},
 
+/**
+@doc game_character/
+@method changeParamPoints Change the number of points of type. Call the `initParamPoints` before. If the points beyond the maximum or minium, callback functions defined in the `initParamPoints` method are called
+@param {String} type Point type
+@param {Integer|String} nb Number. The value can be a percentage
+@param {String} operation (optional) Operation (set by default)
+@example
+
+Example 1
+
+	global.game_player.initParamPoints("attack_pt", 10, 0, 100);
+	global.game_player.changeParamPoints("attack_pt", 10, "add");
+	global.game_player.getParamPoint("attack_pt"); // return 20
+	
+Example 2
+
+	global.game_player.initParamPoints("attack_pt", 10, 0, 100);
+	global.game_player.changeParamPoints("attack_pt", "10%", "add");
+	global.game_player.getParamPoint("attack_pt"); // return 11
+
+*/
 	changeParamPoints: function(type, nb, operation) {
 		operation = operation || "add";
 		if (!this.paramPoints[type]) {
@@ -846,7 +967,14 @@ Displays :
 		if (!this.itemEquiped[type]) return false;
 		return this.itemEquiped[type];
 	},
-	
+
+/**
+@doc game_character/
+@method getIndexEquipedById Returns the position of the item equiped in the array. Returns false if the position is not found
+@param {String} type Name type
+@param {Integer} id Item id
+@return {Integer|Boolean}
+*/	
 	getIndexEquipedById: function(type, id) {
 		if (!this.itemEquiped[type]) return false;
 		for (var i=0 ; i < this.itemEquiped[type].length ; i++) {
@@ -857,6 +985,17 @@ Displays :
 		return false;
 	},
 	
+/**
+@doc game_character/
+@method getItemsEquipedByAttr Finds the identifier of an item according to an attribute value. Returns false if the position is not found
+@param {String} type Name type
+@param {String} attr Attribute name
+@param {String} val Value
+@return {Integer|Boolean}
+@example
+
+	global.game_player.getItemsEquipedByAttr("weapons", "name", "Sword"); // => return weapon ID
+*/	
 	getItemsEquipedByAttr: function(type, attr, val) {
 		var id;
 		if (!this.itemEquiped[type]) return false;
@@ -917,14 +1056,27 @@ Displays :
 		}
 	},
 
-	/**
-     * Fixed elements to the event
-	 * @method setElements
-	 * @param {Object} The different properties of elements
-	 <pre>
-		rpg.player.setElements({"thunder": 200, "water": 50});
-	 </pre>
-    */
+/**
+@doc game_character/
+@method setElements Fixed elements to the event. Assigns the value to the `elements` property
+@param {Array} elements Array with an array of two elements: `[ID element, Percent affectation]`
+
+Percent affectation :
+
+* 200
+* 100
+* 50
+* 0
+* -100
+
+@example
+
+	global.game_player.setElements([[4, 100], [3, 50]]);
+	
+Element #4 = 100%
+Element #3 = 50%
+
+*/
 	setElements: function(elements) {
 		var obj = {};
 		if (elements instanceof Array) {
@@ -938,10 +1090,35 @@ Displays :
 		this.elements = obj;
 	},
 	
+/**
+@doc game_character/
+@method getElement Retrieves the percentage affectation of an element
+@param {Integer} id Element ID
+*/
 	getElement: function(id) {
 		return this.elements[id];
 	},
 	
+/**
+@doc game_character/
+@method setDefStates Fixed states to the event. Assigns the value to the `defstates` property
+@param {Array} states Array with an array of two states: `[ID state, Percent affectation]`
+
+Percent affectation :
+
+* 200
+* 100
+* 50
+* 0
+* -100
+
+@example
+
+	global.game_player.setDefStates([[4, 100], [3, 50]]);
+	
+State #4 = 100%
+State #3 = 50%
+*/
 	setDefStates: function(states) {
 		var obj = {};
 		for (var i=0 ; i < states.length ; i++) {
@@ -950,26 +1127,27 @@ Displays :
 		this.defstates = obj;
 	},
 
-	/**
-     * To learn a skill to the event
-	 * @method learnSkill
-	 * @param {Integer} id Skill ID
-	 * @param {Object} prop Skill properties
-    */
-	/**
-     * To learn a skill to the event
-	 * @method learnSkill
-	 * @param {String} name Name skill in "Database.skills". The data must have the property "id". Example :
-	 <pre>
-		Database.skills = {
-			"fire": {
-				name: "Fire",
-				id: 1	// required
-			}
-		};
-		rpg.player.learnSkill("fire");
-	 </pre>
-    */
+
+/**
+@doc game_character/
+@method learnSkill To learn a skill. If status are present, they are afflicted with the character
+@param {Integer|Array} states Array with an array of two states: `[ID state, Percent affectation]`
+
+Percent affectation :
+
+* 200
+* 100
+* 50
+* 0
+* -100
+
+@example
+
+	global.game_player.setDefStates([[4, 100], [3, 50]]);
+	
+State #4 = 100%
+State #3 = 50%
+*/
 	learnSkill: function(id) {
 		var skill, data;
 		if (!(id instanceof Array)) {
@@ -986,23 +1164,20 @@ Displays :
 		};
 	},
 
-	/**
-     * Remove a skill
-	 * @method removeSkill
-	 * @param {Integer|String} id Skill ID. If it is a string, it will take the id in "Database.skills"
-	 * @return {Boolean} true if deleted
-    */
+/**
+@doc game_character/
+@method removeSkill Remove a skill
+@param {Integer} id Skill ID
+*/
 	removeSkill: function(id) {
 		delete this.getSkill(id);
 	},
-
-
-	/**
-     * Get a skill under its id
-	 * @method getSkill
-	 * @param {Integer} id Skill ID.
-	 * @return {Object|Boolean} Skill properties. false if the skill does not exist
-    */
+	
+/**
+@doc game_character/
+@method getSkill Get a skill
+@param {Integer} id Skill ID
+*/
 	getSkill: function(id) {
 		if (!id) {
 			return this.skills;
@@ -1016,46 +1191,13 @@ Displays :
 	},
 
 
-	/**
-     * Adds a state event that affects his ability to fight or his movement
-	 * @method addState
-	 * @param {Object|String} prop State property. If you use the Database object, you can only put the name of the state. The state must contain at least the following parameters:
-		<ul>
-			<li>id {Integer} : State ID</li>
-			<li>onStart {Function} : Callback when the status effect begins. One parameter: the event affected</li>
-			<li>onDuring {Function} (optional) : callback during the alteration of state. Two parameters : 
-				<ul>
-					<li>event {Event} : the event affected</li>
-					<li>time (Integer} : The time frame from the beginning of the change of state</li>
-				</ul>
-			</li>
-			<li>onRelease {Function} : Callback when the status effect is complete. Use the removeState() to leave the state altered. One parameter: the event affected</li>
-		</ul>
-		Example : 
-	 <pre>
-		Database.states = {
-			"venom": {
-				id: 1,							// required
-				onStart: function(event) {		// required
-					rpg.animations['Venom'].setPositionEvent(event);
-					rpg.animations['Venom'].play();
-				},
-				onDuring: function(event, time) { 	// optional
-					if (time % 50 == 0) {
-						console.log("Lost 100 HP");
-					}
-					if (time % 150 == 0) {
-						event.removeState("venom");
-					}
-				},
-				onRelease: function(event) { 	// required
-					console.log("phew !");
-				}
-			}
-		};
-		rpg.player.addState("venom");
-	 </pre>
-    */
+	
+	
+/**
+@doc game_character/
+@method addState Adds a state event that affects his ability to fight or his movement. Common events can be triggered
+@param {Integer} id State ID
+*/
 	addState: function(id) {
 		var rand1, rand2, val = 1;
 		
@@ -1095,11 +1237,11 @@ Displays :
 		return true;
 	},
 
-	/**
-     * Removes a state of the event
-	 * @method removeState
-	 * @param {Integer|String} id The identifier of the state. If you use the Database object, you can put the name of the state
-    */
+/**
+@doc game_character/
+@method removeState Remove this state of a character
+@param {Integer} id State ID
+*/
 	removeState: function(id) {
 	
 		if (!this.states[id]) {
@@ -1134,48 +1276,24 @@ Displays :
 		}
 	},
 
-	/**
-     * Whether a state is inflicted in the event
-	 * @method stateInflicted
-	 * @param {Integer|String} id The identifier of the state. If you use the Database object, you can put the name of the state
-	 * @return {Boolean} true if inflicted
-    */
+	
+/**
+@doc game_character/
+@method stateInflicted Whether a state is inflicted in the event
+@param {Integer} id State ID
+@return {Boolean} true if inflicted
+*/
 	stateInflicted: function(id) {
 		return this.states[id];
 	},
 	
-	/**
-     * Adds an item in the player's inventory. You can use the Database object to store object properties. Example :
-		<pre>
-			Database.items = {
-				"potion": {
-					name: "Potion",
-					description: "Restores HP to player.",
-					price: 50,
-					consumable: true,
-					animation: "Use Item",
-					recover_hp: 500,
-					hit_rate: 100
-				}
-			};
-			rpg.addItem("items", 1, Database.items["potion"]);
-		</pre>
-		or 
-		<pre>
-			Database.items = {
-				"potion": {
-					name: "Potion",
-					type: "items", 	// required
-					id: 1 			// required
-				}
-			};
-			rpg.addItem(Database.items["potion"]);
-		</pre>
-	 * @method addItem
-     * @param {String} type Item Type. Examples : "armors", "weapons", etc.
-     * @param {Integer} id Unique Id of the item
-     * @param {Object} prop Property of the item
-    */
+/**
+@doc game_character/
+@method addItem Adds an item in the player's inventory.
+@param {String} type Item Type. Examples : "armors", "weapons", etc.
+@param {Integer} id Unique Id of the item
+@param {Integer} nb Number of items to add
+*/	
 	addItem: function(type, id, nb) {
 		if (+id == 0) {
 			return false;
@@ -1193,12 +1311,13 @@ Displays :
 		this._setState(data.states);
 	},
 	
-	/**
-     * Removes an item from the inventory
-	 * @method removeItem
-     * @param {String} type Item Type. Examples : "armors", "weapons", etc.
-     * @param {Integer} id Unique Id of the item
-    */
+/**
+@doc game_character/
+@method removeItem Removes an item from the inventory
+@param {String} type Item Type. Examples : "armors", "weapons", etc.
+@param {Integer} id Unique Id of the item
+@param {Integer} nb Number of items to add
+*/	
 	removeItem: function(type, id, nb) {
 		if (!nb) {
 			nb = 1;
@@ -1211,6 +1330,12 @@ Displays :
 		return true;
 	},
 	
+/**
+@doc game_character/
+@method useItem Using objects. After use, the object is deleted. Modification of the parameters are afflicted and in particular the points `hp` and `sp`
+@param {String} type Item Type. Examples : "armors", "weapons", etc.
+@param {Integer} id Unique Id of the item
+*/
 	useItem: function(type, id) {
 		var data = global.data[type][id];
 		if (data && +data.consumable) {
@@ -1229,18 +1354,23 @@ Displays :
 		}
 	},
 
-	
-	/**
-     * Get object properties
-	 * @method getItem
-     * @param {String} type Item Type.	See "addItem()"
-     * @param {Integer} id Unique Id of the item
-     * @return {Object|Boolean} Property of the item or false if the item does not exist
-    */
+/**
+@doc game_character/
+@method getItem Get object properties. Return property of the item or false if the item does not exist
+@param {String} type Item Type. Examples : "armors", "weapons", etc.
+@param {Integer} id Unique Id of the item
+@return {Object}
+*/
 	getItem: function(type, id) {
 		return this.items[type][id] ? this.items[type][id] : false;
 	},
 	
+/**
+@doc game_character/
+@method getItems Retrieves the items of a type
+@param {String} type (optional) Item Type. Examples : "armors", "weapons", etc.
+@return {Object}
+*/
 	getItems: function(type) {
 		if (type) {
 			return this.items[type];

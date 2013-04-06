@@ -22,6 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+/**
+@doc game_switches
+@class Game_Switches Important concept in RPG JS to trigger events
+*/
 Class.create("Game_Switches", {
 	initialize: function() {
 		this.data = {};
