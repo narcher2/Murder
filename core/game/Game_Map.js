@@ -42,6 +42,12 @@ Class.create("Game_Map", {
 		this.tick();
 	},
 	
+/**
+@doc game_map/
+@method transfer_player Moves the player to a location on the map
+@param {Integer} x Position X
+@param {Integer} y Position Y
+*/	
 	transfer_player: function(x, y) {
 		global.game_player.moveto(x, y);
 	},
@@ -93,6 +99,22 @@ Class.create("Game_Map", {
 	  this.callScene("scrollMap", [path]);
    },
    
+/**
+@doc game_map/
+@method passable Checks if the next destination of the player is not fair. Returns an object with three values :
+
+- passable (boolean) If the tile is passable
+- x (integer) the length difference between the new position and not passable tile
+- y (integer) the difference of height between the new position and not passable tile
+
+@param {Game_Character} entity Character
+@param {Integer} old_x Current position X
+@param {Integer} old_y Current position X
+@param {Integer} x New position X
+@param {Integer} y New position Y
+@param {String} d Direction : up, right, bottom or left
+@return {Object}
+*/	
    passable: function(entity, old_x, old_y, x, y, d) {
 		
 		entity.savePosition();
@@ -277,10 +299,17 @@ Class.create("Game_Map", {
 		return {passable: true, x: x, y: y};
    },
    
+/**
+@doc game_map/
+@method getEvent Get an event on the map by its ID
+@param {Game_Character} entity Position X
+@param {Integer} id Event ID
+@return {Game_Event}
+*/
    getEvent: function(id) {
 		return this.events[id];
    },
-   
+  
    execEvent: function() {
 		var e;
 		for (var id in this.events) {
@@ -292,6 +321,10 @@ Class.create("Game_Map", {
 		}
    },
    
+/**
+@doc game_map/
+@method updateEvents Update events on the map. Called the `update` method in Game_Event
+*/  
    updateEvents: function() {
 		var data;
 		for (var id in this.events) {
@@ -299,6 +332,10 @@ Class.create("Game_Map", {
 		}
    },
    
+/**
+@doc game_map/
+@method refreshEvents Refresh events on the map. Refresh on the scene. Called the `refresh` method in Game_Event
+*/ 
    refreshEvents: function() {
 		var data;
 		for (var id in this.events) {
@@ -307,24 +344,42 @@ Class.create("Game_Map", {
 		}
    },
    
+/**
+@doc game_map/
+@method refreshPlayer Refresh player on the map. Refresh on the scene.
+*/
    refreshPlayer: function() {
 	   var data = global_game_player.serialize();
 	   this.callScene("refreshEvent", [0, data]);
    },
    
-   getEvent: function(id) {
-		return this.events[id];
-   },
-   
+/**
+@doc game_map/
+@method isAutotile Checks whether the identifier of the tile is a autotile
+@param {Integer} id Tile ID
+@return {Boolean}
+*/
    isAutotile: function(id) {
 		return id < this.nb_autotiles_max * 48;
    },
-   
+ 
+/**
+@doc game_map/
+@method getPropAutotile Retrieves properties autotile by its ID
+@param {Integer} id Tile ID
+@return {Object}
+*/ 
    getPropAutotile: function(id) {
 		var real_id = Math.floor(id / 48);
 		return this._autotiles[real_id];
    },
    
+/**
+@doc game_map/
+@method getPropTile Retrieves properties tile by its ID
+@param {Integer} id Tile ID
+@return {Object}
+*/
    getPropTile: function(id) {
 		var real_id = id - this.nb_autotiles_max * 48;
 		return this._priorities[real_id];
@@ -399,10 +454,24 @@ Class.create("Game_Map", {
 		
    },
    
+/**
+@doc game_map/
+@method getSize Map size (number of tiles)
+@return {Integer}
+*/
    getSize: function() {
 		return this.grid.getNbCell() * this.tile_w * this.tile_h;
    },
-   
+  
+/**
+@doc game_map/
+@method getTileSize Tile size. Returns an object :
+
+- width : Width of tile in pixels
+- height : Height of tile in pixels
+
+@return {Object}
+*/  
    getTileSize: function() {
 		return {
 			width: this.tile_w,
@@ -410,6 +479,22 @@ Class.create("Game_Map", {
 		};
    },
    
+/**
+@doc game_map/
+@method tileToPixel Transforms positions tile to real positions. Return an object
+
+- x : Position X in pixels
+- y : Position Y tile in pixels
+
+@param {Integer} tile_x Tile X 
+@param {Integer} tile_y Tile Y
+@return {Object}
+@example
+	
+	// if tile is 32*32px
+	global.game_map.tileToPixel(2, 3); // returns {x: 64, y: 96}
+
+*/  
    tileToPixel: function(x, y) {
 		return {
 			x: x * this.tile_w,
@@ -417,6 +502,18 @@ Class.create("Game_Map", {
 		}
    },
    
+/**
+@doc game_map/
+@method loadEvent Load event on the map. The event is then sent to the scene to display
+@param {String} name Filename JSON. The file is located in `Data/Events/MAP-[ID]/[NAME].json`. Example : `Data/Events/MAP-1/EV-1.json`. If the event has no ID, a random ID is automatically given
+@param {Boolean} dynamic (optional) Specifies that the event is dynamic. In this case, the path of the event is `Data/Events/[NAME].json`
+@param {Function} callback (optional) Callback function when the event is loaded and displayed. Three parameters sent
+
+- id {Integer} Event ID
+- event {Game_Event} : Event
+- data {Object} : Data from JSON file
+
+*/  
    loadEvent: function(name, dynamic, callback) {
 		var self = this;
 		
@@ -433,26 +530,55 @@ Class.create("Game_Map", {
 				id = data[0].id = CanvasEngine.uniqid();
 			}
 			self.events[id] = Class.New("Game_Event", [self.map_id, data]);
+			self.events[id].refresh();
 			RPGJS_Core.Plugin.call("Game", "addEvent", [self.events[id], self.map_id, data, dynamic, this]);
 			if (callback) callback.call(this, id, self.events[id], data);
 		});
    },
    
+/**
+@doc game_map/
+@method addDynamicEvent Load event on the map. The event is then sent to the scene to display
+@param {String} name Filename JSON. In this case, the path of the event is `Data/Events/[NAME].json`
+@param {Object} pos Position on the map
+
+- x {Integer} Position X
+- y {Integer} Position Y
+
+@param {Function} callback (optional) Callback function when the event is loaded and displayed. Three parameters sent
+
+- id {Integer} Event ID
+- event {Game_Event} : Event
+- data {Object} : Data from JSON file
+
+@param {Object} params (optional) Additional parameter (see `moveto` method in Game_Character)
+*/  
    addDynamicEvent: function(name, pos, callback, params) {
 		var self = this;
 		params = params || {};
-		this.loadEvent(name, true, function(id, event) {
+		this.loadEvent(name, true, function(id, event, data) {
 			event.moveto(pos.x, pos.y, params);
 			if (params.add) self.callScene("addEvent", [event.serialize()]);
-			if (callback) callback.call(this, id, event);
+			if (callback) callback.call(this, id, event, data);
 		});
    },
    
+/**
+@doc game_map/
+@method removeEvent Delete an event in the map
+@param {Game_Event} id Event ID
+*/
    removeEvent: function(id) {
 		this.callScene("removeEvent", [id]);
 		delete this.events[id];
    },
    
+/**
+@doc game_map/
+@method callScene Call a method on Scene_Map
+@param {String} method Method Name
+@param {Array} params Method parameters
+*/
 	callScene: function(method, params) {
 		this._scene[method].apply(this._scene, params);
 	},

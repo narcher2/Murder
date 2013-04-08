@@ -296,7 +296,6 @@ Class.create("Game_Character", {
 		this.typeMove.push("random");
 		rand();
 		function rand() {
-		
 			if (self.removeTypeMove["random"]) {
 				self.removeTypeMove["random"]= false;
 				return;
@@ -305,7 +304,7 @@ Class.create("Game_Character", {
 				return;
 			}
 		
-			var dir_id = CE.random(0, 3),
+			var dir_id = CE.random(0, 4),
 				dir;
 			switch (dir_id) {
 				case 0:
@@ -321,7 +320,7 @@ Class.create("Game_Character", {
 					dir = "bottom";
 				break;
 			}
-			
+
 			if (self.lastTypeMove != "random") {
 				self.moveOneTile(dir, function() {
 					if (self.frequence != 0) {
@@ -375,7 +374,6 @@ Class.create("Game_Character", {
 			if (!global.game_map.getEvent(self.id)) {
 				return;
 			}
-			
 			self.moveDir(dir);
 			i++;	
 			if (i >= distance) {
@@ -418,19 +416,19 @@ Class.create("Game_Character", {
 			y = 0,
 			pos;
 		this.direction = dir;
-
+		
 		switch (dir) {
 			case "left":
 				x = -speed;
 			break;
 			case "right":
-				x = speed;
+				x = +speed;
 			break;
 			case "up":
 				y = -speed;
 			break;
 			case "bottom":
-				y = speed;
+				y = +speed;
 			break;
 		}
 		

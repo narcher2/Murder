@@ -67,9 +67,7 @@ Class.create("Game_Event", {
 		this.moveto(this.x, this.y);
 		
 		this.interpreter = Class.New("Interpreter", [this]);
-		
-		this.refresh();
-		
+
 	},
 
 /**
