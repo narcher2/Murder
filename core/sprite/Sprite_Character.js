@@ -23,6 +23,7 @@ Class.create("Sprite_Character", {
 	},
 	
 	refresh: function(data) {
+		
 		var self = this;
 		if (data) {
 			for (var key in data) {
@@ -35,25 +36,30 @@ Class.create("Sprite_Character", {
 				this[key] = this.graphic_params[key] != "" ? this.graphic_params[key] : this[key];
 			}
 		}
+	
 		
 		if (this.regY) this.regY = +this.regY;
 		if (this.regX) this.regX = +this.regX;
-		
-		if (!this.exist) return;
+		if (!this.pattern) this.pattern = 0;
+			
+		if (!this.exist) {
+			this.entity.el.removeCmd("drawImage");
+			return;
+		}
 		
 		if (!this.initial_dir) {
 			this.initial_dir = this.direction;
 		}
 		
-
 		if (this.graphic) {
 		
 			function load() {
+				if (!self.graphic) return;
 				var img = RPGJS.Materials.get("characters_" + self.graphic);
 				self.width = img.width / self.nbSequenceX;
 				self.height = img.height / self.nbSequenceY;
 			
-				self.entity.el.drawImage("characters_" + self.graphic, 0, 0, self.width, self.height, -self.regX, -self.regY, self.width, self.height);
+				//self.entity.el.drawImage("characters_" + self.graphic, 0, 0, self.width, self.height, -self.regX, -self.regY, self.width, self.height);
 				self.setAnimation();
 				self.setSpritesheet();
 				self.stop();
@@ -84,17 +90,16 @@ Class.create("Sprite_Character", {
 	
 	setSpritesheet: function() {
 		var array = [], val;
-		for (var i=0 ; i < this.nbSequenceY ; i++) {
+		for (var i=0 ; i < 4 ; i++) {
 			for (var j=0 ; j < this.nbSequenceX ; j++) {
 				val = "";
-				if (j == 0) {
-					switch (i) {
-						case 0:  val = "bottom"; break;
-						case 1:  val = "left"; break;
-						case 2:  val = "right"; break;
-						case 3:  val = "up"; break;
-					}
+				switch (i) {
+					case 0:  val = "bottom"; break;
+					case 1:  val = "left"; break;
+					case 2:  val = "right"; break;
+					case 3:  val = "up"; break;
 				}
+				val += "_" + j;
 				array.push(val); 
 			}
 		}
@@ -262,8 +267,9 @@ Class.create("Sprite_Character", {
 	
 	stop: function() {
 		if (!this.animation) return;
+		var id = this.getDisplayDirection() + "_" + this.pattern;
 		this.animation.stop();
-		this.spritesheet.draw(this.entity.el, this.getDisplayDirection());
+		if (this.spritesheet._set[id]) this.spritesheet.draw(this.entity.el, id);
 	},
 	
 	startMove: function() {
@@ -281,7 +287,7 @@ Class.create("Sprite_Character", {
 	changeDirection: function(anim, dir) {
 		var display_direction = this.getDisplayDirection();
 		if (this.spritesheet && this.direction != this.old_direction && this.graphic) {
-			this.spritesheet.draw(this.entity.el, display_direction);
+			this.spritesheet.draw(this.entity.el, display_direction + "_0");
 			if (!this.no_animation) {
 				this.animation.play(display_direction, "loop");
 			}

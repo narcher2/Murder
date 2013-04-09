@@ -132,7 +132,7 @@ Class.create("Game_Character", {
 		}
 		this.direction = prop.direction || "bottom";
 		this.graphic = prop.graphic;
-		this.graphic_params = prop["graphic_params"];
+		this.graphic_params = prop["graphic-params"];
 		
 		switch (this.type) {
 			case "random":
@@ -761,7 +761,7 @@ Displays :
 @param {String} type Point type
 @param {Integer} current initial value
 @param {Integer} min minimum value
-@param {Integer} max maximum value
+@param {Integer|String} max maximum value
 @param {Object} callbacks (optional) Various callbacks :
 
 * onMin : Call function when the minimum is reached
@@ -770,6 +770,11 @@ Displays :
 @example
 
 	global.game_player.initParamPoints("attack_pt", 10, 0, 100);
+	
+Example :
+
+	global.game_player.setParam("attack", [0, 100, 150]); // Param by level
+	global.game_player.initParamPoints("attack_pt", 10, 0, "attack");
 
 */
 	initParamPoints: function(type, current, min, max, callbacks) {
@@ -802,13 +807,20 @@ Displays :
 	getAllParamsPoint: function() {
 		return this.paramPoints;
 	},
+	
+	setMaxParamPoint: function(new_max) {
+		if (!this.paramPoints[type]) {
+			throw "Call the 'initParamPoints' before";
+		}
+		this.paramPoints[type].max = new_max;
+	},
 
 /**
 @doc game_character/
 @method changeParamPoints Change the number of points of type. Call the `initParamPoints` before. If the points beyond the maximum or minium, callback functions defined in the `initParamPoints` method are called
 @param {String} type Point type
 @param {Integer|String} nb Number. The value can be a percentage
-@param {String} operation (optional) Operation (set by default)
+@param {String} operation (optional) Operation (add by default)
 @example
 
 Example 1

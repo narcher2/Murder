@@ -77,7 +77,7 @@ Class.create("Game_Event", {
 */	
 	refresh: function() {
 		this.setPage();
-		
+
 		if (this.currentPage == -1) {
 			this.exist = false;
 		}
@@ -92,7 +92,6 @@ Class.create("Game_Event", {
 			}
 		
 		}
-		
 		return this.serialize();
 	},
 	
@@ -104,6 +103,7 @@ Class.create("Game_Event", {
 	
 	setPage: function() {
 		var page_find = false;
+		this.currentPage = -1;
 		for (var i = this.pages.length-1 ; i >= 0 ; i--) {
 			if (!page_find) {
 				if (!this.pages[i].conditions) {
@@ -118,14 +118,13 @@ Class.create("Game_Event", {
 						if (condition["switch_" + j] !== undefined && condition["switch_" + j] != "0") {
 							valid &= global.game_switches.get(condition["switch_" + j]);
 						}
-						
 					}
 					
 					if (condition.self_switch !== undefined && condition.self_switch != "0") {
 						valid &= global.game_selfswitches.get(this.map_id, this.id, condition.self_switch);
 					}
 					if (condition.variable !== undefined && condition.variable != "0") {
-						var _var = global.game_variables.get(condition.variables);
+						var _var = global.game_variables.get(condition.variable);
 						var test_value = condition.variable_value;
 						valid &= _var >= test_value;
 					}

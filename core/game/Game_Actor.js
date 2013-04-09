@@ -74,9 +74,9 @@ Class.create("Game_Actors", {
 		actor.setLevel(data.level_min);
 		
 		var max_hp =  actor.getCurrentParam("maxhp");
-		actor.initParamPoints("hp", max_hp, 0, max_hp);
+		actor.initParamPoints("hp", max_hp, 0, "maxhp");
 		var max_sp =  actor.getCurrentParam("maxsp");
-		actor.initParamPoints("sp", max_sp, 0, max_sp);
+		actor.initParamPoints("sp", max_sp, 0, "maxsp");
 		
 		actor.initParamPoints("atk", 0, 0, 99999);
 		actor.initParamPoints("pdef", 0, 0, 99999);

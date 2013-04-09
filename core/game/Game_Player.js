@@ -72,7 +72,7 @@ Class.create("Game_Player", {
 		
 		this.setProperties({
 			graphic: actor.graphic,
-			graphic_params: actor["graphic-params"]
+			"graphic-params": actor["graphic-params"]
 		});
 		
 		global.game_actors.add(system.actor, this);

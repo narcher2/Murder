@@ -484,10 +484,11 @@ THE SOFTWARE.
 		this.nextCommand();
 	},
 	
-	// Private
+	// MOVE_ROUTE: {'target': 'this','move': ['left','left']}
 	cmdMoveRoute: function(dir) {
 		var current_move = -1,
-			event = self.event;
+			self = this,
+			event = this._target(dir.target);
 		nextRoute();
 		function nextRoute() {
 			current_move++;
@@ -501,7 +502,7 @@ THE SOFTWARE.
 					case 'left':
 					case 'right':
 					case 'bottom':
-						event.moveOneTile(dir.move, function() {
+						event.moveOneTile(dir.move[current_move], function() {
 							nextRoute();
 						});
 					break;
@@ -513,8 +514,8 @@ THE SOFTWARE.
 				}
 			}
 			else {
-				//self.animation('stop');
-				
+				global.game_map.callScene('stopEvent', [event.id]);
+				self.nextCommand();
 			}
 		}
 		
@@ -811,13 +812,13 @@ THE SOFTWARE.
 	// RECOVER_ALL: {}
 	cmdRecoverAll: function(params) {
 		var points = [
-			["hp", "hp_max"], 
-			["sp", "sp_max"]
+			["hp", "maxhp"], 
+			["sp", "maxsp"]
 		], max;
 		this._execActor(params, function(actor) {
 			for (var i=0 ; i < points.length ; i++) {
 				max = actor.getCurrentParam(points[i][1]);
-				actor.changeParamPoints(points[i][0], max);
+				actor.changeParamPoints(points[i][0], max, "set");
 			}
 		});
 		this.nextCommand();
@@ -953,6 +954,7 @@ THE SOFTWARE.
 	
 	// ADD_DYNAMIC_EVENT_RELATIVE: {'name': '2', 'position-type': 'distance','dir': '5','move': '1'}
 	cmdAddDynamicEventRelative: function(params) {
+		var self = this;
 		var dir = global.game_player.direction,
 			tile_w = global.game_map.tile_w,
 			tile_h = global.game_map.tile_h,
@@ -962,20 +964,12 @@ THE SOFTWARE.
 		
 		if (+params.move) {
 			var array_dir = [];
-			for (var i=0 ; i < params.dir ; i++) {
+			for (var i=0 ; i < +params.dir-1 ; i++) {
 				array_dir.push(dir);
 			}
-			global.game_map.addDynamicEvent(params.name, {
-				x: x,
-				y: y
-			}, function(id, event) {
-				event.moveTilePath(array_dir);
-			});
-		}
-		else {
+			var distance = +params.dir;
 			new_x = x;
 			new_y = y;
-			var distance = params.dir;
 			switch (dir) {
 				case "left":
 					new_x = x - distance;
@@ -990,16 +984,56 @@ THE SOFTWARE.
 					new_y = y + distance;
 				break;
 			}
-			global.game_map.addDynamicEvent(params.name, {
+			global.game_map.addDynamicEvent("EV-dynamic_events-" + params.name, {
 				x: new_x,
 				y: new_y
+			}, function(id, event) {
+				event.moveTilePath(array_dir);
+				self.nextCommand();
+			}, {
+				add: true
+			});
+		}
+		else {
+			new_x = x;
+			new_y = y;
+			var distance = +params.dir;
+			switch (dir) {
+				case "left":
+					new_x = x - distance;
+				break;
+				case "right":
+					new_x = x + distance;
+				break;
+				case "up":
+					new_y = y - distance;
+				break;
+				case "bottom":
+					new_y = y + distance;
+				break;
+			}
+			global.game_map.addDynamicEvent("EV-dynamic_events-" + params.name, {
+				x: new_x,
+				y: new_y
+			}, function(id, event) {
+				self.nextCommand();
+			}, {
+				add: true
 			});
 		}
 	},
 	
+	// CALL_SYSTEM: {'menus': '4'}
 	cmdCallSystem: function(params) {
-		//var menu_id = client.getDatabase("_scenes", params.menus, "menu_id");
-		//client.plugin('_menu').callScene(menu_id);
+		for (var i=0 ; i < Menu_Generated.scenes.length ; i++) {
+			s = Menu_Generated.scenes[i];
+			if (s.id == params.menus) {
+				scene = RPGJS_Core.scene.call(s.menu_id, {
+					overlay: true
+				});
+			}
+		}
+		this.nextCommand();
 	},
 	
 	cmdCallSave: function() {
@@ -1007,8 +1041,11 @@ THE SOFTWARE.
 		scene.refresh("save");
 	},
 	
+	// SCRIPT: {'text': 'alert(&#34;kk&#34;);'}
 	cmdScript: function(params) {
-		return params.text;
+		var t = params.text.replace(/&#34;/g, '"');
+		eval(t);
+		this.nextCommand();
 	},
 	
 	// IF: '3 > 1'
