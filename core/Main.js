@@ -206,7 +206,8 @@ Class.create("RPGJS", {
 			}
 		},
 		
-		get: function(type, file_id, object) {
+
+		get: function(type, file_id, object, onlyFile) {
 			var obj = {}, path;
 
 			if (!global.materials[type]) {
@@ -217,7 +218,7 @@ Class.create("RPGJS", {
 				throw "[Path.get]" + type + " - " + file_id + " doesn't exist";
 			}
 			
-			path = this[type] + global.materials[type][file_id];
+			path = (onlyFile ? "" : this[type]) + global.materials[type][file_id];
 			if (object) {
 				obj[type + "_" + file_id] = path;
 				return obj;

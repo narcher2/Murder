@@ -397,7 +397,9 @@ Class.create("Spriteset_Map", {
 		var t = RPGJS.Timeline.New(el);
 		t.to({
 			rotation: 360
-		}, time).loop();
+		}, time).call(function() {
+			el.rotation = 0;
+		});
 	},
 	
 	erasePicture: function(id) {

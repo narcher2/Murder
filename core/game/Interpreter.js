@@ -524,10 +524,8 @@ THE SOFTWARE.
 	
 	// SHOW_ANIMATION: {'name': 1, 'target': 1}
 	cmdShowAnimation: function(params) {
-		if (!params.target) {
-			params.target = this.event.id;
-		}
-		global.game_map._scene.animation(params.target, params.name);
+		var event = this._target(params.target);
+		global.game_map.callScene("animation", [event.id, params.name]);
 		this.nextCommand();
 	},
 
@@ -565,6 +563,11 @@ THE SOFTWARE.
 	cmdBlink: function(params) {
 		var self = this;
 		var id;
+		
+		function next() {
+			self.nextCommand();
+		}
+		
 		switch (params.target) {
 			case "this":
 				id = this.event.id;
@@ -576,8 +579,12 @@ THE SOFTWARE.
 				id = params.target
 		}
 		global.game_map.callScene("blink", [id, params.duration, params.frequence, function() {
-			self.nextCommand();
+			if (params.wait != "_no") next();
 		}]);
+		
+		if (params.wait == "_no") {
+			next();
+		}
 	},
 
 	
@@ -905,6 +912,7 @@ THE SOFTWARE.
 	cmdShowPicture: function(params) {
 		var self = this;
 		params = this._valuePicture(params);
+		params.filename = RPGJS_Core.Path.get("pictures", params.filename, false, true);
 		global.game_map.callScene("pictures", ["add", [params.id, params, function() {
 			self.nextCommand();
 		}]]);

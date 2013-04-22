@@ -51,7 +51,7 @@ Class.create("Sprite_Character", {
 			this.initial_dir = this.direction;
 		}
 		
-		if (this.graphic) {
+		if (+this.graphic) {
 		
 			function load() {
 				if (!self.graphic) return;

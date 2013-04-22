@@ -35,7 +35,7 @@ RPGJS.Scene.New({
 		
 		if (data.events) {
 			CE.each(data.events, function(i, val) {
-				if (val.graphic) {
+				if (+val.graphic) {
 					images.push(RPGJS_Core.Path.get("characters", val.graphic, true));
 				}
 			});
@@ -51,10 +51,10 @@ RPGJS.Scene.New({
 		
 		images.concat(RPGJS_Core.Plugin.call("Sprite", "mapLoadImages", [images, this]));
 		
-		if (data.musics.bgm) {
+		if (+data.musics.bgm) {
 			sounds.push(RPGJS_Core.Path.get("bgms", data.musics.bgm, true));
 		}
-		if (data.musics.bgs) {
+		if (+data.musics.bgs) {
 			sounds.push(RPGJS_Core.Path.get("bgss", data.musics.bgs, true));
 		}
 		
@@ -132,23 +132,26 @@ RPGJS.Scene.New({
 			actions: this.data.actions
 		}]);
 		
-		if (this.data.musics.bgm) {
+		if (+this.data.musics.bgm) {
 			global.game_system.bgmPlay(this.data.musics.bgm);
 		}
-		if (this.data.musics.bgs) {
+		if (+this.data.musics.bgs) {
 			global.game_system.bgsPlay(this.data.musics.bgs);
 		}
 		
 		this.keysAssign();
 		
-		this.gamepad = RPGJS.Input.Gamepad.init();
-		this.gamepad.addListener("faceButton0", Input.A);
-		this.gamepad.addListener("faceButton1", Input.Esc);
-		this.gamepad.addListener("faceButton2", Input.Enter);
-		this.gamepad.addListener("dpadLeft", Input.Left);
-		this.gamepad.addListener("dpadRight", Input.Right);
-		this.gamepad.addListener("dpadDown", Input.Bottom);
-		this.gamepad.addListener("dpadUp", Input.Up);
+		if (typeof(Gamepad) !== 'undefined') {
+			this.gamepad = RPGJS.Input.Gamepad.init();
+			this.gamepad.addListener("faceButton0", Input.A);
+			this.gamepad.addListener("faceButton1", Input.Esc);
+			this.gamepad.addListener("faceButton2", Input.Enter);
+			this.gamepad.addListener("dpadLeft", Input.Left);
+			this.gamepad.addListener("dpadRight", Input.Right);
+			this.gamepad.addListener("dpadDown", Input.Bottom);
+			this.gamepad.addListener("dpadUp", Input.Up);
+		}
+		
 		
 		RPGJS_Core.Plugin.call("Sprite", "loadMap", [this]);
 		
@@ -183,7 +186,7 @@ RPGJS.Scene.New({
 		RPGJS_Core.Plugin.call("Sprite", "sceneMapRender", [this]);
 		
 		stage.refresh();
-		this.gamepad.update();
+		if (typeof(Gamepad) !== 'undefined') this.gamepad.update();
 
 	},
 	
@@ -213,7 +216,10 @@ RPGJS.Scene.New({
 	},
 	
 	stopEvent: function(id) {
-		this.getSpriteset().stopEvent(id);
+		var spriteset = this.getSpriteset();
+		if (spriteset) {
+			spriteset.stopEvent(id);
+		}
 	},
 	
 	moveEvent: function(id, value, dir) {

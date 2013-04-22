@@ -119,7 +119,7 @@ Class.create("Game_Character", {
 		this.nbSequenceY  = prop.nbSequenceY || 4;
 		this.speedAnimation  = prop.speedAnimation || 5;
 		this.graphic_pattern = prop.pattern === undefined ? 0 : prop.pattern;
-		this.through =  !prop.graphic ? prop.through : true;
+		this.through =  !+prop.graphic ? prop.through : true;
 		this.alwaysOnTop = prop.alwaysOnTop !== undefined ? prop.alwaysOnTop : false;
 		this.alwaysOnBottom = prop.alwaysOnBottom !== undefined ? prop.alwaysOnBottom : false;
 		this.regX = prop.regX !== undefined ? prop.regX : 0;
@@ -131,7 +131,7 @@ Class.create("Game_Character", {
 			this._z = global.game_map.getSize() + 1;
 		}
 		this.direction = prop.direction || "bottom";
-		this.graphic = prop.graphic;
+		this.graphic = +prop.graphic;
 		this.graphic_params = prop["graphic-params"];
 		
 		switch (this.type) {
@@ -1168,8 +1168,8 @@ State #3 = 50%
 			skill = this.getSkill(id[i]);
 			if (!skill) {
 				this.skills.push(id[i]);
-				data = global.data.skills[id];
-				this._setState(data.states);
+				data = global.data.skills[id[i]];
+				if (data) this._setState(data.states);
 			}
 		};
 	},
@@ -1332,6 +1332,7 @@ State #3 = 50%
 		if (!nb) {
 			nb = 1;
 		}
+		if (!this.items[type]) return false;
 		if (!this.items[type][id]) return false;
 		this.items[type][id] -= nb;
 		if (this.items[type][id] <= 0) {
