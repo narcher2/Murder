@@ -6,6 +6,7 @@ Class.create("Sprite_Character", {
 	initial_dir: null,
 	width: 0,
 	height: 0,
+	_actions: {},
 	initialize: function(scene, data, layer, model) {
 		this.scene = scene;
 		
@@ -167,75 +168,87 @@ Class.create("Sprite_Character", {
 	
 	initAnimationActions: function(data) {
 
-		var seq_x, seq_y, frequence, position, animation, self = this;
+		var seq_x, seq_y, frequence, position, animation, self = this, action, img, seq;
 		
-		function finish() {
-			self.stop();
-		}
-		
-		var action;
-		for (var id in data) {
+		function setAnimation(id) {
+			
+			function finish() {
+				RPGJS.Scene.get("Scene_Map").animation(0, data[id]["animation_finish"]);
+				self.stop();
+			}
+			
 			action = data[id];
-			seq_x = this.nbSequenceX-1,
-			seq_y = this.nbSequenceY-1;
+			
+			if (!action['graphic-params']) action['graphic-params'] = {};
+			if (!action['graphic-params'].nbSequenceX) action['graphic-params'].nbSequenceX = 4;
+			if (!action['graphic-params'].nbSequenceY) action['graphic-params'].nbSequenceY = 4;
+			if (!action['graphic-params'].regX) action['graphic-params'].regX = 0;
+			if (!action['graphic-params'].regY) action['graphic-params'].regY = 0;
+			
+			
+			img = RPGJS.Materials.get("characters_" + action.graphic);
+			seq = {
+				width: img.width / action['graphic-params'].nbSequenceX,
+				height: img.height / action['graphic-params'].nbSequenceY,
+			};
+			
+			seq_x = action['graphic-params'].nbSequenceX-1;
+			seq_y = action['graphic-params'].nbSequenceY-1;
 			frequence = action.speed;
 			position = {
-				left: 0 - this.regX,
-				top: -18 - this.regY
+				left: 0 - action['graphic-params'].regX,
+				top: -18 - action['graphic-params'].regY
 			};
 			animation = {};
 			animation[id + "_bottom"] =  {
 				frames: [0, seq_x],
-				 size: {
-					width: this.width,
-					height: this.height
-				  },
+				 size: seq,
 				  position: position,
 				 frequence: frequence,
 				 finish: finish
 			 };
 			 animation[id + "_left"] = {
 				frames: [seq_x+1, seq_x*2+1],
-				 size: {
-					width: this.width,
-					height: this.height
-				  },
+				 size: seq,
 				  position: position,
 				 frequence: frequence,
 				 finish: finish
 			 };
 			 animation[id + "_right"] = {
 				frames: [seq_x*2+2, seq_x*3+2],
-				 size: {
-					width: this.width,
-					height: this.height
-				  },
+				 size: seq,
 				  position: position,
 				 frequence: frequence,
 				 finish: finish
 			 };
 			  animation[id + "_up"] = {
 				frames: [seq_x*3+3, seq_x*4+3],
-				 size: {
-					width: this.width,
-					height: this.height
-				  },
+				 size: seq,
 				  position: position,
 				 frequence: frequence,
 				 finish: finish
 			 };
-
+			
 			this.action_animation = RPGJS.Animation.New({
 			   images: "characters_" + action.graphic,
 			   animations: animation
 			});
 			this.action_animation.add(this.entity.el);
-			
+			this._actions = data;
+		}
+		
+		for (var id in data) {
+			setAnimation.call(this, id);
 		}
 	},
 	
 	playAnimationAction: function(id) {
-		this.action_animation.play(id + "_" + this.getDisplayDirection(), "stop");
+		var dir;
+		if (this._actions[id]) {
+			dir = this.getDisplayDirection();
+			this.action_animation.play(id + "_" + dir, "stop");
+			RPGJS.Scene.get("Scene_Map").animation(0, this._actions[id]["animation_" + dir]);
+		}
 	},
 	
 	

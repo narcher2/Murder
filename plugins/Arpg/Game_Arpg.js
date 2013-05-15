@@ -1,6 +1,6 @@
 Class.create("Game_Enemy", {
 
-	data: null,
+    data: null,
 	event: null,
 	state: "passive",
 	detection: false,
@@ -30,8 +30,11 @@ Class.create("Game_Enemy", {
 		enemy.setElements(data._elements);
 		enemy.setDefStates(data.states);
 		
-		enemy.speed = 1;
-		enemy.frequence = 0;
+		enemy.pages[0] = {
+			speed: 1,
+			frequence: 0
+		};
+		
 		enemy.moveRandom();
 		
 		this.event = enemy;
@@ -244,68 +247,6 @@ Class.create("Game_Arpg", {
 
 	},
 	
-/**
- * Define the formulas of battle
- * @method battleFormulas
- * @param {String} name Name of the formula of combat
- * @param {Function} fn Call function. Two parameters: the event source and the target event (see "battleEffect()")
- * @example 
-	<pre>
-	rpg.battleFormulas("attack", function(source, target) {
-		var weapons = source.getItemsEquipedByType("weapons");
-		var attack = 0;
-		if (weapons[0]) attack = Database.items[weapons[0]].atk;
-		var atk = attack - target.getCurrentParam("defense") / 2;
-		return atk * (20 + source.getCurrentParam("str")) / 20;
-	});
-	</pre>
-	Remember to set the parameters for the player and enemy (see "addEvent()"<br />
-	<br />
-	<b>Using the formulas of battle (<i>Documentation RPG Maker XP</i>) : </b><br />
-	<cite>
-		Normal attacks: <br />
-		Power = A's attack power - (B's physical defense ÷ 2)<br />
-		Rate = 20 + A's strength<br />
-		Variance = 15 <br />
-		Minimum force: 0 <br />
-		Skills: <br />
-		Skill's force is positive: <br />
-		Force = Skill's force <br />
-		 + (A's attack power × skill's attack power F ÷ 100)<br />
-		 - (B's physical defense × skill's physical defense F ÷ 200) <br />
-		 - (B's magic defense × skill's magic defense F ÷ 200) <br />
-		<br />
-		Minimum force: 0 <br />
-		Skill's force is negative: <br />
-		Force = Skill's force <br />
-		Rate = 20 <br />
-		 + (A's strength × skill's strength F ÷ 100) <br />
-		 + (A's dexterity × skill's dexterity F ÷ 100) <br />
-		 + (A's agility × skill's agility F ÷ 100) <br />
-		 + (A's intelligence × skill's intelligence F ÷ 100) <br />
-		Variance = Skill's variance <br />
-		Items: <br />
-		HP recovery amount is negative: <br />
-		Force = - Amount of HP recovered <br />
-		 - (B's physical defense × item's physical defense F ÷ 20) <br />
-		 - (B's magic defense × item's magic defense F ÷ 20) <br />
-		<br />
-		Minimum force: 0 <br />
-		HP recovery amount is positive: <br />
-		Force = - Amount of HP recovered <br />
-		Rate = 20<br />
-		Variance = Item's variance <br />
-		Damage = force × multiplier ÷ 20 × elemental modifier × critical modifier × defense modifier (± variance %)<br />
-		<br />
-		<br />
-		Elemental modifier: The weakest of B's effective elements corresponding to the action's element(s).<br />
-		A: 200%, B: 150%, C: 100%, D: 50%, E: 0%, F: -100%<br />
-		Reduced by half if B's armor or state has a defending (opposing) element.<br />
-		When there are more than one of the same defending elements, the damage may be halved multiple times. <br />
-		Critical modifier: Equals 2 when the damage is positive and a critical hit is made. <br />
-		Defense modifier: Equals 1/2 when the damage is positive and B is defending. 
-	</cite>
-*/
 	battleFormulas: function(enemy, playerAttack) {
 		var power, rate, variance, damage = 0, critical, isCritical, weapon, elements = 100, armor, miss = false,
 			a, b;
@@ -352,7 +293,7 @@ Class.create("Game_Arpg", {
 	},
 	
 	contactPlayer: function(event) {
-		this.enemies[event.id].attack(this);
+	    if (this.enemies[event.id]) this.enemies[event.id].attack(this);
 	},
 	
 	removeEnemy: function(id) {

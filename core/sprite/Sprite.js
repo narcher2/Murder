@@ -1,6 +1,7 @@
 Class.create("Sprite", {
 	
 	showAnimation: function(id) {
+		if (!global.data.animations) return;
 		var data = global.data.animations[id],
 			self = this;
 		

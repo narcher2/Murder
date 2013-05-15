@@ -1,6 +1,6 @@
 Class.create("Sprite_Enemy", {
 
-	bar: null,
+    bar: null,
 	hp: 0,
 
 	initialize: function(scene, enemy, character, data) {
@@ -72,8 +72,8 @@ Class.create("Sprite_Enemy", {
 		this.displayBar(this.hp, this.enemy.maxhp, 40, 3);
 	},
 	
-	dead: function() {
-	
+	dead: function(scene) {
+		scene.animation(this.data.id, this.enemy.animation_death);
 	}
 
 });
@@ -134,7 +134,7 @@ Class.create("Sprite_Arpg", {
 	},
 	
 	_ennemyDead: function(id) {
-		this.characters[id].dead();
+		this.characters[id].dead(this.scene);
 	},
 	
 	_playerDead: function() {

@@ -340,7 +340,7 @@ Class.create("Game_Map", {
 		var data;
 		for (var id in this.events) {
 			data = this.events[id].refresh();
-			this._scene.refreshEvent(id, data);
+			this.callScene("refreshEvent", [id, data]);
 		}
    },
    
@@ -591,7 +591,9 @@ Class.create("Game_Map", {
 				"animation_bottom":"", 
 				"animation_right":"", 
 				"animation_left":"", 
+				"animation_finish":"", 
 				"graphic": "",
+				"graphic-params": "",
 				"speed": ""
 			};
 		for (var id in this.actions_data) {

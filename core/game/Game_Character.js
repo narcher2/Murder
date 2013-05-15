@@ -171,6 +171,15 @@ Class.create("Game_Character", {
 		return this.typeMove[this.typeMove.length-1];
 	},
 	
+	typeExist: function(type) {
+		for (var i=0 ; i < this.typeMove.length ; i++) {
+			if (this.typeMove[i] == type) {
+				return true;
+			}
+		}
+		return false;
+	},
+	
 /**
 @doc game_character/
 @method removeTypeMove By calling `approachPlayer` method and after `randomMethod` method, only the latest movement type is executed. This method remove a type.
@@ -192,6 +201,9 @@ Class.create("Game_Character", {
 	approachPlayer: function() {
 	
 		var self = this;
+		
+		if (this.typeExist("approach")) return;
+		
 		this.typeMove.push("approach");
 		approach();
 		function approach() {
@@ -293,6 +305,11 @@ Class.create("Game_Character", {
 */	
 	moveRandom: function() {
 		var self = this;
+		
+		if (this.typeExist("random")) {
+			return;
+		}
+		
 		this.typeMove.push("random");
 		rand();
 		function rand() {

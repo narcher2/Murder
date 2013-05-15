@@ -56,6 +56,8 @@ THE SOFTWARE.
 
 Class.create("Game_Event", {
 	currentPage: -1,
+	pages: [],
+	auto: null,
 	_initialize: function(map_id, event) {
 		this.map_id = map_id;
 		this.pages = event[1];
@@ -86,18 +88,20 @@ Class.create("Game_Event", {
 			var prop = this.pages[this.currentPage];
 			this.setProperties(prop);
 			this.interpreter.assignCommands(prop.commands);
-			
-			if (this.trigger == "auto_one_time") {
-				this.execTrigger();
-			}
 		
 		}
 		return this.serialize();
 	},
 	
 	update: function() {
-		if ((this.trigger == "auto" || this.trigger == "parallel_process") && !this.interpreter.isRun) {
-			this.execTrigger();
+		if (!this.interpreter.isRun) {
+			if ((this.trigger == "auto" || this.trigger == "parallel_process")) {
+				this.execTrigger();
+			}
+			if (this.trigger == "auto_one_time" && this.auto != this.currentPage) {
+				this.auto = this.currentPage;
+				this.execTrigger();
+			}
 		}
 	},
 	
@@ -164,9 +168,11 @@ Class.create("Game_Event", {
 	},
 	
 	finishCommands: function() {
+		var self = this;
 		global.game_player.freeze = false;
 		this.direction = this.old_direction;
 		global.game_map.callScene("refreshEvent", [this.id, this.serialize()]);
+		
 	},
 	
 /**

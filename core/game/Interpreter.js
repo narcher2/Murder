@@ -310,14 +310,14 @@ THE SOFTWARE.
 		var cmd = this._command(this.getCurrentPos());
 
 		if (cmd) {
-			var params = this[cmd.callback].call(this, cmd.params, cmd.name, cmd.id);
 			this.isRun = true;
+			var params = this[cmd.callback].call(this, cmd.params, cmd.name, cmd.id);
+			
 		}
 		else  {
 			this.setCurrentPos(0);
 			this.isRun = false;
 			this.tmpCommands = [];
-			this.currentEvent = null;
 			if (this.event) {
 				this.event.finishCommands();
 			}
