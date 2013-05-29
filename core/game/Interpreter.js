@@ -82,7 +82,6 @@ THE SOFTWARE.
 			'CHANGE_CLASS': 			'cmdChangeClass',
 			'CHANGE_SKILLS': 			'cmdChangeSkills',
 			'CHANGE_NAME': 				'cmdChangeName',
-			'CHANGE_CLASS': 			'cmdChangeClass',
 			'CHANGE_GRAPHIC': 			'cmdChangeGraphic',
 			'CHANGE_EQUIPMENT': 		'cmdChangeEquipment',
 			'CHANGE_PARAMS': 			'cmdChangeParams',
@@ -264,7 +263,6 @@ THE SOFTWARE.
 					this._conditions[id]["endif"] = i;
 					change = true;
 				}
-				
 				if (name == "CHOICES") {
 					id = CanvasEngine.uniqid();
 					current_choice[indent_choice] = id;
@@ -277,6 +275,7 @@ THE SOFTWARE.
 				else if (/CHOICE_[0-9]+/.test(name)) {
 					match = /CHOICE_([0-9]+)/.exec(name);
 					id = current_choice[indent_choice-1];
+					
 					this._conditions[id]["choice_" + match[1]] = i;
 					change = true;
 				}
@@ -554,7 +553,7 @@ THE SOFTWARE.
 				map_id: pos.id,
 				pos: pos
 			}
-		});
+		}).load();
 		global.game_player.freeze = false;
 
 	},
@@ -793,9 +792,9 @@ THE SOFTWARE.
 	
 	// CHANGE_PARAMS: {'param': 'atk', 'operation': 'increase', 'operand-type': 'constant', 'operand': '1'}
 	cmdChangeParams: function(params) {
-		var operand = this._getValue(params, client);
+		var operand = this._getValue(params);
 		this._execActor(params, function(actor) {
-			actor.setParamLevel(params.param, actor.currentLevel, operand);
+			actor.addCurrentParam(params.param, operand, actor.currentLevel);
 		});
 		this.nextCommand();
 	},
@@ -862,15 +861,15 @@ THE SOFTWARE.
 	
 	// CHANGE_GRAPHIC: {'actor': 'all','graphic': '5'}
 	cmdChangeGraphic: function(params) {
-		global_game_player.graphic = params.graphic;
-		global_game_player.refreshPlayer();
+		global.game_player.graphic = params.graphic;
+		global.game_map.refreshPlayer();
 		this.nextCommand();
 	},
 	
 	// CHANGE_EQUIPMENT: {'type': 'weapons', 'operand': '1'}
 	cmdChangeEquipment: function(params) {
 		var operand = params['operand-type'], type;
-		if (operand == "weapons") {
+		if (operand == "weapon") {
 			type = "weapons";
 		}
 		else {
@@ -1197,11 +1196,11 @@ THE SOFTWARE.
 			actor = global.game_actors.get();
 		}
 		else {
-			actor = [global.game_actors.get(params.actor)];
+			actor = [global.game_actors.getById(params.actor)];
 		}
 		for (var i=0 ; i < actor.length ; i++) {
 			if (callback) {
-				callback.call(this, actor[i]);
+				if (actor[i]) callback.call(this, actor[i]);
 			}
 		}
 		return actor;

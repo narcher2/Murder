@@ -31,8 +31,8 @@ Class.create("Game_Enemy", {
 		enemy.setDefStates(data.states);
 		
 		enemy.pages[0] = {
-			speed: 1,
-			frequence: 0
+			speed: data.speed || 1,
+			frequence: +(data.frequence || "0")
 		};
 		
 		enemy.moveRandom();

@@ -60,7 +60,7 @@ Class.create("Game_Event", {
 	auto: null,
 	_initialize: function(map_id, event) {
 		this.map_id = map_id;
-		this.pages = event[1];
+		this.pages = event[1] || [];
 
 		for (var key in event[0]) {
 			this[key] = event[0][key];
@@ -70,6 +70,17 @@ Class.create("Game_Event", {
 		
 		this.interpreter = Class.New("Interpreter", [this]);
 
+	},
+	
+	addPage: function(obj, commands) {
+		obj.commands = commands;
+		this.pages.push(obj);
+		return this;
+	},
+	
+	display: function() {
+		this.refresh();
+		global.game_map.displayEvent(this.id);
 	},
 
 /**

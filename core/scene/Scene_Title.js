@@ -97,7 +97,7 @@ RPGJS.Scene.New({
 			
 	},
 	new_game: function() {
-		RPGJS_Core.scene.call("Scene_Map");
+		RPGJS_Core.scene.call("Scene_Map").load();
 	},
 	load_game: function() {
 		var scene = RPGJS_Core.scene.call("Scene_Load");

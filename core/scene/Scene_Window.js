@@ -17,8 +17,11 @@ RPGJS.Scene.New({
 	box: function() {
 	
 		var self = this;
+		
+		
 		this.window = RPGJS.Window.new(this, 500, 200, "window");
 		this.window.setBackground("#32343A", 6, .7);
+		
 		this.window.position("bottom");
 		this.window.open(this.stage);
 		
@@ -52,6 +55,7 @@ RPGJS.Scene.New({
 			height = array.length * 35 + 25;
 			
 		var box = RPGJS.Window.new(this, width, height, "window");
+		// var box = RPGJS.Window.new(this, width, height);
 			
 		box.position("top");
 		

@@ -1,8 +1,112 @@
 Class.create("RPGJS", {
+
+	_defaultData: function(data) {
+		data = data || {};
+		var _default = {
+			actors: {},
+			system: {},
+			map_infos: {},
+			tilesets: {},
+			actions: {},
+			autotiles: {},
+			classes: {},
+			items: {},
+			weapons: {},
+			armors: {},
+			variables: {},
+			switches: {},
+			states: {},
+			skills: {},
+			elements: {},
+			dynamic_events: {},
+			common_events: {},
+			animations: {}
+		};
+		
+		for (var key in _default) {
+			if (!data[key]) {
+				data[key] = _default[key];
+			}
+		}
+		return data;
+	},
 	
 	defines: function(params) {
 		this.params = params;
+		this.params.autoload = this.params.autoload == undefined ? true : this.params.autoload;
 		return this;
+	},
+	
+	
+	
+	loadMaterials: function(callback) {
+				
+		CE.getJSON("Data/Materials.json", function($materials) {
+			global.materials = $materials;			
+			if (callback) callback();						
+		});
+		
+	},
+	
+	loadDatabase: function(callback) {
+		var self = this;
+		CE.getJSON("Data/Database.json", function($data) {
+			global.data = self._defaultData($data);
+			if (callback) callback();
+		});
+	},
+	
+/**
+@doc rpgjs/
+@method setData Assigns data to the game
+@param {String} type Default type
+
+Existing type:
+
+- actors
+- system
+- map_infos
+- tilesets
+- actions
+- autotiles
+*/  
+	setData: function(type, id, obj) {
+		if (typeof id != "number") {
+			global.materials[type] = id;
+		}
+		else {
+			if (!global.data[type][id]) global.data[type][id] =  {};
+			global.data[type][id] = obj;
+		}
+	},
+	
+	setMaterials: function(type, id, obj) {
+		if (typeof id != "string") {
+			global.materials[type] = id;
+		}
+	},
+	
+	load: function(callback) {
+		var self = this;
+		
+		global.game_switches = Class.New("Game_Switches");
+		global.game_variables = Class.New("Game_Variables");
+		global.game_selfswitches = Class.New("Game_SelfSwitches");
+		global.game_map = Class.New("Game_Map");
+		global.game_actors = Class.New("Game_Actors");
+		global.game_player = Class.New("Game_Player");
+		
+		this.scene.load(["Scene_Map", "Scene_Window", "Scene_Title", "Scene_Menu", "Scene_Load", "Scene_Gameover", "Scene_Generated"], function() {
+			if (self.params.plugins) {
+				self.Plugin.add(self.params.plugins, function() {
+					RPGJS_Core.Plugin.call("Sprite", "loadBeforeGame");
+					if (callback) callback.call(self);
+				});
+			}
+			else {
+				if (callback) callback.call(self);
+			}
+		}, this.params.scene_path);
 	},
 	
 	ready: function(callback) {
@@ -10,39 +114,28 @@ Class.create("RPGJS", {
 		
 		RPGJS = CE.defines(this.params.canvas).
 			extend([Animation, Input, Spritesheet, Scrolling, Window, Text, Effect]).
-			ready(function(ctx) {
+			ready(function() {
 			
-				global.game_system = Class.New("Game_System");
-				global.game_save = Class.New("Game_Save");
-				
-				CE.getJSON("Data/Database.json", function($data) {
-					CE.getJSON("Data/Materials.json", function($materials) {
-						
-						global.data = $data;
-						global.materials = $materials;
-						
-						global.game_switches = Class.New("Game_Switches");
-						global.game_variables = Class.New("Game_Variables");
-						global.game_selfswitches = Class.New("Game_SelfSwitches");
-						global.game_map = Class.New("Game_Map");
-						global.game_actors = Class.New("Game_Actors");
-						global.game_player = Class.New("Game_Player");
-						
-						self.scene.load(["Scene_Map", "Scene_Window", "Scene_Title", "Scene_Menu", "Scene_Load", "Scene_Gameover", "Scene_Generated"], function() {
-							if (self.params.plugins) {
-								self.Plugin.add(self.params.plugins, function() {
-									RPGJS_Core.Plugin.call("Sprite", "loadBeforeGame");
-									if (callback) callback.call(self, ctx);
-								});
-							}
-							else {
-								if (callback) callback.call(self, ctx);
-							}
-						}, self.params.scene_path);
-						
-					});
-				});
+					global.game_system = Class.New("Game_System");
+					global.game_save = Class.New("Game_Save");
+					
+					if (self.params.autoload) {
+						self.loadMaterials(function() {
+							self.loadDatabase(function() {
+								self.load(callback);
+							});
+						})
+					}
+					else {
+						global.materials = {};
+						global.data = self._defaultData();
+						self.load(callback);
+					
+					}
+	
 			});
+				
+			
 			
 	},
 	
@@ -108,7 +201,12 @@ Class.create("RPGJS", {
 				
 				function finish(type, name) {
 					i++;
-
+					
+					if (!Class.get(type + "_" + name)) {
+						callback();
+						return;
+					}
+					
 					data[type] = Class.New(type + "_" + name);
 					data.name = name;
 					

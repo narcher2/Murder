@@ -179,6 +179,8 @@ Class.create("Sprite_Character", {
 			
 			action = data[id];
 			
+			if (!action.graphic) return;
+			
 			if (!action['graphic-params']) action['graphic-params'] = {};
 			if (!action['graphic-params'].nbSequenceX) action['graphic-params'].nbSequenceX = 4;
 			if (!action['graphic-params'].nbSequenceY) action['graphic-params'].nbSequenceY = 4;

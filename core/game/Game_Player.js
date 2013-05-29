@@ -59,24 +59,27 @@ Class.create("Game_Player", {
 */
 	map_id: 0,
 	
-	_initialize: function() {
-	
-	   var system = global.data.system ? global.data.system : {
-			start: {x: 0, y: 0, id: 1},
-			actor: 1
-	   },
-	   actor = global.data.actors[system.actor];
-
-		this.x = system.start.x;
-		this.y = system.start.y;
-		
-		this.setProperties({
-			graphic: actor.graphic,
-			"graphic-params": actor["graphic-params"]
-		});
-		
-		global.game_actors.add(system.actor, this);
-	
+	init: function(s) { this._initialize(s); },
+	_initialize: function(s) {
+	   global.data.system = global.data.system || s || {};
+	   if (!global.data.system.start) global.data.system.start = {x: 0, y: 0, id: 1};
+	   if (!global.data.system.actor) global.data.system.actor = 1;
+	   
+	   var system = global.data.system;
+	   
+	   var actor = global.data.actors[system.actor];
+	   
+	    if (actor) {
+		   this.x = system.start.x;
+		   this.y = system.start.y;
+			
+			this.setProperties({
+				graphic: actor.graphic,
+				"graphic-params": actor["graphic-params"]
+			});
+			
+			global.game_actors.add(system.actor, this);
+		}
 		this.startTime();
 	},
 	

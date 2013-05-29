@@ -1,0 +1,1 @@
+[{"id":"dynamic_events-2","x":0,"y":0,"name":"EV-dynamic_events-2"},[{"trigger":"action_button","frequence":16,"type":"fixed","speed":4,"switch_1":0,"switch_2":0,"switch_3":0,"commands":["SHOW_TEXT: {'text': 'Hello'}"],"graphic":"5","graphic-params":{"uniqid":1338733662046}}]]

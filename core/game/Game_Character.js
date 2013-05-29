@@ -827,7 +827,8 @@ Example :
 	
 	setMaxParamPoint: function(new_max) {
 		if (!this.paramPoints[type]) {
-			throw "Call the 'initParamPoints' before";
+			console.log("Call the 'initParamPoints' before");
+			return false;
 		}
 		this.paramPoints[type].max = new_max;
 	},
@@ -856,7 +857,8 @@ Example 2
 	changeParamPoints: function(type, nb, operation) {
 		operation = operation || "add";
 		if (!this.paramPoints[type]) {
-			throw "Call the 'initParamPoints' before";
+			console.log("Call the 'initParamPoints' before");
+			return false;
 		}
 		var current = this.paramPoints[type].current,
 			max = this.paramPoints[type].max,
@@ -979,7 +981,7 @@ Example 2
 		index = this.getIndexEquipedById(type, id);
 		if (index !== false) {
 			this.addItem(type, id);
-			delete this.itemEquiped[type][index];
+			this.itemEquiped[type].splice(index, 1);
 		}
 		return true;
 	},
@@ -1072,15 +1074,17 @@ Example 2
 */
 	setClass: function(id) {
 		var data = global.data.classes[id];
-		this.className = data.name;
-		this.classId = id;
 		if (data) {
+			this.className = data.name;
+			this.classId = id;
 			if (data.skills) {
 				this.skillsToLearn(data.skills);
 			}
 			if (data.elements) this.setElements(data._elements);
 			if (data.states) this.setDefStates(data.states);
+			return true;
 		}
+		return false;
 	},
 
 /**
@@ -1335,7 +1339,7 @@ State #3 = 50%
 		this.items[type][id] += nb;
 		
 		var data = global.data.items[id];
-		this._setState(data.states);
+		if (data) this._setState(data.states);
 	},
 	
 /**

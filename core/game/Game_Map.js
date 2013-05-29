@@ -36,9 +36,6 @@ Class.create("Game_Map", {
 	_scene: null,
 	_callback: null,
 	initialize: function() {
-		this.tileset_data = global.data.tilesets;
-		this.actions_data = global.data.actions;
-		this.autotiles_data = global.data.autotiles;
 		this.tick();
 	},
 	
@@ -53,6 +50,11 @@ Class.create("Game_Map", {
 	},
 	
 	load: function(params, callback, scene) {
+	
+		this.tileset_data = global.data.tilesets;
+		this.actions_data = global.data.actions;
+		this.autotiles_data = global.data.autotiles;
+		
 		params = params || {};
 		var self = this, tmp,
 			map_id = params.map_id;
@@ -80,6 +82,9 @@ Class.create("Game_Map", {
 		}
 		
 		this.map = global.data.map_infos[this.map_id];
+		if (!this.map) {
+			this.map = {};
+		}
 		if (callback) {
 			this._callback  = callback;
 		}
@@ -349,7 +354,7 @@ Class.create("Game_Map", {
 @method refreshPlayer Refresh player on the map. Refresh on the scene.
 */
    refreshPlayer: function() {
-	   var data = global_game_player.serialize();
+	   var data = global.game_player.serialize();
 	   this.callScene("refreshEvent", [0, data]);
    },
    
@@ -370,6 +375,9 @@ Class.create("Game_Map", {
 @return {Object}
 */ 
    getPropAutotile: function(id) {
+		if (!this._autotiles) {
+			return true;
+		}
 		var real_id = Math.floor(id / 48);
 		return this._autotiles[real_id];
    },
@@ -381,6 +389,9 @@ Class.create("Game_Map", {
 @return {Object}
 */
    getPropTile: function(id) {
+		if (!this._priorities) {
+			return true;
+		}
 		var real_id = id - this.nb_autotiles_max * 48;
 		return this._priorities[real_id];
    },
@@ -389,7 +400,9 @@ Class.create("Game_Map", {
 		if (!this.map.events) {
 			this.map.events = [];
 		}
-		
+		if (!this.map.dynamic_event) {
+			this.map.dynamic_event = [];
+		}
 		var e, 
 			j=0, 
 			nb_events = this.map.events.length, 
@@ -399,6 +412,14 @@ Class.create("Game_Map", {
 			autotiles = this.autotiles_data[this.map.autotiles_id],
 			events = [],
 			data_events = [];
+			
+		if (!tileset) {
+			tileset = {
+				name: "",
+				propreties: {},
+				graphic: null
+			};
+		}
 			
 		this._tileset_name = tileset.name;
 		this._priorities = tileset.propreties;
@@ -433,6 +454,8 @@ Class.create("Game_Map", {
 			
 		}
 		
+		global.game_player.start();
+		
 		for (var i=0 ; i < nb_events ; i++) {
 			e = this.map.events[i];
 			this.loadEvent(e, call);
@@ -449,7 +472,7 @@ Class.create("Game_Map", {
 			call();
 		}
 		
-		global.game_player.start();
+		
 		RPGJS_Core.Plugin.call("Game", "loadMap", [this]);
 		
    },
@@ -534,6 +557,22 @@ Class.create("Game_Map", {
 			RPGJS_Core.Plugin.call("Game", "addEvent", [self.events[id], self.map_id, data, dynamic, this]);
 			if (callback) callback.call(this, id, self.events[id], data);
 		});
+   },
+   
+   
+   createEvent: function(id, x, y, obj) {
+		obj = obj || {};
+		obj.id = id;
+		obj.x = x;
+		obj.y = y;
+   
+		return this.events[id] = Class.New("Game_Event", [this.map_id, [obj]]);
+		
+   },
+   
+   displayEvent: function(id) {
+		var event = this.getEvent(id);
+		this.callScene("addEvent", [event.serialize()]);
    },
    
 /**

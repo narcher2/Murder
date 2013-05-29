@@ -69,7 +69,7 @@ Class.create("Game_CommonEvents", {
 				commands.commands[i] = commands.commands[i].replace(/&apos;/g, "'");
 			}
 			
-			interpreter = Class.New('Interpreter', [this.event, commands.commands]);
+			interpreter = Class.New('Interpreter', [this.event, CE.clone(commands.commands)]);
 			interpreter.execCommands(finish);
 		}
 	}

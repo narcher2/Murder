@@ -254,10 +254,9 @@ Class.create("Spriteset_Map", {
 					
 				} 	
 
-
 				var map_data = this.data.data.map,
-					autotiles = this.data.autotiles,
-					map_prop = this.data.propreties,
+					autotiles = this.data.autotiles || {},
+					map_prop = this.data.propreties || {},
 					prop;
 					  this.width = map_data.length;
 					  this.height = map_data[0].length;
@@ -272,15 +271,17 @@ Class.create("Spriteset_Map", {
 				
 								var tile = self.scene.createElement();
 								
+								
+								
 								if (self.nb_autotiles_max * 48 <= id) {
 									
 									id -= (self.nb_autotiles_max * 48);
 									var pos_y = parseInt(id / (256 / self.tile_h)) * self.tile_h;
 									var pos_x = (id % (256 / self.tile_w)) * self.tile_w;
-									tile.drawImage("tileset", pos_x, pos_y, self.tile_w, self.tile_h, 0, 0, self.tile_w, self.tile_h);
+									if (self.data.graphics && self.data.graphics.tileset) tile.drawImage("tileset", pos_x, pos_y, self.tile_w, self.tile_h, 0, 0, self.tile_w, self.tile_h);
 									prop = map_prop[id];
 								}
-								else {
+								else if (autotiles_array[id]) {
 									tile.drawImage(autotiles_array[id]);
 									prop = autotiles[Math.floor(id / 48)];
 								}

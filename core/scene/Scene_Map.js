@@ -1,24 +1,27 @@
 RPGJS.Scene.New({
 	name: "Scene_Map",
 	data: {},
-	materials: {
+	/*materials: {
 		images: {
-			"window": "../materials/Graphics/Windowskins/window.png"
+			//"window": "../materials/Graphics/Windowskins/window.png"
 		}
-	},
+	},*/
 	ready: function(stage, el, params) {
+		this.stage = stage;	
+		this.params = params;
+	},
+	load: function(callback) {
 		var self = this;
-		this.stage = stage;
-		global.game_map.load(params, function(data) {
+		global.game_map.load(this.params, function(data) {
 			self.data = data;
-			self.loadMaterials(data);
+			self.loadMaterials(data, callback);
 		}, this);
 	},
 	loadMaterials: function(data, callback) {
 		var images = [], sounds = [], load_i = 0, self = this;
-		images.push({tileset: RPGJS_Core.Path.get("tilesets", data.graphics.tileset)});
-		images.push(RPGJS_Core.Path.get("characters", data.player.graphic, true));
-		//images.push({window: RPGJS_Core.Path.get("windowskins", "window")});
+		if (data.graphics.tileset) images.push({tileset: RPGJS_Core.Path.get("tilesets", data.graphics.tileset)});
+		if ( data.player.graphic) images.push(RPGJS_Core.Path.get("characters", data.player.graphic, true));
+		images.push({window: "../materials/Graphics/Windowskins/window.png"});
 	
 		data.autotiles_img = [];
 		
@@ -62,7 +65,7 @@ RPGJS.Scene.New({
 		
 		function finish() {
 			if (load_i){
-				self.load(data);
+				self.tilesetLoad(data);
 				if (callback) callback();
 			}
 			load_i++;
@@ -125,7 +128,7 @@ RPGJS.Scene.New({
 		
 		
 	},
-	load: function() {
+	tilesetLoad: function() {
 	
 		this.spriteset = Class.New("Spriteset_Map", [this, this.stage, this.data, {
 			autotiles: this.data.autotiles_img,

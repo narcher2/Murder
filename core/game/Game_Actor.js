@@ -44,6 +44,8 @@ Class.create("Game_Actors", {
 	
 		actor.maxLevel = data.level_max;
 		
+		data.params = data.params || {};
+		
 		if (data.params.exp) {
 			actor.makeExpList(data.params.exp);
 		}

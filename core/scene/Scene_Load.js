@@ -193,7 +193,7 @@ RPGJS.Scene.New({
 			params: {
 				map_id: global.game_player.map_id
 			}
-		});
+		}).load();
 	},
 	
 	exit: function() {
