@@ -81,6 +81,10 @@ Class.create("Sprite_Character", {
 			this.entity.el.removeCmd("drawImage");
 		}
 		
+		if (this.opacity != undefined) {
+			this.entity.el.opacity = this.opacity / 255;
+		}
+		
 		this.entity.el.regX = this.regX;
 		this.entity.el.regY = this.regY;
 	},
@@ -116,7 +120,8 @@ Class.create("Sprite_Character", {
 	setAnimation: function() {
 		var seq_x = this.nbSequenceX-1,
 			seq_y = this.nbSequenceY-1;
-		var frequence = Math.abs(-18 + (this.speed * 3));
+		var frequence = Math.abs(-18 + (this.speed * 4));
+		// var frequence = 6;
 		var position = {
 			left: 0 - this.regX,
 			top: -18 - this.regY
@@ -126,7 +131,7 @@ Class.create("Sprite_Character", {
 		   images: "characters_" + this.graphic,
 		   animations: {
 				 bottom: {
-					frames: [0, seq_x],
+					frames: [1, seq_x],
 					 size: {
 						width: this.width,
 						height: this.height
@@ -197,6 +202,7 @@ Class.create("Sprite_Character", {
 			seq_x = action['graphic-params'].nbSequenceX-1;
 			seq_y = action['graphic-params'].nbSequenceY-1;
 			frequence = action.speed;
+			// frequence = 0;
 			position = {
 				left: 0 - action['graphic-params'].regX,
 				top: -18 - action['graphic-params'].regY
@@ -253,6 +259,10 @@ Class.create("Sprite_Character", {
 		}
 	},
 	
+	setParameter: function(name, val) {
+		this[name] = val;
+		this.refresh();
+	},
 	
 	setPosition: function(x, y) {
 		this.entity.position(x, y);
@@ -281,25 +291,40 @@ Class.create("Sprite_Character", {
 	},
 	
 	stop: function() {
+		var self = this;
 		if (!this.animation) return;
 		var id = this.getDisplayDirection() + "_" + this.pattern;
-		this.animation.stop();
-		if (this.spritesheet._set[id]) this.spritesheet.draw(this.entity.el, id);
+		
+		/*setTimeout(function() {
+			self.animation.stop();
+			if (self.spritesheet._set[id]) self.spritesheet.draw(self.entity.el, id);
+		}, 200);*/
+		
+		self.animation.stop();
+			if (self.spritesheet._set[id]) self.spritesheet.draw(self.entity.el, id);
+		
+		//
 	},
 	
 	startMove: function() {
 		if (!this.animation) return;
 		this.animation.play(this.getDisplayDirection(), "loop");
 	},
-	move: function(axis, value, dir) {
+	move: function(axis, pos, dir, nbDir, params) {
 		if (this.jumping) {
 			return;
 		}
-		this.direction = dir;
-		this.changeDirection(dir);
-		this.entity.el[axis] = value;
+		if (!nbDir || nbDir != 2) {
+			this.turn(params.direction || dir);
+		}
+		this.entity.el.x = pos.x;
+		this.entity.el.y = pos.y;
 	},
-	changeDirection: function(anim, dir) {
+	turn: function(dir) {
+		this.direction = dir;
+		this.changeDirection();
+	},
+	changeDirection: function() {
 		var display_direction = this.getDisplayDirection();
 		if (this.spritesheet && this.direction != this.old_direction && this.graphic) {
 			this.spritesheet.draw(this.entity.el, display_direction + "_0");

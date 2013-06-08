@@ -446,15 +446,23 @@ Class.create("Spriteset_Map", {
 		delete this.events[id];
 	},
 	
-	moveEvent: function(id, value, dir) {
+	moveEvent: function(id, value, dir, nbDir, params) {
 		var axis = dir == "left" || dir == "right" ? "x" : "y";
-		this.getEvent(id).move(axis, value[axis], dir);
+		this.getEvent(id).move(axis, value, dir, nbDir, params);
 		this.layer[3].children().sort(function(a, b) {
 			var za = a._z ? a._z : a.y;
 			var zb = b._z ? b._z : b.y;
 			return za - zb;
 		});
 		
+	},
+	
+	setParameterEvent: function(id, name, val) {
+		this.getEvent(id).setParameter(name, val);
+	},
+	
+	turnEvent: function(id, dir) {
+		this.getEvent(id).turn(dir);
 	},
 	
 	stopEvent: function(id) {

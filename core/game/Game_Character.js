@@ -235,31 +235,7 @@ Class.create("Game_Character", {
 	
 	},
 
-/**
-@doc game_character/
-@method moveAwayFromPlayer The event is approaching the player.
-@param {Function} onFinish (optional) Callback when the movement is finished
-*/	
-	moveAwayFromPlayer: function(onFinish) {
-		var dir;
-		var player = global.game_player;
-		if (player) {
-			if (player.y < this.y) {
-				dir = "bottom";
-			}
-			else if (player.y > this.y) {
-				dir = "up";
-			}
-			else if (player.x > this.x) {
-				dir = "left";
-			}
-			else if (player.x < this.x) {
-				dir = "right";
-			}
-			this.moveOneTile(dir, onFinish);
-		}
-		
-	},
+	
 
 /**
 @doc game_character/
@@ -301,7 +277,297 @@ Class.create("Game_Character", {
 	
 /**
 @doc game_character/
+@method turn Changes the direction of the event (without moving) and displayed on the map
+@params {String} dir `left`, `right`, `up`, `bottom`
+*/
+	turn: function(dir) {
+		this.direction = dir;
+		global.game_map.callScene('turnEvent', [this.id, dir]);
+	},
+	
+/**
+@doc game_character/
+@method moveRoute  Assigns a specific motion event
+@params {Array} dir Id path
+
+* left
+* right
+* up
+* bottom
+* lower_left
+* lower_right
+* upper_left
+* upper_right
+* random
+* turn_left
+* turn_right
+* turn_up
+* turn_bottom
+* turn_90d_right
+* turn_90d_left
+* turn_180d
+* turn_90d_right_or_left
+* turn_at_random
+* turn_toward
+* turn_away
+* step_forward
+* step_backward
+* move_toward
+* move_away
+* switch_X_ON
+* switch_X_OFF
+* direction_fix_ON
+* no_animation_ON
+* stop_animation_ON
+* through_ON
+* alwaysOnTop_ON
+* alwaysOnBottom_ON
+* direction_fix_OFF
+* no_animation_OFF
+* stop_animation_OFF
+* through_OFF
+* alwaysOnTop_OFF
+* alwaysOnBottom_OFF
+* frequence_X
+* speed_X
+* wait_X
+* graphic_X
+* opacity_X
+
+Example
+
+	["left", "wait_30", "right"]
+	
+@params {Function} callback (optional) Callback when the road is finished
+@params {Object} params (optional) Additional parameter for the path :
+
+* repeat : Repeats the way when it is finished
+
+@example
+
+	global.game_player.moveRoute(["turn_left", "wait_40", "left", "left", "speed_6", "left", left"]);
+
+
+*/	
+	moveRoute: function(dir, callback, params) {
+		var current_move = -1,
+			self = this;
+		params = params || {};
+		nextRoute();
+		
+		function finishRoute(wait) {
+			if (!wait) wait = 1;
+			setTimeout(nextRoute, 1000 / 60 * wait);
+		}
+		
+		function oppositeDir(dir) {
+			if (dir == "left" || dir == "right") {
+				return dir == "left" ? "right" : "left";
+			}
+			return dir == "up" ? "bottom" : "up";
+		}
+		
+		function nextRoute() {
+			var d, m;
+			current_move++;
+			d = dir[current_move];
+			if (d !== undefined) {
+				if (/speed_[0-9]+/.test(d)) {
+					m = /speed_([0-9]+)/.exec(d);
+					self.speed = m[1];
+					finishRoute();
+					return;
+				}
+				if (/frequence_[0-9]+/.test(d)) {
+					m = /frequence_([0-9]+)/.exec(d);
+					self.setParameter("frequence", m[1]);
+					finishRoute();
+					return;
+				}
+				if (/wait_[0-9]+/.test(d)) {
+					m = /wait_([0-9]+)/.exec(d);
+					finishRoute(m[1]);
+					return;
+				}
+				if (/graphic_[0-9]+/.test(d)) {
+					m = /graphic_([0-9]+)/.exec(d);
+					self.setParameter("graphic", m[1]);
+					finishRoute();
+					return;
+				}
+				if (/opacity_[0-9]+/.test(d)) {
+					m = /opacity_([0-9]+)/.exec(d);
+					self.setParameter("opacity", m[1]);
+					finishRoute();
+					return;
+				}
+				if (/switch_[0-9]+_(ON|OFF)/.test(d)) {
+					m = /switch_([0-9]+)_(ON|OFF)/.exec(d);
+					global.game_switches.set(m[1], m[2] == "ON");
+					finishRoute();
+					return;
+				}
+
+				switch (d) {
+					case 2:
+					case 4:
+					case 6:
+					case 8:
+					case 'up':
+					case 'left':
+					case 'right':
+					case 'bottom':
+					case 'random':
+					case 'lower_left':
+					case 'lower_right':
+					case 'upper_left':
+					case 'upper_right':
+						if (d == "random") {
+							var dir_id = CE.random(0, 4);
+							switch (dir_id) {
+								case 0:
+									d = "left";
+								break;
+								case 1:
+									d = "right";
+								break;
+								case 2:
+									d = "up";
+								break;
+								case 3:
+									d = "bottom";
+								break;
+							}
+						}
+						self.moveOneTile(d, function() {
+							nextRoute();
+						});
+					break;
+					case 'turn_right':
+					case 'turn_left':
+					case 'turn_up':
+					case 'turn_bottom':
+						m = /turn_(.+)/.exec(d);
+						self.turn(m[1]);
+						finishRoute();
+					break;
+					case 'turn_90d_right':
+					case 'turn_90d_left':
+					case 'turn_90d_right_or_left':
+						if (d == "turn_90d_right_or_left") {
+							d = CE.random(1, 2) == 1 ? 'turn_90d_right' : 'turn_90d_left';
+						}
+						var array = ["up", "right", "bottom", "left"]; // order !
+						var pos = CE.inArray(self.direction, array) + (d == "turn_90d_right" ? -1 : 1);
+						if (pos > array.length-1) {
+							pos = 0;
+						}
+						else if (pos < 0) {
+							pos = array.length-1;
+						}
+						self.turn(array[pos]);
+						finishRoute();
+					break;
+					case 'turn_180d':
+						m = oppositeDir(self.direction);
+						self.turn(m);
+						finishRoute();
+					break;
+					case 'turn_at_random':
+						var dir_id = CE.random(0, 4);
+						switch (dir_id) {
+							case 0:
+								d = "left";
+							break;
+							case 1:
+								d = "right";
+							break;
+							case 2:
+								d = "up";
+							break;
+							case 3:
+								d = "bottom";
+							break;
+						}
+						self.turn(d);
+						finishRoute();
+					break;
+					case 'turn_toward':
+					case 'turn_away':
+						m = global.game_player.direction;
+						if (d == "turn_toward") {
+							m = oppositeDir(m);
+						}
+						self.turn(m);
+						finishRoute();
+					break;
+					case 'step_forward':
+					case 'step_backward':
+					case 'move_toward': 
+					case 'move_away': 
+						m = global.game_player.direction;
+						
+						var option = false, op;
+						
+						if (d == "step_forward" || d == "move_toward") {
+							m = oppositeDir(m);
+						}
+						
+						op = oppositeDir(m);
+						
+						if (d != "move_toward" && d != "move_away") {
+							option =  {
+								direction: op
+							};
+						}
+						
+						self.moveOneTile(m, function() {
+							if (option) self.direction = op;
+							nextRoute();
+						}, option);
+					break;
+					case "direction_fix_ON":
+					case "no_animation_ON":
+					case "stop_animation_ON":
+					case "through_ON":
+					case "alwaysOnTop_ON":
+					case "alwaysOnBottom_ON":
+					case "direction_fix_OFF":
+					case "no_animation_OFF":
+					case "stop_animation_OFF":
+					case "through_OFF":
+					case "alwaysOnTop_OFF":
+					case "alwaysOnBottom_OFF":
+						m = /(.+)_(ON|OFF)/.exec(d);
+						self.setParameter(m[1], m[2] == "ON");
+						finishRoute();
+					break;
+
+				}
+			}
+			else {
+				if (params.repeat) {
+					current_move = -1;
+					finishRoute();
+				}
+				else {
+					global.game_map.callScene('stopEvent', [self.id]);
+					if (callback) callback.call(self);
+				}
+			}
+		}
+	},
+	
+	setParameter: function(name, val) {
+		this[name] = val;
+		global.game_map.callScene('setParameterEvent', [this.id, name, val]);
+	},
+	
+/**
+@doc game_character/
 @method moveRandom Random walk in 4 directions
+
+
 */	
 	moveRandom: function() {
 		var self = this;
@@ -341,7 +607,7 @@ Class.create("Game_Character", {
 			if (self.lastTypeMove != "random") {
 				self.moveOneTile(dir, function() {
 					if (self.frequence != 0) {
-						global.game_map._scene.stopEvent(self.id);
+						global.game_map.callScene("stopEvent", [self.id]);
 					}
 					setTimeout(rand, self.frequence * 60);
 				});
@@ -383,7 +649,7 @@ Class.create("Game_Character", {
 @param {String} dir Direction : up, bottom, left or right
 @param {Function} callback (optional) Function called at the end of the movement
 */
-	moveOneTile: function(dir, callback) {
+	moveOneTile: function(dir, callback, params) {
 		var distance = global.game_map.tile_w / this.speed,
 			i = 0, self = this, current_freq = this.frequence;
 		var interval = setInterval(function loop() {
@@ -391,7 +657,7 @@ Class.create("Game_Character", {
 			if (!global.game_map.getEvent(self.id)) {
 				return;
 			}
-			self.moveDir(dir);
+			self.moveDir(dir, false, false, params);
 			i++;	
 			if (i >= distance) {
 				clearInterval(interval);
@@ -420,8 +686,8 @@ Class.create("Game_Character", {
 	
 @return {Object}
 */
-	moveDir: function(dir, isPassable) {
-		
+	moveDir: function(dir, isPassable, nbDir, params) {
+		params = params || {};
 		var passable;
 		
 		if (this.id == 0 && this.freeze) {
@@ -432,23 +698,27 @@ Class.create("Game_Character", {
 			x = 0,
 			y = 0,
 			pos;
-		this.direction = dir;
-		
-		switch (dir) {
-			case "left":
-				x = -speed;
-			break;
-			case "right":
-				x = +speed;
-			break;
-			case "up":
-				y = -speed;
-			break;
-			case "bottom":
-				y = +speed;
-			break;
+			
+		if (!params.direction) {
+			this.direction = dir;
 		}
 		
+		if (dir == "lower_left" || dir == "upper_left" || dir == "left") {
+			x = -speed;
+		}
+		if (dir == "lower_right" || dir == "upper_right" || dir == "right") {
+			x = +speed;
+		}
+		if (dir == "upper_left" || dir == "upper_right" || dir == "up") {
+			y = -speed;
+		}
+		if (dir == "lower_right" || dir == "lower_left" || dir == "bottom") {
+			y = +speed;
+		}
+		if (/^lower/.test(dir) || /^upper/.test(dir)) {
+			nbDir = 2;
+			dir = /.+_(.+)/.exec(dir)[1];
+		}
 		var game_map = global.game_map.passable(this, this.x, this.y, x + this.x, y + this.y, dir);
 		
 		if (game_map.passable || this.alwaysOnTop) {
@@ -460,7 +730,7 @@ Class.create("Game_Character", {
 		
 		pos = this.position(game_map.x, game_map.y);
 		
-		global.game_map.callScene("moveEvent", [this.id, pos, dir]);
+		global.game_map.callScene("moveEvent", [this.id, pos, dir, nbDir, params]);
 		
 		if (isPassable) {
 			return {

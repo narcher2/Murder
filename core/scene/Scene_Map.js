@@ -21,7 +21,7 @@ RPGJS.Scene.New({
 		var images = [], sounds = [], load_i = 0, self = this;
 		if (data.graphics.tileset) images.push({tileset: RPGJS_Core.Path.get("tilesets", data.graphics.tileset)});
 		if ( data.player.graphic) images.push(RPGJS_Core.Path.get("characters", data.player.graphic, true));
-		images.push({window: "../materials/Graphics/Windowskins/window.png"});
+		//images.push({window: "../materials/Graphics/Windowskins/window.png"});
 	
 		data.autotiles_img = [];
 		
@@ -81,6 +81,7 @@ RPGJS.Scene.New({
 		
 		
 	},
+	nbKeyPress: 0,
 	keysAssign: function() {
 		var self = this;
 		RPGJS.Input.reset();
@@ -88,9 +89,11 @@ RPGJS.Scene.New({
 		CanvasEngine.each(["Up", "Right", "Left", "Bottom"], function(i, val) {
 
 			RPGJS.Input.press(Input[val], function() {
+				self.nbKeyPress++;
 				self.spriteset.player.startMove();
 			});
-			RPGJS.Input.keyUp(Input[val], function() {
+			RPGJS.Input.keyUp(Input[val], function() {	
+				self.nbKeyPress--;
 				if (!RPGJS.Input.isPressed([Input.Up, Input.Right, Input.Left, Input.Bottom])) {
 					self.spriteset.player.stop();
 				}
@@ -144,7 +147,7 @@ RPGJS.Scene.New({
 		
 		this.keysAssign();
 		
-		if (typeof(Gamepad) !== 'undefined') {
+		if (this.data.system.gamepad != "_no" && typeof(Gamepad) !== 'undefined') {
 			this.gamepad = RPGJS.Input.Gamepad.init();
 			this.gamepad.addListener("faceButton0", Input.A);
 			this.gamepad.addListener("faceButton1", Input.Esc);
@@ -179,7 +182,12 @@ RPGJS.Scene.New({
 		for (var key in input) {
 			if (RPGJS.Input.isPressed(input[key][0])) {
 				press++;
-				if (press == 1) global.game_player.moveDir(key);
+				if (this.data.system.diagonal == 1) {
+					 global.game_player.moveDir(key, false, this.nbKeyPress);
+				}
+				else if (press == 1) {
+					global.game_player.moveDir(key, false);
+				}
 			}
 		}
 		
@@ -189,7 +197,7 @@ RPGJS.Scene.New({
 		RPGJS_Core.Plugin.call("Sprite", "sceneMapRender", [this]);
 		
 		stage.refresh();
-		if (typeof(Gamepad) !== 'undefined') this.gamepad.update();
+		if (this.data.system.gamepad != "_no" && typeof(Gamepad) !== 'undefined') this.gamepad.update();
 
 	},
 	
@@ -225,10 +233,24 @@ RPGJS.Scene.New({
 		}
 	},
 	
-	moveEvent: function(id, value, dir) {
+	moveEvent: function(id, value, dir, nbDir, params) {
 		var spriteset = this.getSpriteset();
 		if (spriteset) {
-			spriteset.moveEvent(id, value, dir);
+			spriteset.moveEvent(id, value, dir, nbDir, params);
+		}
+	},
+	
+	setParameterEvent: function(id, name, val) {
+		var spriteset = this.getSpriteset();
+		if (spriteset) {
+			spriteset.setParameterEvent(id, name, val);
+		}
+	},
+	
+	turnEvent: function(id, dir) {
+		var spriteset = this.getSpriteset();
+		if (spriteset) {
+			spriteset.turnEvent(id, dir);
 		}
 	},
 	

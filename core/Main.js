@@ -112,7 +112,7 @@ Existing type:
 	ready: function(callback) {
 		var self = this;
 		
-		RPGJS = CE.defines(this.params.canvas).
+		RPGJS = CE.defines(this.params.canvas, this.params).
 			extend([Animation, Input, Spritesheet, Scrolling, Window, Text, Effect]).
 			ready(function() {
 			
@@ -337,6 +337,9 @@ Existing type:
 			var obj= {}, global_type = this.isSound(type) ? "sounds" : "images";
 			var path = this.get(type, id);
 			obj[type + "_" + id] = path;
+			if (RPGJS.Materials.sounds[type + "_" + id]) {
+				if (callback) callback();
+			}
 			RPGJS.Materials.load(global_type, obj, callback);
 		},
 		

@@ -449,6 +449,7 @@ Class.create("Game_Map", {
 				autotiles: self._autotiles,
 				player: global.game_player.serialize(),
 				events: events,
+				system: global.data.system,
 				actions: self.actionSerialize()
 			});
 			

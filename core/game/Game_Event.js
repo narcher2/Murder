@@ -171,17 +171,21 @@ Class.create("Game_Event", {
 	execCommands: function() {
 		global.game_player.freeze = true;
 		
-		this.old_direction = this.direction;
-		this.direction = this.directionRelativeToPlayer();
-		
+		var cmd = this.interpreter.getCurrentCommand();
+		if (CE.inArray(cmd.name, ["MOVE_ROUTE"]) == -1) {
+			this.old_direction = this.direction;
+			this.direction = this.directionRelativeToPlayer();
+		}
+			
 		global.game_map.callScene("refreshEvent", [this.id, this.serialize()]);
 		this.interpreter.execCommands();
+		
 	},
 	
 	finishCommands: function() {
 		var self = this;
 		global.game_player.freeze = false;
-		this.direction = this.old_direction;
+		if (this.old_direction) this.direction = this.old_direction;
 		global.game_map.callScene("refreshEvent", [this.id, this.serialize()]);
 		
 	},

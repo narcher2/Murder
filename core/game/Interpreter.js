@@ -485,40 +485,18 @@ THE SOFTWARE.
 	
 	// MOVE_ROUTE: {'target': 'this','move': ['left','left']}
 	cmdMoveRoute: function(dir) {
-		var current_move = -1,
-			self = this,
-			event = this._target(dir.target);
-		nextRoute();
-		function nextRoute() {
-			current_move++;
-			if (dir.move[current_move] !== undefined) {
-				switch (dir.move[current_move]) {
-					case 2:
-					case 4:
-					case 6:
-					case 8:
-					case 'up':
-					case 'left':
-					case 'right':
-					case 'bottom':
-						event.moveOneTile(dir.move[current_move], function() {
-							nextRoute();
-						});
-					break;
-					case 'step_backward':
-						event.moveAwayFromPlayer(function() {
-							nextRoute();
-						});
-					break;
-				}
-			}
-			else {
-				global.game_map.callScene('stopEvent', [event.id]);
-				self.nextCommand();
-			}
-		}
+		var self = this,
+			event = this._target(dir.target),
+			options = dir.options || [];
+			
+
+		event.moveRoute(dir.move, function() {
+			
+		}, {
+			repeat: CE.inArray('repeat', options) != -1
+		});
 		
-		
+		self.nextCommand();
 	},
 	
 	// SHOW_ANIMATION: {'name': 1, 'target': 1}
