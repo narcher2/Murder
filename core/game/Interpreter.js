@@ -488,7 +488,6 @@ THE SOFTWARE.
 		var self = this,
 			event = this._target(dir.target),
 			options = dir.options || [];
-			
 
 		event.moveRoute(dir.move, function() {
 			
@@ -505,27 +504,13 @@ THE SOFTWARE.
 		global.game_map.callScene("animation", [event.id, params.name]);
 		this.nextCommand();
 	},
+	
+	
 
 	// TRANSFER_PLAYER: {'position-type': 'constant', 'appointement': {'x':1,'y': 1, 'id':2}}
 	cmdTransferPlayer: function(map) {
-		var pos = {
-			x: map.x,
-			y: map.y,
-			id: map.name
-		};
-		if (map['position-type'] == "constant") {
-			pos = {
-				x: map.appointement.x,
-				y: map.appointement.y,
-				id: map.appointement.id
-			};
-		}
-		else if (map['position-type'] == "variables") {
-			pos.id = map.appointement.id;
-		}
-		if (map['position-type']) {
-			map.name = pos.id;
-		}
+		var pos = this._getPos(map);
+		if (map.direction && map.direction != "0") global.game_player.direction = map.direction;
 		RPGJS_Core.scene.call("Scene_Map", {
 			params: {
 				map_id: pos.id,
@@ -639,8 +624,10 @@ THE SOFTWARE.
 
 	// SET_EVENT_LOCATION: {'event': 'this','direction': '0','position-type': 'constant','appointement': {'id':'3','x':20,'y':14,'w':1,'h':1}}"]
 	cmdSetEventLocation: function(param) {
-		var target = this._target.call(param.event);
-		var x, y;
+		var target = this._target(param.event);
+		var x, y, p = {
+			refresh: true
+		};
 		if (param['position-type'] == "constant" && param.appointement) {
 			x = param.appointement.x;
 			y = param.appointement.y;
@@ -653,11 +640,12 @@ THE SOFTWARE.
 			var other_event = this._target(param.other_event);
 			x = other_event.x;
 			y = other_event.y;
-			other_event.moveto(target.x, target.y);
+			p.tileToPixel = false;
+			other_event.moveto(target.x, target.y, p);
 		}
 		if (param.direction) target.direction = param.direction;
-		target.moveto(x, y);
-		global.game_map.refreshEvents();
+		target.moveto(x, y, p);
+		//global.game_map.refreshEvents();
 		this.nextCommand();
 	},
 	
@@ -929,11 +917,18 @@ THE SOFTWARE.
 		});
 	},
 	
-	// ADD_DYNAMIC_EVENT: {'name': '2', 'x': 1, 'y': 1}
+	// ADD_DYNAMIC_EVENT: {'name': '2','position-type': 'constant', appointement: {'x': 1, 'y': 1}}
 	cmdAddDynamicEvent: function(params) {
-		global.game_map.addDynamicEvent(params.name, {
-			x: params.x,
-			y: params.y
+		var self = this;
+		var pos = this._getPos(params);
+		global.game_map.addDynamicEvent("EV-dynamic_events-" + params.name, {
+			x: pos.x,
+			y: pos.y
+		}, function(id, event) {
+			self.nextCommand();
+		}, {
+			add: true,
+			direction: params.direction != "0" ? params.direction : false
 		});
 	},
 	
@@ -1195,6 +1190,27 @@ THE SOFTWARE.
 			operand = params.constant || params.operand;
 		}
 		return operand * (params.operation == "decrease" ? -1 : 1);
+	},
+	
+	_getPos: function(map) {
+		var pos = {
+			x: map.x,
+			y: map.y,
+			id: map.name
+		};
+		if (map['position-type'] == "constant") {
+			pos = {
+				x: map.appointement.x,
+				y: map.appointement.y,
+				id: map.appointement.id
+			};
+		}
+		else if (map['position-type'] == "variables") {
+			pos.id = global.game_variables.get(pos.id);
+			pos.x = global.game_variables.get(pos.x);
+			pos.y = global.game_variables.get(pos.y);
+		}
+		return pos;
 	},
 	
 	

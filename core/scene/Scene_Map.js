@@ -9,6 +9,7 @@ RPGJS.Scene.New({
 	ready: function(stage, el, params) {
 		this.stage = stage;	
 		this.params = params;
+		RPGJS_Core.Plugin._refreshScene();
 	},
 	load: function(callback) {
 		var self = this;
@@ -21,7 +22,7 @@ RPGJS.Scene.New({
 		var images = [], sounds = [], load_i = 0, self = this;
 		if (data.graphics.tileset) images.push({tileset: RPGJS_Core.Path.get("tilesets", data.graphics.tileset)});
 		if ( data.player.graphic) images.push(RPGJS_Core.Path.get("characters", data.player.graphic, true));
-		//images.push({window: "../materials/Graphics/Windowskins/window.png"});
+		images.push({window: "../materials/Graphics/Windowskins/window.png"});
 	
 		data.autotiles_img = [];
 		
@@ -89,6 +90,7 @@ RPGJS.Scene.New({
 		CanvasEngine.each(["Up", "Right", "Left", "Bottom"], function(i, val) {
 
 			RPGJS.Input.press(Input[val], function() {
+				if (global.game_player.freeze) return;
 				self.nbKeyPress++;
 				self.spriteset.player.startMove();
 			});

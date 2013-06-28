@@ -77,6 +77,8 @@ Class.create("Game_System", {
 	},
 
 	_playAudio: function(id, type) {
+		if (this._current[type] == id) return;
+		if (this._current[type]) this._stopAudio(this._current[type], type);
 		this._current[type] = id;
 		RPGJS_Core.Path.loadMaterial(type + "s", id, function() {
 			RPGJS.Sound.get(type + "s_" + id).play();

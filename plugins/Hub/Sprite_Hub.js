@@ -14,6 +14,7 @@ Class.create("Sprite_Hub", {
 	},
 
 	drawMapEnd: function(spriteset_map) {
+		
 		var stage = this.scene.getStage(),
 			scene = this.scene,
 			self = this,

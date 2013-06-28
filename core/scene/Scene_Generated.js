@@ -54,6 +54,12 @@ var Menu_Generated = {
 		
 		for (var id in this.elements) {
 			el = this.elements[id];
+			if (!el) {
+				el = {};
+			}
+			if (!el.graphism) el.graphism = {};
+			if (!el.element) el.element = {};
+			if (!el.trigger) el.trigger = {};
 			div = this.createElement();
 			div.width = this.getCss("width", el.graphism);
 			div.height = this.getCss("height", el.graphism);

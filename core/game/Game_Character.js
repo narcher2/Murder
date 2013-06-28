@@ -314,8 +314,8 @@ Class.create("Game_Character", {
 * step_backward
 * move_toward
 * move_away
-* switch_X_ON
-* switch_X_OFF
+* switch_ON_X
+* switch_OFF_X
 * direction_fix_ON
 * no_animation_ON
 * stop_animation_ON
@@ -367,6 +367,7 @@ Example
 			return dir == "up" ? "bottom" : "up";
 		}
 		
+
 		function nextRoute() {
 			var d, m;
 			current_move++;
@@ -401,9 +402,9 @@ Example
 					finishRoute();
 					return;
 				}
-				if (/switch_[0-9]+_(ON|OFF)/.test(d)) {
-					m = /switch_([0-9]+)_(ON|OFF)/.exec(d);
-					global.game_switches.set(m[1], m[2] == "ON");
+				if (/switch_(ON|OFF)_[0-9]+/.test(d)) {
+					m = /switch_(ON|OFF)_([0-9]+)/.exec(d);
+					global.game_switches.set(m[2], m[1] == "ON");
 					finishRoute();
 					return;
 				}
@@ -579,6 +580,7 @@ Example
 		this.typeMove.push("random");
 		rand();
 		function rand() {
+			var timer;
 			if (self.removeTypeMove["random"]) {
 				self.removeTypeMove["random"]= false;
 				return;
@@ -609,14 +611,14 @@ Example
 					if (self.frequence != 0) {
 						global.game_map.callScene("stopEvent", [self.id]);
 					}
-					setTimeout(rand, self.frequence * 60);
+					timer = setTimeout(rand, self.frequence * 60);
 				});
 			}
 			else {
-				setTimeout(rand, self.frequence * 60);
+				timer = setTimeout(rand, self.frequence * 60);
 			}
 			
-			
+			global.game_map._tick["random"] = timer;
 		}
 	},
 	
@@ -654,9 +656,10 @@ Example
 			i = 0, self = this, current_freq = this.frequence;
 		var interval = setInterval(function loop() {
 		
-			if (!global.game_map.getEvent(self.id)) {
+			if (self.id != 0 && !global.game_map.getEvent(self.id)) {
 				return;
 			}
+			
 			self.moveDir(dir, false, false, params);
 			i++;	
 			if (i >= distance) {
@@ -689,16 +692,11 @@ Example
 	moveDir: function(dir, isPassable, nbDir, params) {
 		params = params || {};
 		var passable;
-		
-		if (this.id == 0 && this.freeze) {
-			return {x: this.x, y: this.y};
-		}
-	
 		var speed = this.speed,
 			x = 0,
 			y = 0,
 			pos;
-			
+				
 		if (!params.direction) {
 			this.direction = dir;
 		}

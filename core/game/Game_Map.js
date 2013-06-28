@@ -35,6 +35,7 @@ Class.create("Game_Map", {
 	tile_h: 32,
 	_scene: null,
 	_callback: null,
+	_tick: {},
 	initialize: function() {
 		this.tick();
 	},
@@ -319,7 +320,7 @@ Class.create("Game_Map", {
 		var e;
 		for (var id in this.events) {
 			e = this.events[id];
-			if (e._hit && e.trigger == "action_button") {
+			if (e && e._hit && e.trigger == "action_button") {
 				RPGJS_Core.Plugin.call("Game", "execEvent", [e, this]);
 				e.execTrigger();
 			}
@@ -597,6 +598,7 @@ Class.create("Game_Map", {
 		var self = this;
 		params = params || {};
 		this.loadEvent(name, true, function(id, event, data) {
+			if (params.direction) event.direction = params.direction;
 			event.moveto(pos.x, pos.y, params);
 			if (params.add) self.callScene("addEvent", [event.serialize()]);
 			if (callback) callback.call(this, id, event, data);
@@ -654,10 +656,16 @@ Class.create("Game_Map", {
 	
 	tick: function() {
 		var self = this;
-		var interval = setInterval(function() {
+		setInterval(function() {
 			 RPGJS_Core.Plugin.call("Game", "tick", [self]);
 		}, 1000 / 60);
-	}
+	},
+	
+	clear: function() {
+		for (var t in this._tick) {
+			clearTimeout(this._tick[t]);
+		}
+	},
 
 }).attr_accessor([
 	"tileset_name",

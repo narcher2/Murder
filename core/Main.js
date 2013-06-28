@@ -186,6 +186,12 @@ Existing type:
 	Plugin: {
 	
 		list: [],
+		
+		_refreshScene: function() {
+			for (var i=0 ; i < this.list.length ; i++) {
+				this.list[i].Sprite.scene = RPGJS.Scene.get("Scene_Map");
+			}
+		},
 	
 		add: function(plugins, onFinish) {
 			var name, data, self = this, j=0;
