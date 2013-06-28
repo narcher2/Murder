@@ -22,7 +22,7 @@ RPGJS.Scene.New({
 		var images = [], sounds = [], load_i = 0, self = this;
 		if (data.graphics.tileset) images.push({tileset: RPGJS_Core.Path.get("tilesets", data.graphics.tileset)});
 		if ( data.player.graphic) images.push(RPGJS_Core.Path.get("characters", data.player.graphic, true));
-		images.push({window: "../materials/Graphics/Windowskins/window.png"});
+		//images.push({window: "../materials/Graphics/Windowskins/window.png"});
 	
 		data.autotiles_img = [];
 		
