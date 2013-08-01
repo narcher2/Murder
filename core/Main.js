@@ -31,6 +31,10 @@ Class.create("RPGJS", {
 		return data;
 	},
 	
+	maps: {},
+	events: {},
+	dyn_event: {},
+	
 	defines: function(params) {
 		this.params = params;
 		this.params.autoload = this.params.autoload == undefined ? true : this.params.autoload;
@@ -84,6 +88,32 @@ Existing type:
 		if (typeof id != "string") {
 			global.materials[type] = id;
 		}
+	},
+	
+	setMap: function(id, obj) {
+		this.maps[id] = obj;
+	},
+	
+	setEvent: function(map_id, event_id, obj) {
+		if (!this.events[map_id]) {
+			this.events[map_id] = {};
+		}
+		this.events[map_id][event_id] = obj;
+	},
+	
+	setDynamicEvent: function(name, obj) {
+		this.dyn_event[name] = obj;
+	},
+	
+	getDynamicEvent: function(name) {
+		return this.dyn_event[name];
+	},
+	
+	getGlobalEvent: function(map_id, event_id) {
+		if (!this.events[map_id]) {
+			return false;
+		}
+		return this.events[map_id][event_id];
 	},
 	
 	load: function(callback) {
@@ -315,10 +345,16 @@ Existing type:
 			var obj = {}, path;
 
 			if (!global.materials[type]) {
+				if (RPGJS_Core.params.ignoreLoadError) {
+					return false;
+				}
 				throw "[Path.get] " + type + " doesn't exist";
 			}
 			
 			if (!global.materials[type][file_id]) {
+				if (RPGJS_Core.params.ignoreLoadError) {
+					return false;
+				}
 				throw "[Path.get]" + type + " - " + file_id + " doesn't exist";
 			}
 			

@@ -19,7 +19,7 @@ RPGJS.Scene.New({
 		var self = this;
 		
 		
-		this.window = RPGJS.Window.new(this, 500, 200, "window");
+		this.window = RPGJS.Window.New(this, 500, 200, "window");
 		this.window.setBackground("#32343A", 6, .7);
 		
 		this.window.position("bottom");
@@ -54,7 +54,8 @@ RPGJS.Scene.New({
 		var width = determineSizeBox() + 50,
 			height = array.length * 35 + 25;
 			
-		var box = RPGJS.Window.new(this, width, height, "window");
+		var box = RPGJS.Window.New(this, width, height, "window");
+		box.setBackground("#32343A", 6, .7);
 		// var box = RPGJS.Window.new(this, width, height);
 			
 		box.position("top");
@@ -94,10 +95,10 @@ RPGJS.Scene.New({
 	text: function(_text) {
 		var content = this.window.getContent();
 		content.empty();
-		var text = RPGJS.Text.new(this, _text);
+		var text = RPGJS.Text.New(this, _text);
 			text.style({
 				size: "18px",
-				lineWidth: 300,
+				lineWidth: 400,
 				color: "white"
 			}).draw(content, 20, 20, {
 				line: {

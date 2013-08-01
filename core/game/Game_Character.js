@@ -22,6 +22,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+if (typeof exports != "undefined") {
+	var CE = require("canvasengine").listen(),
+		Class = CE.Class;
+	// TMP
+	var RPGJS_Core = { 
+		Plugin: {
+			call: function() {}
+		}
+	};
+}
+
 /**
 @doc game_character
 @class Game_Character Properties and methods for game characters: event, player or other. This class inherits to EntityModel from CanvasEngine API
@@ -47,7 +58,8 @@ Class.create("Game_Character", {
 	paramPoints: {},
 	typeMove: [],
 	removeMove: {},
-	timeMove: {},
+	_timeMove: "",
+	_tick: {},
 	initialize: function() {
 		
 		this.id = 0;
@@ -171,14 +183,14 @@ Class.create("Game_Character", {
 		return this.typeMove[this.typeMove.length-1];
 	},
 	
-	typeExist: function(type) {
+	/*typeExist: function(type) {
 		for (var i=0 ; i < this.typeMove.length ; i++) {
 			if (this.typeMove[i] == type) {
 				return true;
 			}
 		}
 		return false;
-	},
+	},*/
 	
 /**
 @doc game_character/
@@ -192,6 +204,17 @@ Class.create("Game_Character", {
 				delete this.typeMove[i];
 			}
 		}
+		var last =  this.lastTypeMove();
+		if (last) {
+			switch (last) {
+				case "random":
+					this.moveRandom();
+				break;
+				case "approach":
+					this.approachPlayer();
+				break;
+			}
+		}
 	},
 	
 /**
@@ -202,9 +225,12 @@ Class.create("Game_Character", {
 	
 		var self = this;
 		
-		if (this.typeExist("approach")) return;
+		// if (this.typeExist("approach")) return;
 		
-		this.typeMove.push("approach");
+		
+		// this.typeMove.push("approach");
+
+		
 		approach();
 		function approach() {
 		
@@ -212,6 +238,7 @@ Class.create("Game_Character", {
 				self.removeTypeMove["approach"] = false;
 				return;
 			}
+			
 			if (!global.game_map.getEvent(self.id)) {
 				return;
 			}
@@ -219,17 +246,17 @@ Class.create("Game_Character", {
 		
 			var dir = self.directionRelativeToPlayer();
 			if (dir) {
-				if (self.lastTypeMove != "approach") {
+				// if (self.lastTypeMove() != "approach") {
 					self.moveOneTile(dir, function() {
 						if (self.frequence != 0) {
-							global.game_map._scene.stopEvent(self.id);
+							global.game_map.callScene("stopEvent", [self.id]);
 						}
-						setTimeout(approach, self.frequence * 60);
+						self._tick = setTimeout(approach, self.frequence * 60);
 					});
-				}
-				else {
-					setTimeout(approach, self.frequence * 60);
-				}
+				// }
+				// else {
+					// setTimeout(approach, self.frequence * 60);
+				// }
 			}
 		}
 	
@@ -372,6 +399,7 @@ Example
 			var d, m;
 			current_move++;
 			d = dir[current_move];
+
 			if (d !== undefined) {
 				if (/speed_[0-9]+/.test(d)) {
 					m = /speed_([0-9]+)/.exec(d);
@@ -552,6 +580,7 @@ Example
 					finishRoute();
 				}
 				else {
+					
 					global.game_map.callScene('stopEvent', [self.id]);
 					if (callback) callback.call(self);
 				}
@@ -573,11 +602,13 @@ Example
 	moveRandom: function() {
 		var self = this;
 		
-		if (this.typeExist("random")) {
-			return;
-		}
+		// if (this.typeExist("random")) {
+			// return;
+		// }
 		
-		this.typeMove.push("random");
+		if (this._tick) clearTimeout(this._tick);
+
+		// this.typeMove.push("random");
 		rand();
 		function rand() {
 			var timer;
@@ -605,20 +636,23 @@ Example
 					dir = "bottom";
 				break;
 			}
-
-			if (self.lastTypeMove != "random") {
-				self.moveOneTile(dir, function() {
+			
+			// if (self.lastTypeMove != "random") {
+				
+				self.moveOneTile(dir, function(kill) {
+					if (kill) {
+						return;
+					}
 					if (self.frequence != 0) {
 						global.game_map.callScene("stopEvent", [self.id]);
 					}
-					timer = setTimeout(rand, self.frequence * 60);
+					self._tick = setTimeout(rand, self.frequence * 60);
 				});
-			}
-			else {
-				timer = setTimeout(rand, self.frequence * 60);
-			}
+			// }
+			// else {
+				// timer = setTimeout(rand, self.frequence * 60);
+			// }
 			
-			global.game_map._tick["random"] = timer;
 		}
 	},
 	
@@ -654,20 +688,39 @@ Example
 	moveOneTile: function(dir, callback, params) {
 		var distance = global.game_map.tile_w / this.speed,
 			i = 0, self = this, current_freq = this.frequence;
-		var interval = setInterval(function loop() {
+			
+		function finish(kill) {
+			clearInterval(self._timeMove);
+			self._timeMove = null;
+			
+		}
+		
+		if (this._timeMove) {
+			 finish();
+		}
+		
+		this.callbackMove = callback;
+		
+		this._timeMove = setInterval(function loop() {
 		
 			if (self.id != 0 && !global.game_map.getEvent(self.id)) {
 				return;
 			}
-			
 			self.moveDir(dir, false, false, params);
-			i++;	
+			i++;		
+			
 			if (i >= distance) {
-				clearInterval(interval);
-				if (callback) callback.call(this);
+				finish();
+				if (self.callbackMove) self.callbackMove.call(self);
+				
 			}
 		}, 1000 / 60);
 		
+	},
+	
+	killIntervalMove: function() {
+		clearInterval(this._timeMove);
+		clearTimeout(this._tick);
 	},
 	
 /**
@@ -690,6 +743,8 @@ Example
 @return {Object}
 */
 	moveDir: function(dir, isPassable, nbDir, params) {
+	
+
 		params = params || {};
 		var passable;
 		var speed = this.speed,
@@ -726,7 +781,8 @@ Example
 			passable = false;
 		}
 		
-		pos = this.position(game_map.x, game_map.y);
+		pos = this.position(game_map.x, game_map.y, true);
+		
 		
 		global.game_map.callScene("moveEvent", [this.id, pos, dir, nbDir, params]);
 		
@@ -813,7 +869,7 @@ Example
 @return {Object}
 */	
 	serialize: function() {
-		var data = ["id", "x", "y", "nbSequenceX", "nbSequenceY", "speedAnimation", "graphic_pattern", "graphic", "graphic_params", "direction", "direction_fix", "no_animation", "stop_animation", "frequence", "speed", "regX", "regY", "alwaysOnBottom", "alwaysOnTop", "exist"];
+		var data = ["id", "x", "y", "nbSequenceX", "nbSequenceY", "speedAnimation", "graphic_pattern", "graphic", "graphic_params", "direction", "direction_fix", "no_animation", "stop_animation", "frequence", "speed", "regX", "regY", "alwaysOnBottom", "alwaysOnTop", "exist", "is_start"];
 		var obj = {};
 		for (var i=0; i < data.length ; i++) {
 			obj[data[i]] = this[data[i]];

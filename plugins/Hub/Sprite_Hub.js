@@ -99,6 +99,7 @@ Class.create("Sprite_Hub", {
 	},
 	
 	_changeHp: function(new_hp, max_hp) {
+		if (!this.text) return;
 		this.text.refresh(new_hp);
 		this.hp = new_hp;
 		this.max_hp = max_hp;

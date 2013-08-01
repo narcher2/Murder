@@ -12,7 +12,6 @@ Class.create("Sprite_Character", {
 		
 		this.entity = Class.New("Entity", [scene.getStage(), {}, false]);
 		this.entity.setModel(model);
-		
 		this.refresh(data);
 		this.setPosition(this.x, this.y);
 		layer.append(this.entity.el);
@@ -27,18 +26,23 @@ Class.create("Sprite_Character", {
 		
 		var self = this;
 		if (data) {
+		
 			for (var key in data) {
 				this[key] = data[key];
 			}
 			
 			this.graphic_params = this.graphic_params || {};
-		
+
 			for (var key in this.graphic_params) {
 				this[key] = this.graphic_params[key] != "" ? this.graphic_params[key] : this[key];
 			}
+			
+			if (!this.is_start) {
+				this.direction = data.direction;
+			}
+				
 		}
-	
-		
+
 		if (this.regY) this.regY = +this.regY;
 		if (this.regX) this.regX = +this.regX;
 		if (!this.pattern) this.pattern = 0;
@@ -95,7 +99,7 @@ Class.create("Sprite_Character", {
 	
 	setSpritesheet: function() {
 		var array = [], val;
-		for (var i=0 ; i < 4 ; i++) {
+		for (var i=0 ; i < this.nbSequenceY ; i++) {
 			for (var j=0 ; j < this.nbSequenceX ; j++) {
 				val = "";
 				switch (i) {
@@ -108,6 +112,7 @@ Class.create("Sprite_Character", {
 				array.push(val); 
 			}
 		}
+		
 		this.spritesheet = RPGJS.Spritesheet.New("characters_" + this.graphic, {
 		  grid: [{
 			size: [this.nbSequenceX, this.nbSequenceY],
@@ -172,6 +177,8 @@ Class.create("Sprite_Character", {
 	},
 	
 	initAnimationActions: function(data) {
+	
+		
 
 		var seq_x, seq_y, frequence, position, animation, self = this, action, img, seq;
 		
@@ -292,7 +299,9 @@ Class.create("Sprite_Character", {
 	
 	stop: function() {
 		var self = this;
+
 		if (!this.animation) return;
+
 		var id = this.getDisplayDirection() + "_" + this.pattern;
 		
 		/*setTimeout(function() {
@@ -300,7 +309,7 @@ Class.create("Sprite_Character", {
 			if (self.spritesheet._set[id]) self.spritesheet.draw(self.entity.el, id);
 		}, 200);*/
 		
-		self.animation.stop();
+			self.animation.stop();
 			if (self.spritesheet._set[id]) self.spritesheet.draw(self.entity.el, id);
 		
 		//

@@ -22,6 +22,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+if (typeof exports != "undefined") {
+	var CE = require("canvasengine").listen(),
+		Class = CE.Class;
+}
+
 /**
 @doc game_event
 @class Game_Event Methods and properties of event inherited from Game_Character class
@@ -162,6 +167,12 @@ Class.create("Game_Event", {
 		}
 		
 		this.execCommands();
+		
+		if (this.interpreter.searchCommand("TRANSFER_PLAYER").length > 0) {
+			return false;
+		}
+		
+		return true;
 	},
 	
 /**
@@ -169,6 +180,7 @@ Class.create("Game_Event", {
 @method execCommands Execute commands event of this event
 */
 	execCommands: function() {
+
 		global.game_player.freeze = true;
 		
 		var cmd = this.interpreter.getCurrentCommand();
@@ -184,6 +196,7 @@ Class.create("Game_Event", {
 	
 	finishCommands: function() {
 		var self = this;
+
 		global.game_player.freeze = false;
 		if (this.old_direction) this.direction = this.old_direction;
 		global.game_map.callScene("refreshEvent", [this.id, this.serialize()]);

@@ -22,11 +22,16 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+if (typeof exports != "undefined") {
+	var CE = require("canvasengine").listen(),
+		Class = CE.Class;
+}
+
 /**
 @doc game_actors
 @class Game_Actors Different players in the game
 */
-Class.create("Game_Actors", {
+var _class = {
 	actors: [],
 	
 /**
@@ -62,14 +67,16 @@ Class.create("Game_Actors", {
 			"int": [36, 349]
 		};
 		
-		CE.each(["maxhp", "maxsp", "str", "dex", "agi", "int"], function(i, type) {
+		var types = ["maxhp", "maxsp", "str", "dex", "agi", "int"];
+		for (var i=0 ; i < types.length ; i++) {
+			type = types[i];
 			if (data.params[type]) {
 				actor.setParam(type, data.params[type]);
 			}
 			else {
 				actor.setParam(type, _defaultVal[type][0], _defaultVal[type][1], "proportional");
 			}
-		});
+		}
 		
 		actor.setClass(data['class']);
 		
@@ -128,4 +135,15 @@ Class.create("Game_Actors", {
 		return false;
 	}
 
-});
+};
+
+if (typeof exports == "undefined") {
+	Class.create("Game_Actors", _class);
+}
+else {
+	CE.Model.create("Game_Actors", _class);
+
+	exports.New = function() {
+	  return CE.Model.New("Game_Actors");
+	};
+}

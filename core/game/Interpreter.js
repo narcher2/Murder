@@ -22,6 +22,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+if (typeof exports != "undefined") {
+	var CE = require("canvasengine").listen(),
+		Class = CE.Class;
+}
+
 /**
 @doc interpreter
 @class Interpreter Interpreter commands events
@@ -163,6 +168,18 @@ THE SOFTWARE.
 			return {name: cmd.name, params: cmd.params};
 		}
 		return false;
+	},
+	
+	searchCommand: function(name) {
+		var c, reg, array = [];
+		for (var i=0 ; i <  this.commands.length ; i++) {
+			c =  this.commands[i];
+			reg = new RegExp("^" + name);
+			if (reg.test(c)) {
+				array.push(i);
+			}
+		}
+		return array;
 	},
 	
 	_command: function(pos) {
@@ -358,6 +375,8 @@ THE SOFTWARE.
 			match = regex.exec(text);
 		}
 		
+		text = text.replace(/&#39;/g, "'");
+		
 		if (!this.scene_window) {
 			this.scene_window = RPGJS_Core.scene.call("Scene_Window", {
 				overlay: true
@@ -377,7 +396,6 @@ THE SOFTWARE.
 		else {
 			this.nextCommand();
 		}
-		
 		this.scene_window.text(text);
 	},
 	
@@ -510,6 +528,7 @@ THE SOFTWARE.
 	// TRANSFER_PLAYER: {'position-type': 'constant', 'appointement': {'x':1,'y': 1, 'id':2}}
 	cmdTransferPlayer: function(map) {
 		var pos = this._getPos(map);
+		
 		if (map.direction && map.direction != "0") global.game_player.direction = map.direction;
 		RPGJS_Core.scene.call("Scene_Map", {
 			params: {
@@ -517,6 +536,7 @@ THE SOFTWARE.
 				pos: pos
 			}
 		}).load();
+		
 		global.game_player.freeze = false;
 
 	},
@@ -921,7 +941,7 @@ THE SOFTWARE.
 	cmdAddDynamicEvent: function(params) {
 		var self = this;
 		var pos = this._getPos(params);
-		global.game_map.addDynamicEvent("EV-dynamic_events-" + params.name, {
+		global.game_map.addDynamicEvent("dynamic_events", params.name, {
 			x: pos.x,
 			y: pos.y
 		}, function(id, event) {
@@ -964,7 +984,7 @@ THE SOFTWARE.
 					new_y = y + distance;
 				break;
 			}
-			global.game_map.addDynamicEvent("EV-dynamic_events-" + params.name, {
+			global.game_map.addDynamicEvent("dynamic_events", params.name, {
 				x: new_x,
 				y: new_y
 			}, function(id, event) {
@@ -992,7 +1012,7 @@ THE SOFTWARE.
 					new_y = y + distance;
 				break;
 			}
-			global.game_map.addDynamicEvent("EV-dynamic_events-" + params.name, {
+			global.game_map.addDynamicEvent("dynamic_events", params.name, {
 				x: new_x,
 				y: new_y
 			}, function(id, event) {

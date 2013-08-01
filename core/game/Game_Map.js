@@ -22,12 +22,27 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+var is_server = false;
+if (typeof exports != "undefined") {
+	var CE = require("canvasengine").listen(),
+		Class = CE.Class;
+	// TMP
+	var RPGJS_Core = { 
+		Plugin: {
+			call: function() {}
+		},
+		maps: {},
+		getGlobalEvent: function() {}
+	};
+	is_server = true;
+}
+
 /**
 @doc game_map
 @class Game_Map Map management and events on this one
 */
 
-Class.create("Game_Map", {
+var _class = {
 	grid: null,
 	nb_autotiles_max: 64, 
 	events: {},
@@ -60,7 +75,7 @@ Class.create("Game_Map", {
 		var self = this, tmp,
 			map_id = params.map_id;
 			
-		this.events = {};
+		
 			
 		if (typeof map_id == "function") {
 			tmp = callback;
@@ -79,9 +94,10 @@ Class.create("Game_Map", {
 		global.game_player.map_id = this.map_id;
 		if (params.pos) {
 			global.game_player.x = params.pos.x;
-			global.game_player.y = params.pos.y;
+			global.game_player.y = params.pos.y;	
 		}
 		
+
 		this.map = global.data.map_infos[this.map_id];
 		if (!this.map) {
 			this.map = {};
@@ -92,13 +108,23 @@ Class.create("Game_Map", {
 		if (scene) {
 			this._scene  = scene;
 		}
-		CE.getJSON("Data/Maps/MAP-" + this.map_id + ".json", function(data) {
+		
+		function loadMap(data) {
 			self.map.data = data;
 			self.grid = Class.New('Grid', [data.map.length, data.map[0].length]);
 			self.grid.setCellSize(self.tile_w, self.tile_h);
 			self.grid.setPropertyCell(data.map);
+
 			self._setup();
-		});
+		}
+		
+		var map_data = RPGJS_Core.maps[this.map_id];
+		if (map_data) {
+			loadMap({map: map_data});
+		}
+		else {
+			(CE.Core || CE).getJSON("Data/Maps/MAP-" + this.map_id + ".json", loadMap);
+		}
    },
    
    scrollMap: function(path) {
@@ -254,11 +280,12 @@ Class.create("Game_Map", {
 				}
 			}
 		}
-		var e;
+		var e, contact_ret;
+		
 		for (var id in this.events) {
 			e = this.events[id];
 			
-			if (!e.exist || id == entity.id) continue;
+			if (!e || (!e.exist || id == entity.id)) continue;
 			
 			state = entity.hit(e);
 			
@@ -269,7 +296,8 @@ Class.create("Game_Map", {
 				
 					if (state.over == 1) {
 						if (e.trigger == "contact") {
-							e.execTrigger();
+							contact_ret = e.execTrigger();
+							if (!contact_ret) return {passable: true};
 						}
 						else {
 							RPGJS_Core.Plugin.call("Game", "eventContact", [e, this]);
@@ -398,6 +426,7 @@ Class.create("Game_Map", {
    },
    
    _setup: function() {
+	
 		if (!this.map.events) {
 			this.map.events = [];
 		}
@@ -436,7 +465,8 @@ Class.create("Game_Map", {
 					return;
 				}	
 			}
-			self._callback({
+			
+			var obj = {
 				data: self.map.data,
 				propreties: self._priorities,
 				musics: {
@@ -452,11 +482,26 @@ Class.create("Game_Map", {
 				events: events,
 				system: global.data.system,
 				actions: self.actionSerialize()
-			});
+			};
+			
+
+			
+			if (is_server) {
+				self.callScene("load", obj); 
+			}
+			else self._callback(obj);
 			
 		}
 		
 		global.game_player.start();
+		
+		if (this.events) {
+			for (var id in this.events) {
+				this.events[id].killIntervalMove();
+			}
+		}
+		
+		this.events = {};
 		
 		for (var i=0 ; i < nb_events ; i++) {
 			e = this.map.events[i];
@@ -465,7 +510,7 @@ Class.create("Game_Map", {
 		
 		for (var i=0 ; i < this.map.dynamic_event.length ; i++) {
 			e = this.map.dynamic_event[i];
-			this.addDynamicEvent(e.name, e, call, {
+			this.addDynamicEvent(e.name, e.id, e, call, {
 				refresh: false
 			});
 		}
@@ -549,16 +594,37 @@ Class.create("Game_Map", {
 		
 		var path = "Data/Events/" + (!dynamic ? "MAP-" + this.map_id + "/" : "") + name + ".json";
 		
-		CE.getJSON(path, function(data) {
-			var id = data[0].id;
-			if (dynamic) {
-				id = data[0].id = CanvasEngine.uniqid();
+		function loadEvent(data) {
+			var id = CanvasEngine.uniqid();
+			if (!(data instanceof Array)) {
+				id =  CanvasEngine.uniqid();
+				if (!data.pages) {
+					data.pages = [data];
+				}
+				data = [
+					{
+						id: id,
+						name: name + "-" + id
+					}, 
+					data.pages
+				];
+			}
+			else {
+				if (data[0].id) id = data[0].id;
+				else data[0].id = id;
 			}
 			self.events[id] = Class.New("Game_Event", [self.map_id, data]);
 			self.events[id].refresh();
 			RPGJS_Core.Plugin.call("Game", "addEvent", [self.events[id], self.map_id, data, dynamic, this]);
 			if (callback) callback.call(this, id, self.events[id], data);
-		});
+		}
+		var event_data = dynamic ? global.data[name][dynamic] : RPGJS_Core.getGlobalEvent(this.map_id, name);
+		if (event_data) {
+			loadEvent(event_data);
+		}
+		else {
+			(CE.Core || CE).getJSON(path, loadEvent);
+		}
    },
    
    
@@ -594,10 +660,10 @@ Class.create("Game_Map", {
 
 @param {Object} params (optional) Additional parameter (see `moveto` method in Game_Character)
 */  
-   addDynamicEvent: function(name, pos, callback, params) {
+   addDynamicEvent: function(name, _id, pos, callback, params) {
 		var self = this;
 		params = params || {};
-		this.loadEvent(name, true, function(id, event, data) {
+		this.loadEvent(name, _id, function(id, event, data) {
 			if (params.direction) event.direction = params.direction;
 			event.moveto(pos.x, pos.y, params);
 			if (params.add) self.callScene("addEvent", [event.serialize()]);
@@ -622,7 +688,8 @@ Class.create("Game_Map", {
 @param {Array} params Method parameters
 */
 	callScene: function(method, params) {
-		this._scene[method].apply(this._scene, params);
+		if (is_server) this.scene.emit("Scene_Map." + method, params);
+		else this._scene[method].apply(this._scene, params);
 	},
 	
 	actionSerialize: function() {
@@ -667,12 +734,16 @@ Class.create("Game_Map", {
 		}
 	},
 
-}).attr_accessor([
-	"tileset_name",
-	"autotile_names",
-	"panorama_name"
-]).attr_reader([
-	"map_id",
-	"priorities",
-	"passages"
-]);
+};
+
+if (typeof exports == "undefined") {
+	Class.create("Game_Map", _class);
+}
+else {
+	CE.Model.create("Game_Map", ["load"], _class);
+
+	exports.New = function() {
+	  return CE.Model.New("Game_Map");
+	};
+}
+

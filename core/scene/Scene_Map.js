@@ -7,9 +7,18 @@ RPGJS.Scene.New({
 		}
 	},*/
 	ready: function(stage, el, params) {
+		var self = this;
 		this.stage = stage;	
 		this.params = params;
 		RPGJS_Core.Plugin._refreshScene();
+		if (CE.io) {
+			CE.io.emit("load", params);
+			CE.io.on("Scene_Map.load", function(data) {
+				global.game_map.load(params, function() {
+					self.loadMaterials(data);
+				}, self, data);
+			});
+		}
 	},
 	load: function(callback) {
 		var self = this;
@@ -18,11 +27,13 @@ RPGJS.Scene.New({
 			self.loadMaterials(data, callback);
 		}, this);
 	},
+	
+
 	loadMaterials: function(data, callback) {
 		var images = [], sounds = [], load_i = 0, self = this;
 		if (data.graphics.tileset) images.push({tileset: RPGJS_Core.Path.get("tilesets", data.graphics.tileset)});
 		if ( data.player.graphic) images.push(RPGJS_Core.Path.get("characters", data.player.graphic, true));
-		//images.push({window: "../materials/Graphics/Windowskins/window.png"});
+		images.push({window: "../materials/Graphics/Windowskins/window.png"});
 	
 		data.autotiles_img = [];
 		
@@ -140,6 +151,7 @@ RPGJS.Scene.New({
 			actions: this.data.actions
 		}]);
 		
+
 		if (+this.data.musics.bgm) {
 			global.game_system.bgmPlay(this.data.musics.bgm);
 		}
@@ -182,7 +194,7 @@ RPGJS.Scene.New({
 		var press = 0;
 		
 		for (var key in input) {
-			if (RPGJS.Input.isPressed(input[key][0])) {
+			if (RPGJS.Input.isPressed(input[key][0]) && !global.game_player.freeze) {
 				press++;
 				if (this.data.system.diagonal == 1) {
 					 global.game_player.moveDir(key, false, this.nbKeyPress);

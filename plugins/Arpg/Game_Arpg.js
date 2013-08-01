@@ -72,7 +72,6 @@ Class.create("Game_Enemy", {
 		
 		var current_hp = this.event.getParamPoint("hp");
 		
-		
 		if (current_hp <= 0) {
 		
 			global.game_player.addExp(this.data.exp);
@@ -133,14 +132,16 @@ Class.create("Game_Enemy", {
 		function approach() {
 			self.detection = false;
 			self.event.removeTypeMove("approach");
+			self.event.moveRandom();
 		}	
 			
+		
 		if (detect && !this.detection) {
 			this.detection = true;
 			this.event.approachPlayer();
 		}
-		else if (this.detection) {
-			setTimeout(approach, 2000);
+		else if (!detect && this.detection) {
+			approach();
 		}
 	}
 	
@@ -173,7 +174,7 @@ Class.create("Game_Arpg", {
 	action: function(data, id) {
 		var poly, b1, b2,
 			player = global.game_player,
-			hit, hitbox, pos = [], _id,
+			hit, hitbox, pos = [], _id = [],
 			nbSequenceX = player["graphic_params"].nbSequenceX,
 			nbSequenceY = player["graphic_params"].nbSequenceY,
 			playerReg = {
@@ -199,25 +200,32 @@ Class.create("Game_Arpg", {
 				hit = false,
 				hitbox;
 				
-				for (var j=0 ; j < poly.getNumberOfSides() ; j++) {
-					b1 = offset(poly, poly.points[j]);
-					b2 = offset(poly, poly.points[j+1] ? poly.points[j+1] : poly.points[0]);
+				// for (var j=0 ; j < poly.getNumberOfSides() ; j++) {
+					// b1 = offset(poly, poly.points[j]);
+					// b2 = offset(poly, poly.points[j+1] ? poly.points[j+1] : poly.points[0]);
+					
+					var data_hitbox = data.hitbox[player.direction];
+					
+					if (data_hitbox) {
+						_id = [
+							[data_hitbox[0], data_hitbox[1]],
+							[data_hitbox[0] + data_hitbox[2], data_hitbox[1]],
+							[data_hitbox[0] + data_hitbox[2], data_hitbox[1] + data_hitbox[3]],
+							[data_hitbox[0], data_hitbox[1] + data_hitbox[3]]
+						];
+					}
 					
 					switch (player.direction) {
 						case "left": 
-							_id = data.hitbox[4];
 							regY = 1;
 						break;
 						case "right":
-							_id = data.hitbox[8];
 							regY = 2;
 						break;
 						case "up":
-							_id = data.hitbox[12];
 							regY = 3;
 						break;
 						case "bottom": 
-							_id = data.hitbox[0];
 							regY = 0;
 						break;
 					
@@ -225,11 +233,11 @@ Class.create("Game_Arpg", {
 				
 					hitbox = Class.New("Polygon", [{x: player.x, y: player.y}]);
 					for (var i=0 ; i < _id.length ; i++) {
-						hitbox.addPoint({x: _id[i][0] - playerReg.x, y: _id[i][1] - 100 * regY - playerReg.y});
+						hitbox.addPoint({x: _id[i][0] - playerReg.x, y: _id[i][1] - playerReg.y});
 					}
-					
+
 					hit_state = poly.intersectsWith(hitbox);
-					
+
 					if (hit_state) {
 						hit = true;
 						break;
@@ -242,7 +250,7 @@ Class.create("Game_Arpg", {
 				}
 				
 				
-			}
+			// }
 		}
 
 	},
@@ -281,6 +289,9 @@ Class.create("Game_Arpg", {
 			}
 		
 			damage = power * rate / 20 * (100 / elements) * (isCritical ? critical : 1) + ((CE.random(0, 1) ? 1 : -1) * CE.random(0, variance));
+			if (damage < 0) {
+				damage = 0;
+			}
 		}
 		else {
 			miss = true;

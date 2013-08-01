@@ -22,11 +22,16 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+if (typeof exports != "undefined") {
+	var CE = require("canvasengine").listen(),
+		Class = CE.Class;
+}
+
 /**
 @doc game_player
 @class Game_Player Methods and properties of player inherited from Game_Character class
 */
-Class.create("Game_Player", {
+var _class = {
 	
 /**
 @doc game_player/
@@ -84,6 +89,7 @@ Class.create("Game_Player", {
 	},
 	
 	start: function() {	
+		this.is_start = this.map_id == global.data.system.start.id;
 		this.moveto(this.x, this.y);
 	},
 	
@@ -107,7 +113,16 @@ Class.create("Game_Player", {
 	}
 	
 	
-}).attr_reader([
+};
 
-]).extend("Game_Character");
+if (typeof exports == "undefined") {
+	Class.create("Game_Player", _class).extend("Game_Character");
+}
+else {
+	CE.Model.create("Game_Player", _class).extend("Game_Character");
+
+	exports.New = function() {
+	  return CE.Model.New("Game_Player");
+	};
+}
 

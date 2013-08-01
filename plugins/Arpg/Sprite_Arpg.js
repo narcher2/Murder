@@ -19,7 +19,7 @@ Class.create("Sprite_Enemy", {
 	
 	displayBar: function(min, max, width, height, point, params) {
 		
-		var bar;
+		var bar, sprite = this.character.getSprite();
 		if (!this.bar) {
 			bar = this.scene.createElement(["empty", "full"]);
 		}
@@ -40,7 +40,7 @@ Class.create("Sprite_Enemy", {
 			x = point.x;
 		}
 		else {
-			y = -20;
+			y =  -20;
 			x = -(width / 2 - 32 / 2);
 		}
 
@@ -60,15 +60,17 @@ Class.create("Sprite_Enemy", {
 		
 		if (!this.bar) {
 			bar.empty.append(bar.full);
-			this.character.getSprite().append(bar.empty);
+			sprite.append(bar.empty);
 		}
+		
+		
 		
 		this.bar = bar;
 
 	},
 	
 	drawHit: function(hp) {
-		this.hp -= hp;
+		this.hp -= hp.damage;
 		this.displayBar(this.hp, this.enemy.maxhp, 40, 3);
 	},
 	
