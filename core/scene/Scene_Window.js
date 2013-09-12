@@ -64,7 +64,7 @@ RPGJS.Scene.New({
 			el = this.createElement(35, width);
 			el.y = i * 35;
 			el.attr('index', i);
-			text = RPGJS.Text.new(this, array[i]);
+			text = RPGJS.Text.New(this, array[i]);
 			text.style({
 				size: "18px",
 				color: "white"

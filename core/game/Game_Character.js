@@ -1664,6 +1664,7 @@ State #3 = 50%
 		
 		var data = global.data.items[id];
 		if (data) this._setState(data.states);
+		RPGJS_Core.Plugin.call("Game", "addItem", [type, id, nb, this]);
 	},
 	
 /**

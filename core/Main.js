@@ -242,7 +242,7 @@ Existing type:
 						callback();
 						return;
 					}
-					
+				
 					data[type] = Class.New(type + "_" + name);
 					data.name = name;
 					

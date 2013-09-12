@@ -677,6 +677,7 @@ var _class = {
 @param {Game_Event} id Event ID
 */
    removeEvent: function(id) {
+		RPGJS_Core.Plugin.call("Game", "removeEvent", [this.events[id], this]);
 		this.callScene("removeEvent", [id]);
 		delete this.events[id];
    },

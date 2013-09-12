@@ -37,7 +37,7 @@ RPGJS.Scene.New({
 			btn = this.createElement(300, 70);
 			cursor = this.createElement("cursor");
 			
-			var text = RPGJS.Text.new(this, choice[id]);
+			var text = RPGJS.Text.New(this, choice[id]);
 			text.style({
 				size: "25px",
 				color: "white",
@@ -100,7 +100,12 @@ RPGJS.Scene.New({
 			
 	},
 	new_game: function() {
-		RPGJS_Core.scene.call("Scene_Map").load();
+		if (CE.io) {
+			RPGJS_Core.scene.call("Scene_Map");
+		}
+		else {
+			RPGJS_Core.scene.call("Scene_Map").load();
+		}
 	},
 	load_game: function() {
 		var scene = RPGJS_Core.scene.call("Scene_Load");

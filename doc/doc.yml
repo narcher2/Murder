@@ -1,8 +1,8 @@
-game:
-    map:
-    character:
-    event:
-    player:
-    switches:
-    self_switches:
-    variables:
+core:
+    game_map:
+    game_character:
+    game_event:
+    game_player:
+    game_switches:
+    game_selfswitches:
+    game_variables:

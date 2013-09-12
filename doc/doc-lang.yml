@@ -1,9 +1,9 @@
 game: Core
 
-map: Map
-character: Character
-event: Event
-player: Player
-switches: Switches
-self_switches: Self Switches
-variables: Variables
+game_map: Map
+game_character: Character
+game_event: Event
+game_player: Player
+game_switches: Switches
+game_selfswitches: Self Switches
+game_variables: Variables
