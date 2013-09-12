@@ -23,7 +23,7 @@ THE SOFTWARE.
 */
 
 /**
-@doc game_selfswitches
+@doc selfswitches
 @class Game_SelfSwitches Important concept in RPG JS to trigger events
 */
 Class.create("Game_SelfSwitches", {
@@ -32,7 +32,7 @@ Class.create("Game_SelfSwitches", {
 	},
 	
 /**
-@doc game_selfswitches/
+@doc selfswitches/
 @method get Get local switch an event on map
 @param {Integer} map_id Map ID
 @param {Integer} event_id Event ID
@@ -52,7 +52,7 @@ Class.create("Game_SelfSwitches", {
 	},
 	
 /**
-@doc game_selfswitches/
+@doc selfswitches/
 @method set Set local switch an event on map
 @param {Integer} map_id Map ID
 @param {Integer} event_id Event ID

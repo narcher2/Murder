@@ -28,7 +28,7 @@ if (typeof exports != "undefined") {
 }
 
 /**
-@doc game_event
+@doc event
 @class Game_Event Methods and properties of event inherited from Game_Character class
 @param {Integer} map_id ID map where the event
 @param {Array} event Event data : The structure is as follows:
@@ -89,7 +89,7 @@ Class.create("Game_Event", {
 	},
 
 /**
-@doc game_event/
+@doc event/
 @method refresh Refreshes the data of the event (change page, execution triggers). Return new properties by the `serialize` method 
 @return {Object}
 */	
@@ -176,7 +176,7 @@ Class.create("Game_Event", {
 	},
 	
 /**
-@doc game_event/
+@doc event/
 @method execCommands Execute commands event of this event
 */
 	execCommands: function() {
@@ -204,7 +204,7 @@ Class.create("Game_Event", {
 	},
 	
 /**
-@doc game_event/
+@doc event/
 @method remove Remove this event
 */
 	remove: function() {
@@ -212,7 +212,7 @@ Class.create("Game_Event", {
 	},
 	
 /**
-@doc game_event/
+@doc event/
 @method detectionPlayer The event detects the hero in his field of vision
 @param {Integer} area Number of pixels around the event
 @return {Boolean} true if the player is in the detection zone

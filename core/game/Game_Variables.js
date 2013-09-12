@@ -23,7 +23,7 @@ THE SOFTWARE.
 */
 
 /**
-@doc game_variables
+@doc variables
 @class Game_Variables Important concept in RPG JS to trigger events
 */
 Class.create("Game_Variables", {
@@ -33,7 +33,7 @@ Class.create("Game_Variables", {
 	
 /**
 
-@doc game_variables/
+@doc variables/
 @method get Retrieves the value of a variable
 @param {Integer} key Variable identifier
 @return {Integer}
@@ -58,7 +58,7 @@ Class.create("Game_Variables", {
 	
 /**
 
-@doc game_variables/
+@doc variables/
 @method set Assigns a value to a variable. Changing a value, you refresh the game events These are influenced by the change in value. They can activate or deactivate a new page and run commands event
 @param {Integer} key Variable identifier
 @param {Object} operand

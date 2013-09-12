@@ -34,7 +34,7 @@ if (typeof exports != "undefined") {
 }
 
 /**
-@doc game_character
+@doc character
 @class Game_Character Properties and methods for game characters: event, player or other. This class inherits to EntityModel from CanvasEngine API
 */
 Class.create("Game_Character", {
@@ -72,7 +72,7 @@ Class.create("Game_Character", {
 	},
 	
 /**
-@doc game_character/
+@doc character/
 @method setProperties Assigns the character properties
 @param {Object} prop The properties are defined in the following manner:
 
@@ -158,7 +158,7 @@ Class.create("Game_Character", {
 	},
 
 /**
-@doc game_character/
+@doc character/
 @method moveto Moves the character to a location on the map
 @param {Integer} x Position X
 @param {Integer} y Position Y
@@ -175,7 +175,7 @@ Class.create("Game_Character", {
 	},
 
 /**
-@doc game_character/
+@doc character/
 @method lastTypeMove The type of movement being from executing
 @return {String}
 */	
@@ -193,7 +193,7 @@ Class.create("Game_Character", {
 	},*/
 	
 /**
-@doc game_character/
+@doc character/
 @method removeTypeMove By calling `approachPlayer` method and after `randomMethod` method, only the latest movement type is executed. This method remove a type.
 @param {String} type Type : `random` or `approach`
 */
@@ -218,7 +218,7 @@ Class.create("Game_Character", {
 	},
 	
 /**
-@doc game_character/
+@doc character/
 @method approachPlayer The event is approaching the player.
 */
 	approachPlayer: function() {
@@ -265,7 +265,7 @@ Class.create("Game_Character", {
 	
 
 /**
-@doc game_character/
+@doc character/
 @method moveAwayFromPlayer  the direction of the event relative to the player. For example, if the player is right for the event, direction of the event will be on the right
 @return {String|Boolean} Value direction (up, right, left, bottom). Return false if the player does not exist
 */		
@@ -303,7 +303,7 @@ Class.create("Game_Character", {
 	},
 	
 /**
-@doc game_character/
+@doc character/
 @method turn Changes the direction of the event (without moving) and displayed on the map
 @params {String} dir `left`, `right`, `up`, `bottom`
 */
@@ -313,7 +313,7 @@ Class.create("Game_Character", {
 	},
 	
 /**
-@doc game_character/
+@doc character/
 @method moveRoute  Assigns a specific motion event
 @params {Array} dir Id path
 
@@ -594,7 +594,7 @@ Example
 	},
 	
 /**
-@doc game_character/
+@doc character/
 @method moveRandom Random walk in 4 directions
 
 
@@ -657,7 +657,7 @@ Example
 	},
 	
 /**
-@doc game_character/
+@doc character/
 @method moveTilePath Movement per tile. The array gives a path
 @param {Array} array_dir Array with different directions. Example : `["left", "left", "up", "up", "right"]`
 */
@@ -680,7 +680,7 @@ Example
 	},
 		
 /**
-@doc game_character/
+@doc character/
 @method moveOneTile Movement per tile.
 @param {String} dir Direction : up, bottom, left or right
 @param {Function} callback (optional) Function called at the end of the movement
@@ -724,7 +724,7 @@ Example
 	},
 	
 /**
-@doc game_character/
+@doc character/
 @method moveDir Displacement in the direction. The character is moved by `1 pixel * speed`. Returns the new position of the character :
 
 	{x: Integer, y: Integer}
@@ -797,7 +797,7 @@ Example
 	},
 
 /**
-@doc game_character/
+@doc character/
 @method detectionEvents Detects events around this event. Events are refreshed to activate a page with the self switch trigger
 @param {Integer} area Number of pixels around the event
 @param {String} label The name of the label to activate the pages with the same name
@@ -842,7 +842,7 @@ Example
 	 },  
 
 /**
-@doc game_character/
+@doc character/
 @method serialize Transforms useful properties to an object for display :
 
 - id 
@@ -880,7 +880,7 @@ Example
 	
 	
 /**
-@doc game_character/
+@doc character/
 @method makeExpList Experience points necessary for each level.
 @param {Integer|Array} basis Base value for calculing necessary EXP
 
@@ -926,7 +926,7 @@ L(n) = (B * ((n + 3) ^ pow) / (5 ^ pow)) + L(n-1)
 	},
 	
 /**
-@doc game_character/
+@doc character/
 @method addExp Adds experience points. Changes level according to the experience points given. makeExpList() must be called before addExp()
 @param {Integer} exp Experience points
 @return {Integer}
@@ -936,7 +936,7 @@ L(n) = (B * ((n + 3) ^ pow) / (5 ^ pow)) + L(n-1)
 	},
 
 /**
-@doc game_character/
+@doc character/
 @method setExp Fixed experience points. Changes level according to the experience points given. makeExpList() must be called before setExp(). Return difference between two levels gained or lost. For example, if the return is 2, this means that the event has gained 2 levels after changing its EXP
 @param {Unsigned Integer} exp Experience points. If EXP exceed the maximum level, they will be set at maximum
 @return Integer 
@@ -968,7 +968,7 @@ L(n) = (B * ((n + 3) ^ pow) / (5 ^ pow)) + L(n-1)
 	},
 
 /**
-@doc game_character/
+@doc character/
 @method setLevel Sets the level of the event. Fixed points depending on the level of experience assigned. Returns difference between two levels gained or lost.
 @param {Unsigned Integer} level Level
 @return Integer
@@ -982,7 +982,7 @@ L(n) = (B * ((n + 3) ^ pow) / (5 ^ pow)) + L(n-1)
 	},
 	
 /**
-@doc game_character/
+@doc character/
 @method nextExp Returns the number of experience points the next level as the character must achieve to increase to a level
 @return Integer
 */
@@ -1001,7 +1001,7 @@ L(n) = (B * ((n + 3) ^ pow) / (5 ^ pow)) + L(n-1)
 	},
 
 /**
-@doc game_character/
+@doc character/
 @method setParam Sets a parameter for each level
 @param {String|Array} name Parameter name
 
@@ -1051,7 +1051,7 @@ Displays :
 	},
 
 /**
-@doc game_character/
+@doc character/
 @method getCurrentParam Get the value of a parameter at the current level of the event
 @param {String} name Parameter name
 @return {Integer}
@@ -1067,7 +1067,7 @@ Displays :
 	},
 	
 /**
-@doc game_character/
+@doc character/
 @method setParamLevel Assigns a value to a parameter to a specific level
 @param {String} name Parameter name
 @param {Integer} level Level
@@ -1083,7 +1083,7 @@ Displays :
 	},
 
 /**
-@doc game_character/
+@doc character/
 @method setParamLevel Add a value to a parameter to a specific level
 @param {String} name Parameter name
 @param {Integer} value Value
@@ -1097,7 +1097,7 @@ Displays :
 	},
 
 /**
-@doc game_character/
+@doc character/
 @method initParamPoints Initializes a point type
 @param {String} type Point type
 @param {Integer} current initial value
@@ -1128,7 +1128,7 @@ Example :
 	},
 	
 /**
-@doc game_character/
+@doc character/
 @method getParamPoint Retrieves the current points of a type. Call the `initParamPoints` before
 @param {String} type Point type
 @return {Integer}
@@ -1141,7 +1141,7 @@ Example :
 	},
 	
 /**
-@doc game_character/
+@doc character/
 @method getAllParamsPoint Returns all the types of points
 @return {Object}
 */
@@ -1158,7 +1158,7 @@ Example :
 	},
 
 /**
-@doc game_character/
+@doc character/
 @method changeParamPoints Change the number of points of type. Call the `initParamPoints` before. If the points beyond the maximum or minium, callback functions defined in the `initParamPoints` method are called
 @param {String} type Point type
 @param {Integer|String} nb Number. The value can be a percentage
@@ -1217,7 +1217,7 @@ Example 2
 	},
 
 /**
-@doc game_character/
+@doc character/
 @method equipItem Equipping the event of an object. Useful for calculations of fighting
 @param {String} type Name type
 @param {Integer} id Item id
@@ -1261,7 +1261,7 @@ Example 2
 	},
 
 /**
-@doc game_character/
+@doc character/
 @method itemIsEquiped  Whether an item is equipped
 @param {String} type Name type
 @param {Integer} id Item id
@@ -1277,7 +1277,7 @@ Example 2
 	},
 
 /**
-@doc game_character/
+@doc character/
 @method removeItemEquiped  Whether an item is equipped. Return false if the object does not exist
 @param {String} type Name type
 @param {Integer} id Item id
@@ -1311,7 +1311,7 @@ Example 2
 	},
 
 /**
-@doc game_character/
+@doc character/
 @method getItemsEquipedByType Get all items equiped in a type
 @param {String} type Name type
 @return {Object}
@@ -1322,7 +1322,7 @@ Example 2
 	},
 
 /**
-@doc game_character/
+@doc character/
 @method getIndexEquipedById Returns the position of the item equiped in the array. Returns false if the position is not found
 @param {String} type Name type
 @param {Integer} id Item id
@@ -1339,7 +1339,7 @@ Example 2
 	},
 	
 /**
-@doc game_character/
+@doc character/
 @method getItemsEquipedByAttr Finds the identifier of an item according to an attribute value. Returns false if the position is not found
 @param {String} type Name type
 @param {String} attr Attribute name
@@ -1366,7 +1366,7 @@ Example 2
 	},
 
 /**
-@doc game_character/
+@doc character/
 @method skillsToLearn Skills mastered at level-up for event
 @param {Object} skills Skills. Key is the level and value is the identifier of skill. Example :
 
@@ -1379,7 +1379,7 @@ Example 2
 	},
 
 /**
-@doc game_character/
+@doc character/
 @method setSkillToLearn  Change the skill to learn for a specific level
 @param {Integer} level Level
 @param {Integer} skill_id Skill ID
@@ -1392,7 +1392,7 @@ Example 2
 	},
 
 /**
-@doc game_character/
+@doc character/
 @method setClass Change the class of the event
 @param {Integer} id Class ID in database
 */
@@ -1412,7 +1412,7 @@ Example 2
 	},
 
 /**
-@doc game_character/
+@doc character/
 @method setElements Fixed elements to the event. Assigns the value to the `elements` property
 @param {Array} elements Array with an array of two elements: `[ID element, Percent affectation]`
 
@@ -1446,7 +1446,7 @@ Element #3 = 50%
 	},
 	
 /**
-@doc game_character/
+@doc character/
 @method getElement Retrieves the percentage affectation of an element
 @param {Integer} id Element ID
 */
@@ -1455,7 +1455,7 @@ Element #3 = 50%
 	},
 	
 /**
-@doc game_character/
+@doc character/
 @method setDefStates Fixed states to the event. Assigns the value to the `defstates` property
 @param {Array} states Array with an array of two states: `[ID state, Percent affectation]`
 
@@ -1484,7 +1484,7 @@ State #3 = 50%
 
 
 /**
-@doc game_character/
+@doc character/
 @method learnSkill To learn a skill. If status are present, they are afflicted with the character
 @param {Integer|Array} states Array with an array of two states: `[ID state, Percent affectation]`
 
@@ -1520,7 +1520,7 @@ State #3 = 50%
 	},
 
 /**
-@doc game_character/
+@doc character/
 @method removeSkill Remove a skill
 @param {Integer} id Skill ID
 */
@@ -1529,7 +1529,7 @@ State #3 = 50%
 	},
 	
 /**
-@doc game_character/
+@doc character/
 @method getSkill Get a skill
 @param {Integer} id Skill ID
 */
@@ -1549,7 +1549,7 @@ State #3 = 50%
 	
 	
 /**
-@doc game_character/
+@doc character/
 @method addState Adds a state event that affects his ability to fight or his movement. Common events can be triggered
 @param {Integer} id State ID
 */
@@ -1593,7 +1593,7 @@ State #3 = 50%
 	},
 
 /**
-@doc game_character/
+@doc character/
 @method removeState Remove this state of a character
 @param {Integer} id State ID
 */
@@ -1633,7 +1633,7 @@ State #3 = 50%
 
 	
 /**
-@doc game_character/
+@doc character/
 @method stateInflicted Whether a state is inflicted in the event
 @param {Integer} id State ID
 @return {Boolean} true if inflicted
@@ -1643,7 +1643,7 @@ State #3 = 50%
 	},
 	
 /**
-@doc game_character/
+@doc character/
 @method addItem Adds an item in the player's inventory.
 @param {String} type Item Type. Examples : "armors", "weapons", etc.
 @param {Integer} id Unique Id of the item
@@ -1668,7 +1668,7 @@ State #3 = 50%
 	},
 	
 /**
-@doc game_character/
+@doc character/
 @method removeItem Removes an item from the inventory
 @param {String} type Item Type. Examples : "armors", "weapons", etc.
 @param {Integer} id Unique Id of the item
@@ -1688,7 +1688,7 @@ State #3 = 50%
 	},
 	
 /**
-@doc game_character/
+@doc character/
 @method useItem Using objects. After use, the object is deleted. Modification of the parameters are afflicted and in particular the points `hp` and `sp`
 @param {String} type Item Type. Examples : "armors", "weapons", etc.
 @param {Integer} id Unique Id of the item
@@ -1712,7 +1712,7 @@ State #3 = 50%
 	},
 
 /**
-@doc game_character/
+@doc character/
 @method getItem Get object properties. Return property of the item or false if the item does not exist
 @param {String} type Item Type. Examples : "armors", "weapons", etc.
 @param {Integer} id Unique Id of the item
@@ -1723,7 +1723,7 @@ State #3 = 50%
 	},
 	
 /**
-@doc game_character/
+@doc character/
 @method getItems Retrieves the items of a type
 @param {String} type (optional) Item Type. Examples : "armors", "weapons", etc.
 @return {Object}

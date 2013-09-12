@@ -28,14 +28,14 @@ if (typeof exports != "undefined") {
 }
 
 /**
-@doc game_actors
+@doc actors
 @class Game_Actors Different players in the game
 */
 var _class = {
 	actors: [],
 	
 /**
-@doc game_actors/
+@doc actors/
 @method add Add an actor and initializes its parameters
 @param {Integer} id Actor ID
 @param {Object} actor Parameters
@@ -107,7 +107,7 @@ var _class = {
 	},
 	
 /**
-@doc game_actors/
+@doc actors/
 @method get Retrieves a player in the array. The first is always `Game_Player` class
 @param {Integer} index Index in array
 @return {Game_Character|Game_Player}
@@ -120,7 +120,7 @@ var _class = {
 	},
 	
 /**
-@doc game_actors/
+@doc actors/
 @method getById Retrieves a player by ID. false if absent
 @param {Integer} id actor ID
 @param {Game_Character} actor

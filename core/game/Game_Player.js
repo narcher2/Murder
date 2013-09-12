@@ -28,20 +28,20 @@ if (typeof exports != "undefined") {
 }
 
 /**
-@doc game_player
+@doc player
 @class Game_Player Methods and properties of player inherited from Game_Character class
 */
 var _class = {
 	
 /**
-@doc game_player/
+@doc player/
 @property freeze Blocks the movement of the player if true
 @type Boolean
 @default false
 */
 	freeze: false,
 /**
-@doc game_player/
+@doc player/
 @property gold Amount of money owned by the player
 @type Integer
 @default 0
@@ -49,7 +49,7 @@ var _class = {
 	gold: 0,
 	step: 0,
 /**
-@doc game_player/
+@doc player/
 @property time time played
 @type Integer
 @default 0
@@ -57,7 +57,7 @@ var _class = {
 	time: 0,
 	
 /**
-@doc game_player/
+@doc player/
 @property map_id Identifying the current map
 @type Integer
 @default 0
@@ -101,7 +101,7 @@ var _class = {
 	},
 
 /**
-@doc game_player/
+@doc player/
 @method addGold Adding virtual currency.The amount can not be negative
 @param {Integer} val Value to add
 */		

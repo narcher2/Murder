@@ -23,7 +23,7 @@ THE SOFTWARE.
 */
 
 /**
-@doc game_switches
+@doc switches
 @class Game_Switches Important concept in RPG JS to trigger events
 */
 Class.create("Game_Switches", {
@@ -33,7 +33,7 @@ Class.create("Game_Switches", {
 	
 /**
 
-@doc game_switches/
+@doc switches/
 @method get Retrieves the value of a switch
 @param {Integer} key Switch identifier
 @return {Boolean}
@@ -54,7 +54,7 @@ Class.create("Game_Switches", {
 	
 /**
 
-@doc game_switches/
+@doc switches/
 @method set Enables or disables a switch. Changing a value, you refresh the game events These are influenced by the change in value. They can activate or deactivate a new page and run commands event
 @param {Integer} switch_id Switch identifier
 @param {Boolean} true to enable, false to disable

@@ -23,7 +23,7 @@ THE SOFTWARE.
 */
 
 /**
-@doc game_plugin
+@doc plugin
 @class Game_Plugin Methods for plugins game
 */
 Class.create("Game_Plugin", {
@@ -31,7 +31,7 @@ Class.create("Game_Plugin", {
 	_class_: null,
 
 /**
-@doc game_plugin/
+@doc plugin/
 @method callSprite Invokes a method on the `Sprite_[NAME]` class the same plugin. Method on another class is prefixed with `_`. Returns the value of the called method
 @param {String} method Method Name
 @param {Array} params Parameters

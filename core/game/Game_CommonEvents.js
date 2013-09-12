@@ -23,7 +23,7 @@ THE SOFTWARE.
 */
 
 /**
-@doc game_commonevents
+@doc commonevents
 @class Game_CommonEvents Execute event of common commands
 @param {Integer} id Common Event id in the databse
 @example
@@ -41,7 +41,7 @@ Class.create("Game_CommonEvents", {
 	
 /**
 
-@doc game_commonevents/
+@doc commonevents/
 @method exec Execute commands event
 @param {Game_Character} event (optional) Event used for execution. If no, what is the player who is affected
 @param {Function} finish (optional) Callback when command execution is complete

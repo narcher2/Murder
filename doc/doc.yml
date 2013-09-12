@@ -1,13 +1,13 @@
 game:
     map:
-    game_character:
-    game_actor:
-    game_player:
-    game_event:
-    game_commonevents:
-    game_switches:
-    game_selfswitches:
-    game_variables:
-    game_system:
+    character:
+    actor:
+    player:
+    event:
+    commonevents:
+    switches:
+    selfswitches:
+    variables:
+    system:
     interpreter:
-    game_plugin:
+    plugin:
