@@ -1,8 +1,13 @@
-core:
+game:
     game_map:
     game_character:
-    game_event:
+    game_actor:
     game_player:
+    game_event:
+    game_commonevents:
     game_switches:
     game_selfswitches:
     game_variables:
+    game_system:
+    interpreter:
+    game_plugin:

@@ -2,8 +2,13 @@ game: Core
 
 game_map: Map
 game_character: Character
+game_actor: Actor
 game_event: Event
 game_player: Player
+game_commonevents: Common Events
 game_switches: Switches
 game_selfswitches: Self Switches
+game_system: System
 game_variables: Variables
+interpreter: Interpreter
+game_plugin: Plugin
