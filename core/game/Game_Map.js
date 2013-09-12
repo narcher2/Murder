@@ -38,7 +38,7 @@ if (typeof exports != "undefined") {
 }
 
 /**
-@doc game_map
+@doc map
 @class Game_Map Map management and events on this one
 */
 
@@ -56,7 +56,7 @@ var _class = {
 	},
 	
 /**
-@doc game_map/
+@doc map/
 @method transfer_player Moves the player to a location on the map
 @param {Integer} x Position X
 @param {Integer} y Position Y
@@ -132,7 +132,7 @@ var _class = {
    },
    
 /**
-@doc game_map/
+@doc map/
 @method passable Checks if the next destination of the player is not fair. Returns an object with three values :
 
 - passable (boolean) If the tile is passable
@@ -334,7 +334,7 @@ var _class = {
    },
    
 /**
-@doc game_map/
+@doc map/
 @method getEvent Get an event on the map by its ID
 @param {Game_Character} entity Position X
 @param {Integer} id Event ID
@@ -356,7 +356,7 @@ var _class = {
    },
    
 /**
-@doc game_map/
+@doc map/
 @method updateEvents Update events on the map. Called the `update` method in Game_Event
 */  
    updateEvents: function() {
@@ -367,7 +367,7 @@ var _class = {
    },
    
 /**
-@doc game_map/
+@doc map/
 @method refreshEvents Refresh events on the map. Refresh on the scene. Called the `refresh` method in Game_Event
 */ 
    refreshEvents: function() {
@@ -379,7 +379,7 @@ var _class = {
    },
    
 /**
-@doc game_map/
+@doc map/
 @method refreshPlayer Refresh player on the map. Refresh on the scene.
 */
    refreshPlayer: function() {
@@ -388,7 +388,7 @@ var _class = {
    },
    
 /**
-@doc game_map/
+@doc map/
 @method isAutotile Checks whether the identifier of the tile is a autotile
 @param {Integer} id Tile ID
 @return {Boolean}
@@ -398,7 +398,7 @@ var _class = {
    },
  
 /**
-@doc game_map/
+@doc map/
 @method getPropAutotile Retrieves properties autotile by its ID
 @param {Integer} id Tile ID
 @return {Object}
@@ -412,7 +412,7 @@ var _class = {
    },
    
 /**
-@doc game_map/
+@doc map/
 @method getPropTile Retrieves properties tile by its ID
 @param {Integer} id Tile ID
 @return {Object}
@@ -525,7 +525,7 @@ var _class = {
    },
    
 /**
-@doc game_map/
+@doc map/
 @method getSize Map size (number of tiles)
 @return {Integer}
 */
@@ -534,7 +534,7 @@ var _class = {
    },
   
 /**
-@doc game_map/
+@doc map/
 @method getTileSize Tile size. Returns an object :
 
 - width : Width of tile in pixels
@@ -550,7 +550,7 @@ var _class = {
    },
    
 /**
-@doc game_map/
+@doc map/
 @method tileToPixel Transforms positions tile to real positions. Return an object
 
 - x : Position X in pixels
@@ -573,7 +573,7 @@ var _class = {
    },
    
 /**
-@doc game_map/
+@doc map/
 @method loadEvent Load event on the map. The event is then sent to the scene to display
 @param {String} name Filename JSON. The file is located in `Data/Events/MAP-[ID]/[NAME].json`. Example : `Data/Events/MAP-1/EV-1.json`. If the event has no ID, a random ID is automatically given
 @param {Boolean} dynamic (optional) Specifies that the event is dynamic. In this case, the path of the event is `Data/Events/[NAME].json`
@@ -644,7 +644,7 @@ var _class = {
    },
    
 /**
-@doc game_map/
+@doc map/
 @method addDynamicEvent Load event on the map. The event is then sent to the scene to display
 @param {String} name Filename JSON. In this case, the path of the event is `Data/Events/[NAME].json`
 @param {Object} pos Position on the map
@@ -672,7 +672,7 @@ var _class = {
    },
    
 /**
-@doc game_map/
+@doc map/
 @method removeEvent Delete an event in the map
 @param {Game_Event} id Event ID
 */
@@ -683,7 +683,7 @@ var _class = {
    },
    
 /**
-@doc game_map/
+@doc map/
 @method callScene Call a method on Scene_Map
 @param {String} method Method Name
 @param {Array} params Method parameters

@@ -1,6 +1,6 @@
 game: Core
 
-game_map: Map
+map: Map
 game_character: Character
 game_actor: Actor
 game_event: Event

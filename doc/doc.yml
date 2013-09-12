@@ -1,5 +1,5 @@
 game:
-    game_map:
+    map:
     game_character:
     game_actor:
     game_player:
