@@ -101,8 +101,8 @@ Class.create("Sprite_Arpg", {
 			t = "Miss";
 		}
 		
-		text = RPGJS.Text.new(this.scene, formulas.damage);
-		text_info = RPGJS.Text.new(this.scene, t);
+		text = RPGJS_Canvas.Text.new(this.scene, formulas.damage);
+		text_info = RPGJS_Canvas.Text.new(this.scene, t);
 		
 		player = event ? event : this.scene.getSpriteset().player;
 		
@@ -112,7 +112,7 @@ Class.create("Sprite_Arpg", {
 			textBaseline: "top"
 		}).draw(player.getSprite(), 0, 0);
 		
-		RPGJS.Timeline.New(text_info.el).add({y: -35}, 40,  Ease.easeOutElastic).call(function() {
+		RPGJS_Canvas.Timeline.New(text_info.el).add({y: -35}, 40,  Ease.easeOutElastic).call(function() {
 			this.remove();
 		});
 	
@@ -123,7 +123,7 @@ Class.create("Sprite_Arpg", {
 				textBaseline: "top"
 			}).draw(player.getSprite(), 2, -15);
 			
-			RPGJS.Timeline.New(text.el).add({y: -35}, 40,  Ease.easeOutElastic).call(function() {
+			RPGJS_Canvas.Timeline.New(text.el).add({y: -35}, 40,  Ease.easeOutElastic).call(function() {
 				this.remove();
 			});
 		}

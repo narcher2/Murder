@@ -133,7 +133,7 @@ var scenes = global.data._scenes, s;
 
 for (var id in scenes) {
 	s = scenes[id];
-	RPGJS.Scene.New({
+	RPGJS_Canvas.Scene.New({
 		name: s.menu_id,
 		data: s,
 		elements: Menu_Generated.elements,

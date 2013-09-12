@@ -2,7 +2,7 @@ game: Core
 
 map: Map
 character: Character
-actor: Actor
+actors: Actors
 event: Event
 player: Player
 commonevents: Common Events

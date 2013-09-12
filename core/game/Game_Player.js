@@ -66,7 +66,11 @@ var _class = {
 	
 	init: function(s) { this._initialize(s); },
 	_initialize: function(s) {
-	   global.data.system = global.data.system || s || {};
+		
+	   if (!s && !global.data.system.start) return;
+	   
+	   if (!global.data.system.start) global.data.system = s; 
+	   
 	   if (!global.data.system.start) global.data.system.start = {x: 0, y: 0, id: 1};
 	   if (!global.data.system.actor) global.data.system.actor = 1;
 	   

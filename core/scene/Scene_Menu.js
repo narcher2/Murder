@@ -1,4 +1,4 @@
-RPGJS.Scene.New({
+RPGJS_Canvas.Scene.New({
 	name: "Scene_Menu",
 	materials: {
 		images: {
@@ -16,7 +16,7 @@ RPGJS.Scene.New({
 	
 	drawText: function(_text, sprite_b, x, y, style) {
 		style = style || {};
-		var text = RPGJS.Text.new(this, _text);
+		var text = RPGJS_Canvas.Text.new(this, _text);
 		text.style({
 			size: style.size || "20px",
 			color: style.color || "white",
@@ -69,7 +69,7 @@ RPGJS.Scene.New({
 		var set_actor_buttons = this.createElement(),	
 			hp_bar, sp_bar, face, actor, sprite_b, array_sprite = [];
 			
-		var box = RPGJS.Window.new(this),
+		var box = RPGJS_Canvas.Window.new(this),
 			body = box.getContent();
 		
 		for (var i=0 ; i < 4 ; i++) {
@@ -94,7 +94,7 @@ RPGJS.Scene.New({
 			
 			sprite_b.attr('id', actor._id);
 			
-			var img = RPGJS.Materials.get("characters_" + actor.graphic), margin = 20;
+			var img = RPGJS_Canvas.Materials.get("characters_" + actor.graphic), margin = 20;
 			
 			actor.graphic_params = actor.graphic_params || {
 				regX: 0,
@@ -166,7 +166,7 @@ RPGJS.Scene.New({
 			current_index = "items",
 			self = this;
 			
-		var box = RPGJS.Window.new(this),
+		var box = RPGJS_Canvas.Window.new(this),
 			set_buttons = box.getContent();
 		
 		var buttons = {
@@ -180,7 +180,7 @@ RPGJS.Scene.New({
 		
 		};
 		
-		RPGJS.Input.reset();
+		RPGJS_Canvas.Input.reset();
 		
 		var b, sprite_b, i=0, 
 			width_actor = 0,
@@ -310,13 +310,13 @@ RPGJS.Scene.New({
 		
 		
 		this._esc(function() {
-			RPGJS.Scene.exit("Scene_Menu");
+			RPGJS_Canvas.Scene.exit("Scene_Menu");
 		});
 		
 	},
 	
 	_esc: function(callback) {
-		RPGJS.Input.press([Input.Esc], function() {
+		RPGJS_Canvas.Input.press([Input.Esc], function() {
 			callback.call(this);
 		});
 	},
@@ -335,7 +335,7 @@ RPGJS.Scene.New({
 		
 		for (var i=0 ; i < elements.length ; i++) {
 			el = elements[i];
-			RPGJS.Timeline.New(el.el).to(el.to, 40,  easing).call(finish);
+			RPGJS_Canvas.Timeline.New(el.el).to(el.to, 40,  easing).call(finish);
 		}
 	
 	},
@@ -355,9 +355,9 @@ RPGJS.Scene.New({
 	
 	_back: function() {
 		var self = this;
-		RPGJS.Input.reset();
+		RPGJS_Canvas.Input.reset();
 		
-		RPGJS.Input.press([Input.Esc], function() {
+		RPGJS_Canvas.Input.press([Input.Esc], function() {
 			self.openWindow("index");
 		});
 	},
@@ -530,7 +530,7 @@ RPGJS.Scene.New({
 		content.width = 300;
 		content.height = size_h;
 
-		var scroll = RPGJS.Scrolling.new(this);
+		var scroll = RPGJS_Canvas.Scrolling.new(this);
 		scroll.mouseScroll(clip, content);
 		
 		body.append(clip);
@@ -543,7 +543,7 @@ RPGJS.Scene.New({
 				this.enable(false);
 				box.cursor.enable(true);
 				self.data.player.useItem("items", item_id);
-				RPGJS.Timeline.New(choice_actor).to({x: _canvas.width}, 40).call();
+				RPGJS_Canvas.Timeline.New(choice_actor).to({x: _canvas.width}, 40).call();
 				array_items = displayItems.call(self);
 				box.cursor.refresh(array_items, true);
 			});
@@ -591,7 +591,7 @@ RPGJS.Scene.New({
 			this.enable(false);
 			actors.box.cursor.enable(true);
 			
-			RPGJS.Timeline.New(choice_actor).to({x: _canvas.width - actors.width}, 40).call();
+			RPGJS_Canvas.Timeline.New(choice_actor).to({x: _canvas.width - actors.width}, 40).call();
 		});
 		
 		this.transitionStart([{
@@ -868,7 +868,7 @@ RPGJS.Scene.New({
 		
 		items.append(clip);
 		
-		var scroll = RPGJS.Scrolling.new(this);
+		var scroll = RPGJS_Canvas.Scrolling.new(this);
 		scroll.mouseScroll(clip, content);
 		
 		displayInfo.call(this);
@@ -1049,7 +1049,7 @@ RPGJS.Scene.New({
 	
 	createCursor: function(stage, width, height, btns, callback) {
 		callback = callback || {};
-		var box = RPGJS.Window.new(this, width, height);
+		var box = RPGJS_Canvas.Window.new(this, width, height);
 			content = box.getContent();
 	
 		var cursor = this.createElement();
@@ -1076,7 +1076,7 @@ RPGJS.Scene.New({
 	},
 	
 	exit: function() {
-		RPGJS.Scene.get("Scene_Map").pause(false);
-		RPGJS.Scene.get("Scene_Map").keysAssign();
+		RPGJS_Canvas.Scene.get("Scene_Map").pause(false);
+		RPGJS_Canvas.Scene.get("Scene_Map").keysAssign();
 	}
 });

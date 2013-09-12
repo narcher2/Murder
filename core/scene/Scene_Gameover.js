@@ -1,4 +1,4 @@
-RPGJS.Scene.New({
+RPGJS_Canvas.Scene.New({
 	name: "Scene_Gameover",
 	
 	materials: {
@@ -14,15 +14,15 @@ RPGJS.Scene.New({
 		
 		stage.append(background);
 		
-		RPGJS.Input.press([Input.Enter, Input.Space], function() {
-			RPGJS_Core.scene.call("Scene_Title");
+		RPGJS_Canvas.Input.press([Input.Enter, Input.Space], function() {
+			RPGJS.scene.call("Scene_Title");
 		});
 		
 		stage.on("touch", function() {
-			RPGJS_Core.scene.call("Scene_Title");
+			RPGJS.scene.call("Scene_Title");
 		});
 		
-		RPGJS_Core.Plugin.call("Sprite", "gameover", [this]);
+		RPGJS.Plugin.call("Sprite", "gameover", [this]);
 		
 	}
 });

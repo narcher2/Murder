@@ -27,7 +27,7 @@ if (typeof exports != "undefined") {
 	var CE = require("canvasengine").listen(),
 		Class = CE.Class;
 	// TMP
-	var RPGJS_Core = { 
+	var RPGJS = { 
 		Plugin: {
 			call: function() {}
 		},
@@ -118,7 +118,7 @@ var _class = {
 			self._setup();
 		}
 		
-		var map_data = RPGJS_Core.maps[this.map_id];
+		var map_data = RPGJS.maps[this.map_id];
 		if (map_data) {
 			loadMap({map: map_data});
 		}
@@ -300,7 +300,7 @@ var _class = {
 							if (!contact_ret) return {passable: true};
 						}
 						else {
-							RPGJS_Core.Plugin.call("Game", "eventContact", [e, this]);
+							RPGJS.Plugin.call("Game", "eventContact", [e, this]);
 						}
 					}
 					
@@ -323,7 +323,7 @@ var _class = {
 			state = entity.hit(global.game_player);
 			
 			if (state.over >= 1 && !testLineTile(state.result.coincident)) {
-				RPGJS_Core.Plugin.call("Game", "contactPlayer", [entity, this]);
+				RPGJS.Plugin.call("Game", "contactPlayer", [entity, this]);
 				return {passable: false, x: old_x, y: old_y};
 			}
 		}
@@ -349,7 +349,7 @@ var _class = {
 		for (var id in this.events) {
 			e = this.events[id];
 			if (e && e._hit && e.trigger == "action_button") {
-				RPGJS_Core.Plugin.call("Game", "execEvent", [e, this]);
+				RPGJS.Plugin.call("Game", "execEvent", [e, this]);
 				e.execTrigger();
 			}
 		}
@@ -520,7 +520,7 @@ var _class = {
 		}
 		
 		
-		RPGJS_Core.Plugin.call("Game", "loadMap", [this]);
+		RPGJS.Plugin.call("Game", "loadMap", [this]);
 		
    },
    
@@ -615,10 +615,10 @@ var _class = {
 			}
 			self.events[id] = Class.New("Game_Event", [self.map_id, data]);
 			self.events[id].refresh();
-			RPGJS_Core.Plugin.call("Game", "addEvent", [self.events[id], self.map_id, data, dynamic, this]);
+			RPGJS.Plugin.call("Game", "addEvent", [self.events[id], self.map_id, data, dynamic, this]);
 			if (callback) callback.call(this, id, self.events[id], data);
 		}
-		var event_data = dynamic ? global.data[name][dynamic] : RPGJS_Core.getGlobalEvent(this.map_id, name);
+		var event_data = dynamic ? global.data[name][dynamic] : RPGJS.getGlobalEvent(this.map_id, name);
 		if (event_data) {
 			loadEvent(event_data);
 		}
@@ -677,7 +677,7 @@ var _class = {
 @param {Game_Event} id Event ID
 */
    removeEvent: function(id) {
-		RPGJS_Core.Plugin.call("Game", "removeEvent", [this.events[id], this]);
+		RPGJS.Plugin.call("Game", "removeEvent", [this.events[id], this]);
 		this.callScene("removeEvent", [id]);
 		delete this.events[id];
    },
@@ -719,13 +719,13 @@ var _class = {
 	},
 	
 	execAction: function(id) {
-		 RPGJS_Core.Plugin.call("Game", "action", [this.actions_data[id], id, this]);
+		 RPGJS.Plugin.call("Game", "action", [this.actions_data[id], id, this]);
 	},
 	
 	tick: function() {
 		var self = this;
 		setInterval(function() {
-			 RPGJS_Core.Plugin.call("Game", "tick", [self]);
+			 RPGJS.Plugin.call("Game", "tick", [self]);
 		}, 1000 / 60);
 	},
 	

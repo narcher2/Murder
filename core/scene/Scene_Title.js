@@ -1,4 +1,4 @@
-RPGJS.Scene.New({
+RPGJS_Canvas.Scene.New({
 	name: "Scene_Title",
 	materials: {
 		images: {
@@ -16,7 +16,7 @@ RPGJS.Scene.New({
 		var background = this.createElement();
 		background.drawImage("background");
 		
-		var box = RPGJS.Window.new(this);
+		var box = RPGJS_Canvas.Window.new(this);
 			content = box.getContent();
 			
 		box.open(stage);
@@ -37,7 +37,7 @@ RPGJS.Scene.New({
 			btn = this.createElement(300, 70);
 			cursor = this.createElement("cursor");
 			
-			var text = RPGJS.Text.New(this, choice[id]);
+			var text = RPGJS_Canvas.Text.New(this, choice[id]);
 			text.style({
 				size: "25px",
 				color: "white",

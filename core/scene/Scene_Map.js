@@ -1,4 +1,4 @@
-RPGJS.Scene.New({
+RPGJS_Canvas.Scene.New({
 	name: "Scene_Map",
 	data: {},
 	/*materials: {
@@ -10,7 +10,7 @@ RPGJS.Scene.New({
 		var self = this;
 		this.stage = stage;	
 		this.params = params;
-		RPGJS_Core.Plugin._refreshScene();
+		RPGJS.Plugin._refreshScene();
 		if (CE.io) {
 			CE.io.emit("load", params);
 			CE.io.on("Scene_Map.load", function(data) {
@@ -31,15 +31,15 @@ RPGJS.Scene.New({
 
 	loadMaterials: function(data, callback) {
 		var images = [], sounds = [], load_i = 0, self = this;
-		if (data.graphics.tileset) images.push({tileset: RPGJS_Core.Path.get("tilesets", data.graphics.tileset)});
-		if ( data.player.graphic) images.push(RPGJS_Core.Path.get("characters", data.player.graphic, true));
-		images.push({window: "../materials/Graphics/Windowskins/window.png"});
+		if (data.graphics.tileset) images.push({tileset: RPGJS.Path.get("tilesets", data.graphics.tileset)});
+		if ( data.player.graphic) images.push(RPGJS.Path.get("characters", data.player.graphic, true));
+		//images.push({window: "../materials/Graphics/Windowskins/window.png"});
 	
 		data.autotiles_img = [];
 		
 		if (data.graphics.autotiles) {
 			CE.each(data.graphics.autotiles, function(i, val) {
-				var obj = RPGJS_Core.Path.get("autotiles", val, true);
+				var obj = RPGJS.Path.get("autotiles", val, true);
 				images.push(obj);
 				for (var key in obj) {
 					data.autotiles_img.push(key);
@@ -51,7 +51,7 @@ RPGJS.Scene.New({
 		if (data.events) {
 			CE.each(data.events, function(i, val) {
 				if (+val.graphic) {
-					images.push(RPGJS_Core.Path.get("characters", val.graphic, true));
+					images.push(RPGJS.Path.get("characters", val.graphic, true));
 				}
 			});
 		}
@@ -60,20 +60,20 @@ RPGJS.Scene.New({
 		for (var id in this.data.actions) {
 			action = this.data.actions[id];
 			if (action.graphic) {
-				images.push(RPGJS_Core.Path.get("characters", action.graphic, true));
+				images.push(RPGJS.Path.get("characters", action.graphic, true));
 			}
 		}
 		
-		images.concat(RPGJS_Core.Plugin.call("Sprite", "mapLoadImages", [images, this]));
+		images.concat(RPGJS.Plugin.call("Sprite", "mapLoadImages", [images, this]));
 		
 		if (+data.musics.bgm) {
-			sounds.push(RPGJS_Core.Path.get("bgms", data.musics.bgm, true));
+			sounds.push(RPGJS.Path.get("bgms", data.musics.bgm, true));
 		}
 		if (+data.musics.bgs) {
-			sounds.push(RPGJS_Core.Path.get("bgss", data.musics.bgs, true));
+			sounds.push(RPGJS.Path.get("bgss", data.musics.bgs, true));
 		}
 		
-		sounds.concat(RPGJS_Core.Plugin.call("Sprite", "mapLoadSounds", [sounds, this]));
+		sounds.concat(RPGJS.Plugin.call("Sprite", "mapLoadSounds", [sounds, this]));
 		
 		function finish() {
 			if (load_i){
@@ -83,11 +83,11 @@ RPGJS.Scene.New({
 			load_i++;
 		}
 		
-		RPGJS.Materials.load("images", images, function(img) {
+		RPGJS_Canvas.Materials.load("images", images, function(img) {
 			// -- Empty
 		}, finish);
 		
-		RPGJS.Materials.load("sounds", sounds, function(snd) {
+		RPGJS_Canvas.Materials.load("sounds", sounds, function(snd) {
 			// -- Empty
 		}, finish);
 		
@@ -96,32 +96,32 @@ RPGJS.Scene.New({
 	nbKeyPress: 0,
 	keysAssign: function() {
 		var self = this;
-		RPGJS.Input.reset();
+		RPGJS_Canvas.Input.reset();
 		
 		CanvasEngine.each(["Up", "Right", "Left", "Bottom"], function(i, val) {
 
-			RPGJS.Input.press(Input[val], function() {
+			RPGJS_Canvas.Input.press(Input[val], function() {
 				if (global.game_player.freeze) return;
 				self.nbKeyPress++;
 				self.spriteset.player.startMove();
 			});
-			RPGJS.Input.keyUp(Input[val], function() {	
+			RPGJS_Canvas.Input.keyUp(Input[val], function() {	
 				self.nbKeyPress--;
-				if (!RPGJS.Input.isPressed([Input.Up, Input.Right, Input.Left, Input.Bottom])) {
+				if (!RPGJS_Canvas.Input.isPressed([Input.Up, Input.Right, Input.Left, Input.Bottom])) {
 					self.spriteset.player.stop();
 				}
 			});
 		});
 		
-		RPGJS.Input.press([Input.Enter, Input.Space], function() {
-			RPGJS_Core.Plugin.call("Sprite", "pressAction", [self]);
+		RPGJS_Canvas.Input.press([Input.Enter, Input.Space], function() {
+			RPGJS.Plugin.call("Sprite", "pressAction", [self]);
 			global.game_map.execEvent();
 		});
 		
-		RPGJS.Input.press([Input.Esc], function() {
+		RPGJS_Canvas.Input.press([Input.Esc], function() {
 			self.pause(true);
-			RPGJS_Core.Plugin.call("Sprite", "pressEsc", [self]);
-			var menu = RPGJS_Core.scene.call("Scene_Menu", {
+			RPGJS.Plugin.call("Sprite", "pressEsc", [self]);
+			var menu = RPGJS.scene.call("Scene_Menu", {
 				overlay: true
 			});
 			//menu.zIndex(1); // after scene map
@@ -129,7 +129,7 @@ RPGJS.Scene.New({
 		
 		function _action(action, id) {
 			if (action.keypress) {
-				RPGJS.Input.press(Input[action.keypress], function() {
+				RPGJS_Canvas.Input.press(Input[action.keypress], function() {
 					self.spriteset.player.playAnimationAction(id);
 					global.game_map.execAction(id);
 				});
@@ -162,7 +162,7 @@ RPGJS.Scene.New({
 		this.keysAssign();
 		
 		if (this.data.system.gamepad != "_no" && typeof(Gamepad) !== 'undefined') {
-			this.gamepad = RPGJS.Input.Gamepad.init();
+			this.gamepad = RPGJS_Canvas.Input.Gamepad.init();
 			this.gamepad.addListener("faceButton0", Input.A);
 			this.gamepad.addListener("faceButton1", Input.Esc);
 			this.gamepad.addListener("faceButton2", Input.Enter);
@@ -173,7 +173,7 @@ RPGJS.Scene.New({
 		}
 		
 		
-		RPGJS_Core.Plugin.call("Sprite", "loadMap", [this]);
+		RPGJS.Plugin.call("Sprite", "loadMap", [this]);
 		
 
 	},
@@ -194,7 +194,7 @@ RPGJS.Scene.New({
 		var press = 0;
 		
 		for (var key in input) {
-			if (RPGJS.Input.isPressed(input[key][0]) && !global.game_player.freeze) {
+			if (RPGJS_Canvas.Input.isPressed(input[key][0]) && !global.game_player.freeze) {
 				press++;
 				if (this.data.system.diagonal == 1) {
 					 global.game_player.moveDir(key, false, this.nbKeyPress);
@@ -208,7 +208,7 @@ RPGJS.Scene.New({
 		this.spriteset.scrollingUpdate();
 		this.updateEvents();
 		
-		RPGJS_Core.Plugin.call("Sprite", "sceneMapRender", [this]);
+		RPGJS.Plugin.call("Sprite", "sceneMapRender", [this]);
 		
 		stage.refresh();
 		if (this.data.system.gamepad != "_no" && typeof(Gamepad) !== 'undefined') this.gamepad.update();
@@ -288,7 +288,7 @@ RPGJS.Scene.New({
 		var event = this.getSpriteset().getEvent(event_id);
 		if (event) {
 			event = event.getSprite();
-			RPGJS.Effect.new(this, event).blink(duration, frequence, finish);
+			RPGJS_Canvas.Effect.new(this, event).blink(duration, frequence, finish);
 		}
 	},
 	

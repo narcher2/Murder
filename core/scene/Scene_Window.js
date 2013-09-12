@@ -1,4 +1,4 @@
-RPGJS.Scene.New({
+RPGJS_Canvas.Scene.New({
 	name: "Scene_Window",
 	_onEnterPress: null,
 	_onEnterPressChoice: null,
@@ -19,15 +19,15 @@ RPGJS.Scene.New({
 		var self = this;
 		
 		
-		this.window = RPGJS.Window.New(this, 500, 200, "window");
+		this.window = RPGJS_Canvas.Window.New(this, 500, 200, "window");
 		this.window.setBackground("#32343A", 6, .7);
 		
 		this.window.position("bottom");
 		this.window.open(this.stage);
 		
-		RPGJS.Input.reset();
+		RPGJS_Canvas.Input.reset();
 		
-		RPGJS.Input.press([Input.Enter, Input.Space], function() {
+		RPGJS_Canvas.Input.press([Input.Enter, Input.Space], function() {
 			if (self._onEnterPress) self._onEnterPress.call(this);
 		});
 	
@@ -54,9 +54,9 @@ RPGJS.Scene.New({
 		var width = determineSizeBox() + 50,
 			height = array.length * 35 + 25;
 			
-		var box = RPGJS.Window.New(this, width, height, "window");
+		var box = RPGJS_Canvas.Window.New(this, width, height, "window");
 		box.setBackground("#32343A", 6, .7);
-		// var box = RPGJS.Window.new(this, width, height);
+		// var box = RPGJS_Canvas.Window.new(this, width, height);
 			
 		box.position("top");
 		
@@ -64,7 +64,7 @@ RPGJS.Scene.New({
 			el = this.createElement(35, width);
 			el.y = i * 35;
 			el.attr('index', i);
-			text = RPGJS.Text.New(this, array[i]);
+			text = RPGJS_Canvas.Text.New(this, array[i]);
 			text.style({
 				size: "18px",
 				color: "white"
@@ -95,7 +95,7 @@ RPGJS.Scene.New({
 	text: function(_text) {
 		var content = this.window.getContent();
 		content.empty();
-		var text = RPGJS.Text.New(this, _text);
+		var text = RPGJS_Canvas.Text.New(this, _text);
 			text.style({
 				size: "18px",
 				lineWidth: 400,
@@ -110,6 +110,6 @@ RPGJS.Scene.New({
 			});
 	},
 	exit: function() {
-		RPGJS.Scene.get("Scene_Map").keysAssign();
+		RPGJS_Canvas.Scene.get("Scene_Map").keysAssign();
 	}
 });

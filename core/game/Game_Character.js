@@ -26,7 +26,7 @@ if (typeof exports != "undefined") {
 	var CE = require("canvasengine").listen(),
 		Class = CE.Class;
 	// TMP
-	var RPGJS_Core = { 
+	var RPGJS = { 
 		Plugin: {
 			call: function() {}
 		}
@@ -814,7 +814,7 @@ Example
 			}
 
 		}
-		RPGJS_Core.Plugin.call("Game", "eventDetected", [events_detected, this]);
+		RPGJS.Plugin.call("Game", "eventDetected", [events_detected, this]);
 		return events_detected;
 
 	},
@@ -874,7 +874,7 @@ Example
 		for (var i=0; i < data.length ; i++) {
 			obj[data[i]] = this[data[i]];
 		}
-		RPGJS_Core.Plugin.call("Game", "serializeCharacter", [obj, this]);
+		RPGJS.Plugin.call("Game", "serializeCharacter", [obj, this]);
 		return obj;
 	},
 	
@@ -1212,7 +1212,7 @@ Example 2
 			if (callbacks.onMax) callbacks.onMax.call(this);
 		}
 		this.paramPoints[type].current = current;
-		RPGJS_Core.Plugin.call("Game", "changeParamPoints", [type, nb, operation, this]);
+		RPGJS.Plugin.call("Game", "changeParamPoints", [type, nb, operation, this]);
 		return current;
 	},
 
@@ -1664,7 +1664,7 @@ State #3 = 50%
 		
 		var data = global.data.items[id];
 		if (data) this._setState(data.states);
-		RPGJS_Core.Plugin.call("Game", "addItem", [type, id, nb, this]);
+		RPGJS.Plugin.call("Game", "addItem", [type, id, nb, this]);
 	},
 	
 /**

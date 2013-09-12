@@ -60,7 +60,7 @@ Class.create("Sprite_Character", {
 		
 			function load() {
 				if (!self.graphic) return;
-				var img = RPGJS.Materials.get("characters_" + self.graphic);
+				var img = RPGJS_Canvas.Materials.get("characters_" + self.graphic);
 				self.width = img.width / self.nbSequenceX;
 				self.height = img.height / self.nbSequenceY;
 			
@@ -74,7 +74,7 @@ Class.create("Sprite_Character", {
 			}
 
 			if (this.id != 0) { // if not player
-				RPGJS_Core.Path.loadMaterial("characters", this.graphic, load);
+				RPGJS.Path.loadMaterial("characters", this.graphic, load);
 			}
 			else {
 				load();
@@ -113,7 +113,7 @@ Class.create("Sprite_Character", {
 			}
 		}
 		
-		this.spritesheet = RPGJS.Spritesheet.New("characters_" + this.graphic, {
+		this.spritesheet = RPGJS_Canvas.Spritesheet.New("characters_" + this.graphic, {
 		  grid: [{
 			size: [this.nbSequenceX, this.nbSequenceY],
 			tile: [this.width, this.height],
@@ -132,7 +132,7 @@ Class.create("Sprite_Character", {
 			top: -18 - this.regY
 		};
 		
-		this.animation = RPGJS.Animation.New({
+		this.animation = RPGJS_Canvas.Animation.New({
 		   images: "characters_" + this.graphic,
 		   animations: {
 				 bottom: {
@@ -185,7 +185,7 @@ Class.create("Sprite_Character", {
 		function setAnimation(id) {
 			
 			function finish() {
-				RPGJS.Scene.get("Scene_Map").animation(0, data[id]["animation_finish"]);
+				RPGJS_Canvas.Scene.get("Scene_Map").animation(0, data[id]["animation_finish"]);
 				self.stop();
 			}
 			
@@ -200,7 +200,7 @@ Class.create("Sprite_Character", {
 			if (!action['graphic-params'].regY) action['graphic-params'].regY = 0;
 			
 			
-			img = RPGJS.Materials.get("characters_" + action.graphic);
+			img = RPGJS_Canvas.Materials.get("characters_" + action.graphic);
 			seq = {
 				width: img.width / action['graphic-params'].nbSequenceX,
 				height: img.height / action['graphic-params'].nbSequenceY,
@@ -244,7 +244,7 @@ Class.create("Sprite_Character", {
 				 finish: finish
 			 };
 			
-			this.action_animation = RPGJS.Animation.New({
+			this.action_animation = RPGJS_Canvas.Animation.New({
 			   images: "characters_" + action.graphic,
 			   animations: animation
 			});
@@ -262,7 +262,7 @@ Class.create("Sprite_Character", {
 		if (this._actions[id]) {
 			dir = this.getDisplayDirection();
 			this.action_animation.play(id + "_" + dir, "stop");
-			RPGJS.Scene.get("Scene_Map").animation(0, this._actions[id]["animation_" + dir]);
+			RPGJS_Canvas.Scene.get("Scene_Map").animation(0, this._actions[id]["animation_" + dir]);
 		}
 	},
 	

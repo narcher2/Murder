@@ -4,12 +4,12 @@ Class.create("Sprite_Hub", {
 	max_hp: 0,
 
 	mapLoadImages: function(array) {
-		array.push(RPGJS_Core.Path.getFile("pictures", "hub.png", "hub"));
-		array.push(RPGJS_Core.Path.getFile("pictures", "hp_meter.png", "hp_meter"));
-		array.push(RPGJS_Core.Path.getFile("pictures", "hp_number.png", "hp_number"));
-		array.push(RPGJS_Core.Path.getFile("pictures", "Hero_Face.png", "hero_face"));
-		array.push(RPGJS_Core.Path.getFile("pictures", "button_A.png", "button_a"));
-		array.push(RPGJS_Core.Path.getFile("pictures", "button_B.png", "button_b"));
+		array.push(RPGJS.Path.getFile("pictures", "hub.png", "hub"));
+		array.push(RPGJS.Path.getFile("pictures", "hp_meter.png", "hp_meter"));
+		array.push(RPGJS.Path.getFile("pictures", "hp_number.png", "hp_number"));
+		array.push(RPGJS.Path.getFile("pictures", "Hero_Face.png", "hero_face"));
+		array.push(RPGJS.Path.getFile("pictures", "button_A.png", "button_a"));
+		array.push(RPGJS.Path.getFile("pictures", "button_B.png", "button_b"));
 		return array;
 	},
 
@@ -33,7 +33,7 @@ Class.create("Sprite_Hub", {
 		hub.hp_meter.x = 84;
 		hub.hp_meter.y = 17;
 		
-		this.text = RPGJS.Text.new(scene, this.hp)
+		this.text = RPGJS_Canvas.Text.new(scene, this.hp)
 		this.text.style({
 			family: "Aubrey",
 			size: "40px",
@@ -51,7 +51,7 @@ Class.create("Sprite_Hub", {
 			btn.A.y = 50;
 			
 			btn.A.on("touch", function() {
-				RPGJS.Input.trigger(Input.Enter, "press");
+				RPGJS_Canvas.Input.trigger(Input.Enter, "press");
 			});
 			
 			btn.B.drawImage("pictures_button_b");
@@ -59,7 +59,7 @@ Class.create("Sprite_Hub", {
 			btn.B.y = 0;
 			
 			btn.B.on("touch", function() {
-				RPGJS.Input.trigger(Input.A, "press");
+				RPGJS_Canvas.Input.trigger(Input.A, "press");
 			});
 			
 			btn.rightPanel.x = _canvas.width - 80;
@@ -77,7 +77,7 @@ Class.create("Sprite_Hub", {
 		
 		if (typeof(VirtualJoystick) != "undefined") {
 			this.joystick = new VirtualJoystick({
-				container	: document.getElementById(RPGJS_Core.params.canvas),
+				container	: document.getElementById(RPGJS.params.canvas),
 				mouseSupport	: true,
 				onDown: function(e) {
 					var canvas = self.scene.getCanvas();
@@ -115,22 +115,22 @@ Class.create("Sprite_Hub", {
 		
 		if (CE.mobileUserAgent() && this.joystick) {
 			if (this.joystick.down()) {
-				RPGJS.Input.trigger(Input.Bottom, "down");
+				RPGJS_Canvas.Input.trigger(Input.Bottom, "down");
 			}
 			else if (this.joystick.up()) {
-				RPGJS.Input.trigger(Input.Up, "down");
+				RPGJS_Canvas.Input.trigger(Input.Up, "down");
 			}
 			else if (this.joystick.right()) {
-				RPGJS.Input.trigger(Input.Right, "down");
+				RPGJS_Canvas.Input.trigger(Input.Right, "down");
 			}
 			else if (this.joystick.left()) {
-				RPGJS.Input.trigger(Input.Left, "down");
+				RPGJS_Canvas.Input.trigger(Input.Left, "down");
 			}
 			else {
-				RPGJS.Input.trigger(Input.Left, "up");
-				RPGJS.Input.trigger(Input.Right, "up");
-				RPGJS.Input.trigger(Input.Bottom, "up");
-				RPGJS.Input.trigger(Input.Up, "up");
+				RPGJS_Canvas.Input.trigger(Input.Left, "up");
+				RPGJS_Canvas.Input.trigger(Input.Right, "up");
+				RPGJS_Canvas.Input.trigger(Input.Bottom, "up");
+				RPGJS_Canvas.Input.trigger(Input.Up, "up");
 			}
 			
 		}

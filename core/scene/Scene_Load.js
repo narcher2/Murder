@@ -1,4 +1,4 @@
-RPGJS.Scene.New({
+RPGJS_Canvas.Scene.New({
 	name: "Scene_Load",
 	
 	materials: {
@@ -10,7 +10,7 @@ RPGJS.Scene.New({
 	},
 	
 	drawText: function(_text, btn, x, y) {
-		var text = RPGJS.Text.new(this, _text);
+		var text = RPGJS_Canvas.Text.new(this, _text);
 		text.style({
 			size: "18px",
 			color: "white",
@@ -26,7 +26,7 @@ RPGJS.Scene.New({
 		var background = this.createElement();
 		background.drawImage("background");
 		
-		var box = RPGJS.Window.new(this);	
+		var box = RPGJS_Canvas.Window.new(this);	
 		var btn = this.createElement(["set"]), 
 			content,
 			btns_set = [],
@@ -89,7 +89,7 @@ RPGJS.Scene.New({
 		if (type == "save") {
 			this.select = this._execSave;
 			back = function() {
-				RPGJS.Scene.exit("Scene_Load");
+				RPGJS_Canvas.Scene.exit("Scene_Load");
 			};
 		}
 		else {
@@ -98,7 +98,7 @@ RPGJS.Scene.New({
 				RPGJS_Core.scene.call("Scene_Title");
 			};
 		}
-		RPGJS.Input.press([Input.Esc], back);
+		RPGJS_Canvas.Input.press([Input.Esc], back);
 	},
 	
 	refreshSlot: function(el, data) {
@@ -112,7 +112,7 @@ RPGJS.Scene.New({
 		face.x = 20;*/
 		
 		RPGJS_Core.Path.loadMaterial("characters" , data.actor_face, function() {
-			var img = RPGJS.Materials.get("characters_" + data.actor_face);
+			var img = RPGJS_Canvas.Materials.get("characters_" + data.actor_face);
 			face.drawImage("characters_" + data.actor_face, 0, 0, img.width / data.actor_nbSequenceX, img.height / data.actor_nbSequenceY, -data.actor_regX, -data.actor_regY, img.width / data.actor_nbSequenceX, img.height / data.actor_nbSequenceY);
 			face.x = 50;
 			face.y = 25;

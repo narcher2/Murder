@@ -7,7 +7,7 @@ Class.create("Sprite", {
 		
 		if (!data) return;
 		
-		RPGJS_Core.Path.loadMaterial("animations", data.graphic, function(img) {
+		RPGJS.Path.loadMaterial("animations", data.graphic, function(img) {
 		
 			data.pattern_w = data.pattern_w || 5;
 			data.pattern_h = data.pattern_h || 3;
@@ -15,7 +15,7 @@ Class.create("Sprite", {
 			var w = img.width / data.pattern_w, 
 				h = img.height / data.pattern_h;
 				
-			var animation = RPGJS.Animation.New({
+			var animation = RPGJS_Canvas.Animation.New({
 				images: "animations_" + data.graphic,
 				addIn: self.entity.el,
 				animations: {

@@ -82,6 +82,7 @@ var _class = {
 		
 		actor.setLevel(data.level_min);
 		
+
 		var max_hp =  actor.getCurrentParam("maxhp");
 		actor.initParamPoints("hp", max_hp, 0, "maxhp");
 		var max_sp =  actor.getCurrentParam("maxsp");

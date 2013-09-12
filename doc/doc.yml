@@ -1,7 +1,7 @@
 game:
     map:
     character:
-    actor:
+    actors:
     player:
     event:
     commonevents:

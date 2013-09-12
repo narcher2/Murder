@@ -119,17 +119,19 @@ Existing type:
 	load: function(callback) {
 		var self = this;
 		
-		global.game_switches = Class.New("Game_Switches");
-		global.game_variables = Class.New("Game_Variables");
-		global.game_selfswitches = Class.New("Game_SelfSwitches");
-		global.game_map = Class.New("Game_Map");
-		global.game_actors = Class.New("Game_Actors");
-		global.game_player = Class.New("Game_Player");
+		this.Switches = global.game_switches = Class.New("Game_Switches");
+		this.Variables = global.game_variables = Class.New("Game_Variables");
+		this.SelfSwitches = global.game_selfswitches = Class.New("Game_SelfSwitches");
+		this.Map = global.game_map = Class.New("Game_Map");
+		this.Actors = global.game_actors = Class.New("Game_Actors");
+		this.Player = global.game_player = Class.New("Game_Player");
+		
+		this.Scene = this.scene;
 		
 		this.scene.load(["Scene_Map", "Scene_Window", "Scene_Title", "Scene_Menu", "Scene_Load", "Scene_Gameover", "Scene_Generated"], function() {
 			if (self.params.plugins) {
 				self.Plugin.add(self.params.plugins, function() {
-					RPGJS_Core.Plugin.call("Sprite", "loadBeforeGame");
+					RPGJS.Plugin.call("Sprite", "loadBeforeGame");
 					if (callback) callback.call(self);
 				});
 			}
@@ -142,11 +144,11 @@ Existing type:
 	ready: function(callback) {
 		var self = this;
 		
-		RPGJS = CE.defines(this.params.canvas, this.params).
+		RPGJS_Canvas = CE.defines(this.params.canvas, this.params).
 			extend([Animation, Input, Spritesheet, Scrolling, Window, Text, Effect]).
 			ready(function() {
 			
-					global.game_system = Class.New("Game_System");
+					self.System = global.game_system = Class.New("Game_System");
 					global.game_save = Class.New("Game_Save");
 					
 					if (self.params.autoload) {
@@ -159,6 +161,12 @@ Existing type:
 					else {
 						global.materials = {};
 						global.data = self._defaultData();
+						if (self.Database) {
+							global.data = CE.extend(global.data, self.Database);
+						}
+						if (self.Materials) {
+							global.materials = self.Materials;
+						}
 						self.load(callback);
 					
 					}
@@ -169,10 +177,15 @@ Existing type:
 			
 	},
 	
+	
 	scene: {
-		
+	
+		map: function(load) {
+			return this.call("Scene_Map").load(load);
+		},
+	
 		call: function(name, params) {
-			return RPGJS.Scene.call(name, params);
+			return RPGJS_Canvas.Scene.call(name, params);
 		},
 		
 		load: function(scenes, onFinish, abs_path) {
@@ -187,7 +200,7 @@ Existing type:
 			
 			for (var i=0 ; i < scenes.length ; i++) {
 				name = scenes[i];
-				RPGJS_Core.loadScript(abs_path + 'core/scene/' + name, function() {
+				RPGJS.loadScript(abs_path + 'core/scene/' + name, function() {
 					finish();
 				});
 			}
@@ -219,7 +232,7 @@ Existing type:
 		
 		_refreshScene: function() {
 			for (var i=0 ; i < this.list.length ; i++) {
-				this.list[i].Sprite.scene = RPGJS.Scene.get("Scene_Map");
+				this.list[i].Sprite.scene = RPGJS_Canvas.Scene.get("Scene_Map");
 			}
 		},
 	
@@ -249,14 +262,14 @@ Existing type:
 					if (i == 2 && callback) {
 						data["Game"]._class_ = data["Sprite"];
 						data["Sprite"]._class_ = data["Game"];
-						data["Sprite"].scene = RPGJS.Scene.get("Scene_Map");
+						data["Sprite"].scene = RPGJS_Canvas.Scene.get("Scene_Map");
 						self.list.push(data);
 						callback();
 					}
 				}
 				
-				var base_path = RPGJS.Materials.getBasePath(name),
-					filename_path = RPGJS.Materials.getFilename(name),
+				var base_path = RPGJS_Canvas.Materials.getBasePath(name),
+					filename_path = RPGJS_Canvas.Materials.getFilename(name),
 					new_path = ["", ""];
 					
 				function constructPath(base, _name, type) {
@@ -272,10 +285,10 @@ Existing type:
 					new_path[1] = constructPath('plugins', filename_path, "Sprite");
 				}
 				
-				RPGJS_Core.loadScript(new_path[0], function() {
+				RPGJS.loadScript(new_path[0], function() {
 					finish("Game", filename_path);
 				});
-				RPGJS_Core.loadScript(new_path[1], function() {
+				RPGJS.loadScript(new_path[1], function() {
 					finish("Sprite", filename_path);
 				});
 			}
@@ -345,14 +358,14 @@ Existing type:
 			var obj = {}, path;
 
 			if (!global.materials[type]) {
-				if (RPGJS_Core.params.ignoreLoadError) {
+				if (RPGJS.params.ignoreLoadError) {
 					return false;
 				}
 				throw "[Path.get] " + type + " doesn't exist";
 			}
 			
 			if (!global.materials[type][file_id]) {
-				if (RPGJS_Core.params.ignoreLoadError) {
+				if (RPGJS.params.ignoreLoadError) {
 					return false;
 				}
 				throw "[Path.get]" + type + " - " + file_id + " doesn't exist";
@@ -379,21 +392,21 @@ Existing type:
 			var obj= {}, global_type = this.isSound(type) ? "sounds" : "images";
 			var path = this.get(type, id);
 			obj[type + "_" + id] = path;
-			if (RPGJS.Materials.sounds[type + "_" + id]) {
+			if (RPGJS_Canvas.Materials.sounds[type + "_" + id]) {
 				if (callback) callback();
 			}
-			RPGJS.Materials.load(global_type, obj, callback);
+			RPGJS_Canvas.Materials.load(global_type, obj, callback);
 		},
 		
 		load: function(type, file, id, callback) {
 			var obj= {}, global_type = this.isSound(type) ? "sounds" : "images";
 			obj[type + "_" + id] = this[type] + file;
-			RPGJS.Materials.load(global_type, obj, callback);
+			RPGJS_Canvas.Materials.load(global_type, obj, callback);
 		}
 	
 	}
 });
 
-var RPGJS_Core = Class.New("RPGJS"), RPGJS,  RPGJS_Scene, global = {};
+var RPGJS = Class.New("RPGJS"), RPGJS_Canvas,  RPGJS_Scene, global = {};
 
 

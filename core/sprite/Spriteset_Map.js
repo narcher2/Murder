@@ -32,7 +32,7 @@ Class.create("Spriteset_Map", {
 	},
 	tilemap: function(propreties) {
 	
-		RPGJS_Core.Plugin.call("Sprite", "drawMapBegin", [this]);
+		RPGJS.Plugin.call("Sprite", "drawMapBegin", [this]);
 		
 		var self = this, autotiles_array = [];
 		
@@ -223,7 +223,7 @@ Class.create("Spriteset_Map", {
 					CE.each(this.params.autotiles, function(i, val) {
 						var canvas = document.createElement("canvas");
 						var ctx = canvas.getContext("2d");
-						var image = RPGJS.Materials.images[val];
+						var image = RPGJS_Canvas.Materials.images[val];
 						canvas.width = image.width;
 						canvas.height = image.height;
 						ctx.drawImage(image, 0, 0);
@@ -308,7 +308,7 @@ Class.create("Spriteset_Map", {
 		this.layer[0].pack(w, h);
 		this.layer[4].pack(w, h);
 		
-		RPGJS_Core.Plugin.call("Sprite", "drawMapEnd", [this]);
+		RPGJS.Plugin.call("Sprite", "drawMapEnd", [this]);
 
 		this.characters(this.layer[3]);
 		
@@ -325,7 +325,7 @@ Class.create("Spriteset_Map", {
 		this.player = Class.New("Sprite_Character", [this.scene, this.data.player, layer, global.game_player]);
 		this.player.initAnimationActions(this.data.actions);
 		
-		this.scrolling = RPGJS.Scrolling.New(this.scene, this.tile_w, this.tile_h);
+		this.scrolling = RPGJS_Canvas.Scrolling.New(this.scene, this.tile_w, this.tile_h);
 		this.scrolling.setMainElement(this.player.getSprite());
 		
 		this.scrolling.addScroll({
@@ -336,13 +336,13 @@ Class.create("Spriteset_Map", {
 		   height: this.getHeightPixel()
 		});
 		
-		RPGJS_Core.Plugin.call("Sprite", "drawCharactersEnd", [this]);
+		RPGJS.Plugin.call("Sprite", "drawCharactersEnd", [this]);
 	},
 	
 	addCharacter: function(data) {
 		var sprite = Class.New("Sprite_Character", [this.scene, data, this.layer[3], global.game_map.getEvent(data.id)]);
 		this.events[data.id] = sprite;
-		RPGJS_Core.Plugin.call("Sprite", "addCharacter", [sprite, data, this]);
+		RPGJS.Plugin.call("Sprite", "addCharacter", [sprite, data, this]);
 	},
 	
 	addPicture: function(id, params, load) {
@@ -352,7 +352,7 @@ Class.create("Spriteset_Map", {
 		params.zoom_x = params.zoom_x || 100;
 		params.zoom_y = params.zoom_y || 100;
 		
-		RPGJS_Core.Path.load("pictures", params.filename, id, function(img) {
+		RPGJS.Path.load("pictures", params.filename, id, function(img) {
 			var el = self.scene.createElement();
 			el.drawImage("pictures_" + id);
 			el.x = params.x;
@@ -377,7 +377,7 @@ Class.create("Spriteset_Map", {
 		if (params.origin == "center") {
 			el.setPositionOrigin("middle");
 		}
-		var t = RPGJS.Timeline.New(el);
+		var t = RPGJS_Canvas.Timeline.New(el);
 		
 		params.opacity = params.opacity || 255;
 		params.zoom_x = params.zoom_x || 100;
@@ -395,7 +395,7 @@ Class.create("Spriteset_Map", {
 	rotatePicture: function(id, time) {
 		var el = this.pictures[id];
 		if (!el) return false;
-		var t = RPGJS.Timeline.New(el);
+		var t = RPGJS_Canvas.Timeline.New(el);
 		t.to({
 			rotation: 360
 		}, time).call(function() {
@@ -412,7 +412,7 @@ Class.create("Spriteset_Map", {
 	
 	effect: function(name, params, finish) {
 		var self = this;
-		var effect = RPGJS.Effect.New(this.scene, this.map);
+		var effect = RPGJS_Canvas.Effect.New(this.scene, this.map);
 		
 		this.scrolling.freeze = true;
 		
@@ -429,7 +429,7 @@ Class.create("Spriteset_Map", {
 		var self = this;
 		this.scrolling.freeze = true;
 		
-		RPGJS.Timeline.New(this.map).to({x: -pos.x, y: -pos.y}, 120).call(function() {
+		RPGJS_Canvas.Timeline.New(this.map).to({x: -pos.x, y: -pos.y}, 120).call(function() {
 			self.scrolling.freeze = false;
 			if (finish) finish();
 		});

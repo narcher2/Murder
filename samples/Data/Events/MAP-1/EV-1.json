@@ -1,8 +1,8 @@
 [
     {
         "id": "1",
-        "x": "8",
-        "y": "17",
+        "x": "5",
+        "y": "4",
         "name": "EV-1"
     },
     [
@@ -15,12 +15,9 @@
             "switch_2": 0,
             "switch_3": 0,
             "commands": [
-                "CHANGE_EQUIPMENT: {'actor': '2','operand-type': 'weapon','operand': '0'}"
+                "ERASE_EVENT: true"
             ],
-            "graphic": "4",
-            "graphic-params": {
-                "uniqid": 1365417547901
-            }
+            "graphic": "2"
         }
     ]
 ]
