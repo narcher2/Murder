@@ -1,3 +1,46 @@
+/*
+Visit http://rpgjs.com for documentation, updates and examples.
+
+Copyright (C) 2013 by WebCreative5, Samuel Ronce
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+*/
+
+/**
+@doc main
+@class RPGJS Defines a new instance of RPGJS
+@example
+
+	RPGJS.defines({
+		canvas: "canvas",
+		autoload: false
+	}).ready(function() {
+	
+		RPGJS.Player.init({
+			actor: 1,
+			start: {x: 10, y: 10, id: 1}
+		});
+		
+		RPGJS.Scene.map();
+	});
+
+*/
 Class.create("RPGJS", {
 
 	_defaultData: function(data) {
@@ -35,12 +78,29 @@ Class.create("RPGJS", {
 	events: {},
 	dyn_event: {},
 	
+/**
+@doc main/
+@method defines Initializes the canvas
+@params {Object} params Parameters :
+
+- canvas {String} (mandatory) : name of the identifier of the canvas
+- autoload {Boolean) : load data and resources in `Data/Database.json` and `Data/Materials.json` (`true` by default)
+- scene_path {String} : The path to the classes scenes. `./` by default
+
+        scene_path: "../" // => ../core/scene
+
+- plugins {Array} Name of files to load plugins
+
+- and all parameters of [CanvasEngine.defines()](http://canvasengine.net/doc/?p=core.engine.defines)
+
+
+@return {RPGJS}
+*/
 	defines: function(params) {
 		this.params = params;
 		this.params.autoload = this.params.autoload == undefined ? true : this.params.autoload;
 		return this;
 	},
-	
 	
 	
 	loadMaterials: function(callback) {
@@ -61,7 +121,7 @@ Class.create("RPGJS", {
 	},
 	
 /**
-@doc rpgjs/
+@doc main/
 @method setData Assigns data to the game
 @param {String} type Default type
 
@@ -73,6 +133,20 @@ Existing type:
 - tilesets
 - actions
 - autotiles
+- classes
+- states
+- skills
+- weapons
+- armors
+- items
+- elements
+- switches
+- variables
+- detections
+- animations
+
+@param {Integer} id Identifier of the data
+@param {Object} obj data
 */  
 	setData: function(type, id, obj) {
 		if (typeof id != "number") {
@@ -84,16 +158,87 @@ Existing type:
 		}
 	},
 	
+/**
+@doc main/
+@method setMaterials Assigns data to the game
+@param {String} type Default type
+
+Existing type (id: root of path)
+
+- tilesets: "Graphics/Tilesets/",
+- windowskins: "Graphics/Windowskins/"
+- autotiles: "Graphics/Autotiles/"
+- characters: "Graphics/Characters/"
+- animations: "Graphics/Animations/"
+- pictures: "Graphics/Pictures/"
+- battlers: "Graphics/Battlers/"
+- icons: "Graphics/Icons/"
+- titles: "Graphics/Titles/"
+- faces: "Graphics/Faces/"
+- fonts: "Graphics/fonts/"
+- gameovers: "Graphics/Gameovers/"
+- bgms: "Audio/BGM/"
+- bgss: "Audio/BGS/"
+- mes: "Audio/ME/"
+- ses: "Audio/SE/"
+
+
+@param {String} path Path
+*/
 	setMaterials: function(type, id, obj) {
 		if (typeof id != "string") {
 			global.materials[type] = id;
 		}
 	},
 	
+/**
+@doc main/
+@method setMaterials Defines the data of new map
+@param {Integer} id Map ID
+@param {Array} obj Map data
+@example
+
+	RPGJS.setMap(2, [[[8378, null, null], [...
+
+*/
 	setMap: function(id, obj) {
 		this.maps[id] = obj;
 	},
 	
+/**
+@doc main/
+@method setMaterials Defines the data of new event on a map
+@param {Integer} id Map ID. The map must existed
+@param {Integer} id Event ID
+@param {Array} obj Event data
+@example
+
+	RPGJS.setMap(2, [[[8378, null, null], [...
+	RPGJS.setMap(2, 1, [
+		{
+			"id": "1",
+			"x": "5",
+			"y": "4",
+			"name": "EV-1"
+		},
+		[
+			{
+				"trigger": "action_button",
+				"frequence": "2",
+				"type": "fixed",
+				"speed": "4",
+				"switch_1": 0,
+				"switch_2": 0,
+				"switch_3": 0,
+				"commands": [
+					"ERASE_EVENT: true"
+				],
+				"graphic": "2"
+			}
+		]
+	]);
+
+*/
 	setEvent: function(map_id, event_id, obj) {
 		if (!this.events[map_id]) {
 			this.events[map_id] = {};
@@ -118,12 +263,42 @@ Existing type:
 	
 	load: function(callback) {
 		var self = this;
-		
+
+/**
+@doc main/
+@property Switches instance of the Game_Switches class
+@type Game_Switches
+*/		
 		this.Switches = global.game_switches = Class.New("Game_Switches");
+/**
+@doc main/
+@property Variables instance of the Game_Variables class
+@type Game_Variables
+*/	
 		this.Variables = global.game_variables = Class.New("Game_Variables");
+/**
+@doc main/
+@property SelfSwitches instance of the Game_SelfSwitches class
+@type Game_SelfSwitches
+*/	
 		this.SelfSwitches = global.game_selfswitches = Class.New("Game_SelfSwitches");
+/**
+@doc main/
+@property Map instance of the Game_Map class
+@type Game_Map
+*/	
 		this.Map = global.game_map = Class.New("Game_Map");
+/**
+@doc main/
+@property Actors instance of the Game_Actors class
+@type Game_Actors
+*/	
 		this.Actors = global.game_actors = Class.New("Game_Actors");
+/**
+@doc main/
+@property Player instance of the Game_Player class
+@type Game_Player
+*/	
 		this.Player = global.game_player = Class.New("Game_Player");
 		
 		this.Scene = this.scene;
@@ -141,6 +316,26 @@ Existing type:
 		}, this.params.scene_path);
 	},
 	
+/**
+@doc main/
+@method ready Calls a function when the canvas is loaded
+@param {Function} callback Function called when the canvas is loaded
+@example
+
+	RPGJS.defines({
+		canvas: "canvas",
+		autoload: false
+	}).ready(function() {
+	
+		RPGJS.Player.init({
+			actor: 1,
+			start: {x: 10, y: 10, id: 1}
+		});
+		
+		RPGJS.Scene.map();
+	});
+
+*/
 	ready: function(callback) {
 		var self = this;
 		
@@ -148,6 +343,11 @@ Existing type:
 			extend([Animation, Input, Spritesheet, Scrolling, Window, Text, Effect]).
 			ready(function() {
 			
+/**
+@doc main/
+@property System instance of the Game_System class
+@type Game_System
+*/
 					self.System = global.game_system = Class.New("Game_System");
 					global.game_save = Class.New("Game_Save");
 					
@@ -176,14 +376,57 @@ Existing type:
 			
 			
 	},
-	
-	
+
+
+/**
+@doc main_scene
+@class RPGJS.Scene Extend calls scenes of CanvasEngine
+*/	
 	scene: {
+	
+/**
+@doc main_scene/
+@method map Called Scene_Map class
+@params {Function} onLoad (optional) Callback function when the card is loaded
+@return {CanvasEngine.Scene}
+@example 
+
+	RPGJS.defines({
+		canvas: "canvas",
+		autoload: false
+	}).ready(function() {
+	
+		RPGJS.Player.init({
+			actor: 1,
+			start: {x: 10, y: 10, id: 1}
+		});
+		
+		RPGJS.Scene.map();
+	});
+
+*/	
 	
 		map: function(load) {
 			return this.call("Scene_Map").load(load);
 		},
+
+/**
+@doc main_scene/
+@method call Call a scene
+@params {String} name Scene name
+@params {Object} params Scene params. See [CanvasEngine.Scene.call()](http://canvasengine.net/doc/?p=core.scene.call)
+@return {CanvasEngine.Scene}
+@example 
+
+	RPGJS.defines({
+		canvas: "canvas"
+	}).ready(function() {
 	
+		RPGJS.Scene.load("Scene_Title");
+		
+	});
+
+*/			
 		call: function(name, params) {
 			return RPGJS_Canvas.Scene.call(name, params);
 		},
@@ -225,7 +468,11 @@ Existing type:
 		script.src = src + ".js";
 		document.getElementsByTagName("head")[0].appendChild(script);
 	},
-	
+
+/**
+@doc main_plugin
+@class RPGJS.Plugin Manages plugins RPGJS
+*/		
 	Plugin: {
 	
 		list: [],
@@ -236,6 +483,12 @@ Existing type:
 			}
 		},
 	
+/**
+@doc main_plugin/
+@method add Adds one or plugins
+@params {Array|String} Name plugin or plugins
+@params {Function} onFinish callback when their charging is complete
+*/	
 		add: function(plugins, onFinish) {
 			var name, data, self = this, j=0;
 			
@@ -309,6 +562,18 @@ Existing type:
 		
 		
 		// .call(type, method_name, params
+		
+/**
+@doc main_plugin/
+@method call Call a method of the plugin
+@params {String} type `Game` or `Sprite`
+@params {String} name Method name
+@params {Array} params (optional) Method parameters
+@example
+
+RPGJS.Plugin.call("Game", "foo", ["bar"]); // Called `foo()` method in the `Game_X` class 
+ 
+*/			
 		call: function(type, name, params) {
 			var p;
 			if (!(params instanceof Array)) {
@@ -322,7 +587,11 @@ Existing type:
 			}
 		}
 	},
-	
+
+/**
+@doc main_materials
+@class RPGJS.Path Loads a graphic resource or audio
+*/			
 	Path: {
 		
 		tilesets: "Graphics/Tilesets/",
@@ -341,7 +610,20 @@ Existing type:
 		bgss: "Audio/BGS/",
 		mes: "Audio/ME/",
 		ses: "Audio/SE/",
-		
+	
+/**
+@doc main_materials/
+@method getFile Returns the full path of a file
+@params {String} type See setMaterials()
+@params {String} filename Filename
+@params {String} id (optional) Returns as {type + "_" + id: path}
+@return {String}
+@example
+
+	RPGJS.Path.getFile("tilesets", "img.png"); // => Graphics/Tilesets/img.png
+	RPGJS.Path.getFile("tilesets", "img.png", "1"); // => {"tilesets_1": "Graphics/Tilesets/img.png"}
+ 
+*/	
 		getFile: function (type, filename, object) {
 			var path = this[type] + filename, obj = {};
 			if (object) {
@@ -353,7 +635,27 @@ Existing type:
 			}
 		},
 		
+/**
+@doc main_materials/
+@method get retrieve the path of a resource by its identifier
+@params {String} type See setMaterials()
+@params {String} file_id File ID
+@params {Boolean} id (optional) Returns as {type + "_" + file_id: path}. false by default
+@params {Boolean} onlyFile (optional) Returns as {type + "_" + id: path}. false by default
+@return {String}
+@example
 
+	RPGJS.Materials = {
+		"tilesets": {
+			"1": "img.png"
+		}
+	};
+
+	RPGJS.Path.get("tilesets", "1"); 					// => Graphics/Tilesets/img.png
+	RPGJS.Path.getFile("tilesets", "1", true); 			// => {"tilesets_1": "Graphics/Tilesets/img.png"}
+	RPGJS.Path.getFile("tilesets", "1", false, true); 	// => img.png
+ 
+*/	
 		get: function(type, file_id, object, onlyFile) {
 			var obj = {}, path;
 
@@ -380,14 +682,27 @@ Existing type:
 				return path;
 			}
 		},
-		
+
+/**
+@doc main_materials/
+@method isSound The resource type is a sound ? return true if type is `bgms`, `bgss`, `mes` or `ses`
+@params {String} type Resource type
+@return {Boolean}
+*/			
 		isSound: function(type) {
 			return type == "bgms" || 
 				type == "bgss" || 
 				type == "mes" || 
 				type == "ses";
 		},
-		
+
+/**
+@doc main_materials/
+@method loadMaterial Load an existing resource
+@params {String} type Resource type
+@params {Integer} id Resource id
+@params {Function} callback (optional) Call when the resource is loaded
+*/	
 		loadMaterial: function(type, id, callback) {
 			var obj= {}, global_type = this.isSound(type) ? "sounds" : "images";
 			var path = this.get(type, id);
@@ -397,7 +712,21 @@ Existing type:
 			}
 			RPGJS_Canvas.Materials.load(global_type, obj, callback);
 		},
-		
+
+/**
+@doc main_materials/
+@method load Load a new resource
+@params {String} type Resource type
+@params {Integer} file file name
+@params {Integer} id Resource id
+@params {Function} callback (optional) Call when the resource is loaded
+@example
+
+	RPG.Path.load("animations", "anim.png", "12", function() {
+		RPGJS.Path.get("animations", "12"); // => Graphics/Animations/anim.png
+	});
+
+*/		
 		load: function(type, file, id, callback) {
 			var obj= {}, global_type = this.isSound(type) ? "sounds" : "images";
 			obj[type + "_" + id] = this[type] + file;
