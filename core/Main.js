@@ -407,7 +407,9 @@ Existing type (id: root of path)
 */	
 	
 		map: function(load) {
-			return this.call("Scene_Map").load(load);
+			var scene = this.call("Scene_Map");
+			scene.load(load);
+			return scene;
 		},
 
 /**

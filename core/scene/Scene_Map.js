@@ -151,7 +151,6 @@ RPGJS_Canvas.Scene.New({
 			actions: this.data.actions
 		}]);
 		
-
 		if (+this.data.musics.bgm) {
 			global.game_system.bgmPlay(this.data.musics.bgm);
 		}

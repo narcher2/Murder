@@ -40,8 +40,8 @@ Class.create("Game_SelfSwitches", {
 @return {Boolean}
 @example
 
-	global.game_selfswitches.set(1, 3, "A", true); 
-	global.game_selfswitches.get(1, 3, "A"); // return true
+	RPGJS.SelfSwitches.set(1, 3, "A", true); 
+	RPGJS.SelfSwitches.get(1, 3, "A"); // return true
 	
 */
 	get: function(map_id, event_id, key) {
@@ -60,7 +60,7 @@ Class.create("Game_SelfSwitches", {
 @param {Boolean} value Value
 @example
 
-	global.game_selfswitches.set(1, 3, "A", true); 
+	RPGJS.SelfSwitches.set(1, 3, "A", true); 
 */
 	set: function(map_id, event_id, key, value) {
 

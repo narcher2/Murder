@@ -31,8 +31,8 @@ if (typeof exports != "undefined") {
 @doc interpreter
 @class Interpreter Interpreter commands events
 
-@param {Game_Character} event Event concerned
-@param {Array} commands Array containing the commands to be executed
+@param {Game_Character} event (optional) Event concerned. If null, the interpreter to execute the player
+@param {Array} commands (optional) Array containing the commands to be executed
 */
  Class.create("Interpreter", {
 	currentCmd: null,

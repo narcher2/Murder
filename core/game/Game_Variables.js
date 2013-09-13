@@ -39,13 +39,13 @@ Class.create("Game_Variables", {
 @return {Integer}
 @example
 
-	global.game_variables.set(5, 10, "add");
-	global.game_variables.get(5); // returns 10
-	global.game_variables.set(5, 5, "div");
-	global.game_variables.get(5);  // returns 2
-	global.game_variables.set(6, 2);
-	global.game_variables.set(5, {variable: 6}, "mul"); // variable #5 *= variable #6  
-	global.game_variables.get(5);  // returns 4
+	RPGJS.Variables.set(5, 10, "add");
+	RPGJS.Variables.get(5); // returns 10
+	RPGJS.Variables.set(5, 5, "div");
+	RPGJS.Variables.get(5);  // returns 2
+	RPGJS.Variables.set(6, 2);
+	RPGJS.Variables.set(5, {variable: 6}, "mul"); // variable #5 *= variable #6  
+	RPGJS.Variables.get(5);  // returns 4
 */
 	get: function(variable_id) {
 	   if (this.data[variable_id] != null) {
@@ -78,15 +78,15 @@ Class.create("Game_Variables", {
 
 @example
 
-	global.game_variables.set(5, 10, "add");
+	RPGJS.Variables.set(5, 10, "add");
 	
 Means: add the value 10 to the variable #5
 
-	global.game_variables.set(5, [0, 10]);
+	RPGJS.Variables.set(5, [0, 10]);
 	
 Variable #5 is a random value between 0 and 10
 
-	global.game_variables.set(5, {variable: 8});
+	RPGJS.Variables.set(5, {variable: 8});
 	
 Variable #5 takes the value of variable #8
 

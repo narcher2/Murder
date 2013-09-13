@@ -562,7 +562,7 @@ var _class = {
 @example
 	
 	// if tile is 32*32px
-	global.game_map.tileToPixel(2, 3); // returns {x: 64, y: 96}
+	RPGJS.Map.tileToPixel(2, 3); // returns {x: 64, y: 96}
 
 */  
    tileToPixel: function(x, y) {

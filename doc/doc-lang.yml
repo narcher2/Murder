@@ -1,5 +1,10 @@
 game: Core
 
+main: Main
+main_scene: Scene
+main_materials: Materials
+main_plugin: Plugin
+
 map: Map
 character: Character
 actors: Actors

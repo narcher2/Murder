@@ -1,13 +1,8 @@
 <!DOCTYPE html>
 <html>
   <head>
-  
-  <script>
-	
-		
-	</script>
-	
-	<script src="http://canvasengine.net/cdn/canvasengine-latest.all.min.js"></script>
+
+	<script src="http://canvasengine.net/cdn/dev/canvasengine-latest.all.min.js"></script>
 
 	<script src="../core/Main.js"></script>
 	
@@ -35,7 +30,8 @@
 	
 		RPGJS.Materials = {
 			"characters": {
-				"1": "event1.png"
+				"1": "event1.png",
+				"2": "event2.png"
 			},
 			"tilesets": {
 				"1": "tileset.png"
@@ -63,7 +59,7 @@
 		RPGJS.defines({
 			canvas: "canvas",
 			autoload: false,
-			scene_path: "../"
+			scene_path: "../",
 		}).ready(function() {
 		
 			RPGJS.Player.init({
@@ -72,7 +68,9 @@
 			});
 			
 			RPGJS.Scene.map();
+			
 		});
+	
 	
 	</script>
 		

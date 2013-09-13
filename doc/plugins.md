@@ -59,7 +59,7 @@ Methods are called plugins. By Example :
 
 ## Add Hook in your code
 
-    RPGJS_Core.Plugin.call("Sprite", "drawCharactersEnd", [this]);
+    RPGJS.Plugin.call("Sprite", "drawCharactersEnd", [this]);
 
 Parameters
 

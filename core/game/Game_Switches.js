@@ -39,9 +39,9 @@ Class.create("Game_Switches", {
 @return {Boolean}
 @example
 
-	global.game_switches.get(4); // returns false
-	global.game_switches.set(4, true);
-	global.game_switches.get(4); // returns true
+	RPGJS.Switches.get(4); // returns false
+	RPGJS.Switches.set(4, true);
+	RPGJS.Switches.get(4); // returns true
 */
 	get: function(switch_id) {
 	   if (this.data[switch_id] != null) {
@@ -60,7 +60,7 @@ Class.create("Game_Switches", {
 @param {Boolean} true to enable, false to disable
 @example
 
-	global.game_switches.set(4, true);
+	RPGJS.Switches.set(4, true);
 */
 	set: function(switch_id, value) {
 		if (!(switch_id instanceof Array)) {

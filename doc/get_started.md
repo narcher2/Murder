@@ -14,11 +14,46 @@ Follow the steps below to start:
        
 3. Initialize the canvas in your JS file :
 
-        RPGJS_Core.defines({
+        RPGJS.defines({
 			canvas: "canvas_id"
-		}).ready(function(rpg) {
-			this.scene.call("Scene_Map");
+		}).ready(function() {
+
+			RPGJS.Scene.map();
+
 		});
+
+## Do not load the .json files by default
+
+Define the data header :
+
+    RPGJS.Database = {
+        "actors": {
+            "1": {
+                "graphic": "1"
+            }
+        }
+    };
+
+    RPGJS.Materials = {
+        "characters": {
+            "1": "chara.png"
+        }
+    };
+
+    RPGJS.defines({
+		canvas: "canvas_id",
+        autoload: false
+	}).ready(function() {
+
+        RPGJS.Player.init({
+			actor: 1,
+			start: {x: 10, y: 10, id: 1} // Here, map id doesn't exist
+		});
+
+		RPGJS.Scene.map();
+
+	});
+
 
 ## Folder Structure ##
 
