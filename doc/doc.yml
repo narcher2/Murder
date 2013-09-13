@@ -1,5 +1,6 @@
 game:
-    main:
+    rpgjs:
+     main:
      main_scene:
      main_materials:
      main_plugin:
@@ -15,3 +16,8 @@ game:
     system:
     interpreter:
     plugin:
+sprite:
+    scene_map:
+    spriteset_map:
+    sprite_character:
+    sprite_plugin:

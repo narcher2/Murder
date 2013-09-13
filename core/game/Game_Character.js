@@ -372,7 +372,7 @@ Example
 
 @example
 
-	global.game_player.moveRoute(["turn_left", "wait_40", "left", "left", "speed_6", "left", left"]);
+	RPGJS.Player.moveRoute(["turn_left", "wait_40", "left", "left", "speed_6", "left", left"]);
 
 
 */	

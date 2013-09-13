@@ -1,5 +1,43 @@
+/*
+Visit http://rpgjs.com for documentation, updates and examples.
+
+Copyright (C) 2013 by WebCreative5, Samuel Ronce
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+*/
+
+/**
+@doc spriteset_map
+@class Spriteset_Map Map display and all sprites
+*/
 Class.create("Spriteset_Map", {
+/**
+@doc spriteset_map/
+@property stage Main element of the scene
+@type CanvasEngine.Element
+*/
 	stage: null,
+/**
+@doc spriteset_map/
+@property scene Main Scene
+@type CanvasEngine.Scene
+*/
 	scene: null,
 	data: null,
 	tile_w: 32,
@@ -10,8 +48,18 @@ Class.create("Spriteset_Map", {
 	nb_autotiles_max: 64,
 	autotiles: [],
 	events: {},
+/**
+@doc spriteset_map/
+@property layer Array containing each element of each map layer
+@type Array
+*/
 	layer: [],
 	picture_layer: null,
+/**
+@doc spriteset_map/
+@property map element corresponding to the card (with characters)
+@type CanvasEngine.Element
+*/
 	map: null,
 	pictures: {},
 	initialize: function(scene, stage, data, params) {
@@ -344,7 +392,22 @@ Class.create("Spriteset_Map", {
 		this.events[data.id] = sprite;
 		RPGJS.Plugin.call("Sprite", "addCharacter", [sprite, data, this]);
 	},
-	
+
+/**
+@doc spriteset_map/
+@method addPicture Displays an image over the elements of the map
+@params {Integer} id Assigning an identifier
+@params {Object} params Parameters :
+
+- x
+- y
+- opacity (0-255)
+- zoom_x (0-100)
+- zoom_y (0-100)
+- origin : `center` or null
+
+@params {Function} load (optional) Callback when image is loaded
+*/		
 	addPicture: function(id, params, load) {
 		var self = this;
 		
@@ -371,6 +434,22 @@ Class.create("Spriteset_Map", {
 		});
 	},
 	
+/**
+@doc spriteset_map/
+@method movePicture Move an existing image
+@params {Integer} id Image ID
+@params {Integer} time Frame
+@params {Object} params New parameters :
+
+- x
+- y
+- opacity (0-255)
+- zoom_x (0-100)
+- zoom_y (0-100)
+- origin : `center` or null
+
+@params {Function} finish (optional) Callback when the movement is completed
+*/	
 	movePicture: function(id, time, params, finish) {
 		var el = this.pictures[id];
 		if (!el) return false;
@@ -392,6 +471,12 @@ Class.create("Spriteset_Map", {
 		}, time).call(finish);
 	},
 	
+/**
+@doc spriteset_map/
+@method rotatePicture Rotate an image indefinitely
+@params {Integer} id Image ID
+@params {Integer} speed Speed
+*/	
 	rotatePicture: function(id, time) {
 		var el = this.pictures[id];
 		if (!el) return false;
@@ -403,13 +488,31 @@ Class.create("Spriteset_Map", {
 		});
 	},
 	
+/**
+@doc spriteset_map/
+@method rotatePicture Deletes an image
+@params {Integer} id Image ID
+*/	
 	erasePicture: function(id) {
 		var el = this.pictures[id];
 		if (!el) return false;
 		el.remove();
 		delete this.pictures[id];
 	},
+
+/**
+@doc spriteset_map/
+@method effect Performs an effect on the map (http://canvasengine.net/doc/?p=extends.effect)
+@params {String} name Effect name 
+@params {Array} params Effect parameters
+@params {Function} finish (optional) Callback when the effect is completed
+@example
+
+	var scene = RPGJS.Scene.map();
+	scene.getSpriteset().effect("screenFlash", ["ff0000", 20]); // http://canvasengine.net/doc/?p=extends.effect.screenFlash
+	// or scene.effect(...);
 	
+*/	
 	effect: function(name, params, finish) {
 		var self = this;
 		var effect = RPGJS_Canvas.Effect.New(this.scene, this.map);
@@ -469,6 +572,12 @@ Class.create("Spriteset_Map", {
 		this.getEvent(id).stop();
 	},
 	
+/**
+@doc spriteset_map/
+@method getEvent Returns the sprite of an event
+@params {Integer} id Event ID
+@return {Sprite_Character}
+*/
 	getEvent: function(id) {
 		if (id == 0) {
 			return this.player;
@@ -479,9 +588,21 @@ Class.create("Spriteset_Map", {
 	scrollingUpdate: function() {
 		this.scrolling.update();
 	},
+	
+/**
+@doc spriteset_map/
+@method getWidthPixel returns width of the map (pixels)
+@return {Integer}
+*/		
 	getWidthPixel: function() {
 		return this.width * this.tile_w;
 	},
+	
+/**
+@doc spriteset_map/
+@method getHeightPixel returns height of the map (pixels)
+@return {Integer}
+*/	
 	getHeightPixel: function() {
 		return this.height * this.tile_h;
 	}

@@ -1,3 +1,31 @@
+/*
+Visit http://rpgjs.com for documentation, updates and examples.
+
+Copyright (C) 2013 by WebCreative5, Samuel Ronce
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+*/
+
+/**
+@doc scene_map
+@class Scene_Map Scene of the current map
+*/
 RPGJS_Canvas.Scene.New({
 	name: "Scene_Map",
 	data: {},
@@ -214,10 +242,23 @@ RPGJS_Canvas.Scene.New({
 
 	},
 	
+/**
+@doc scene_map/
+@method animation Displays an animation event (http://canvasengine.net/doc/?p=extends.animation, image with several sequences)
+@params {String} event_id Event ID
+@params {Array} animation_id Animation ID
+*/	
 	animation: function(event_id, animation_id) {
 		this.getSpriteset().getEvent(event_id).showAnimation(animation_id);
 	},
-	
+
+/**
+@doc scene_map/
+@method effect Shortcut to `Spriteset_Map.effect()`
+@params {String} name
+@params {Array} params
+@params {Function} finish (optional)
+*/		
 	effect: function(name, params, finish) {
 		this.getSpriteset().effect(name, params, finish);
 	},
@@ -234,7 +275,12 @@ RPGJS_Canvas.Scene.New({
 	scrollMap: function(pos, finish) {
 		this.getSpriteset().scrollMap(pos, finish);
 	},
-	
+
+/**
+@doc scene_map/
+@method getSpriteset Retrieves sprites and elements
+@return {Spriteset_Map}
+*/	
 	getSpriteset: function() {
 		return this.spriteset;
 	},

@@ -336,7 +336,6 @@ var _class = {
 /**
 @doc map/
 @method getEvent Get an event on the map by its ID
-@param {Game_Character} entity Position X
 @param {Integer} id Event ID
 @return {Game_Event}
 */

@@ -193,7 +193,7 @@ Existing type (id: root of path)
 	
 /**
 @doc main/
-@method setMaterials Defines the data of new map
+@method setMap Defines the data of new map
 @param {Integer} id Map ID
 @param {Array} obj Map data
 @example
@@ -207,7 +207,7 @@ Existing type (id: root of path)
 	
 /**
 @doc main/
-@method setMaterials Defines the data of new event on a map
+@method setEvent Defines the data of new event on a map
 @param {Integer} id Map ID. The map must existed
 @param {Integer} id Event ID
 @param {Array} obj Event data

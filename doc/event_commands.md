@@ -56,6 +56,54 @@ You can put as many choices as an element in the array : `CHOICE_X`
 - operation : View `set` method of variables in documentation 
 - id : Variable ID
 
+## Condition
+
+    IF: 'condition'
+    ELSE
+    ENDIF
+
+ - conditon
+    - `switch[ID]`
+    - `self_switch[ID]`
+    - `variable[ID]`
+    - `actor_in_party[ACTOR_ID]`
+    - `actor_name[ACTOR_ID]`
+    - `actor_skill_learned[ACTOR_ID, SKILL_ID]`
+    - `actor_weapon_equiped[ACTOR_ID, WEAPON_ID]`
+    - `actor_armor_equiped[ACTOR_ID, ARMOR_ID]`
+    - `actor_state_inflicted[ACTOR_ID, STATE_ID]`
+    - `character_facing[EVENT_ID]`
+    - `gold`
+    - `item_possessed[ITEM_ID]`
+    - `weapon_possessed[WEAPON_ID]`
+    - `armor_possessed[ARMOR_ID]`
+
+Example :
+
+	IF: '3 > 1'
+	IF: 'switch[1]'
+	IF: 'self_switch[A]'
+	IF: 'variable[1] > 0'
+	IF: 'variable[1] == variable[2]'
+	IF: 'actor_in_party[1]'
+	IF: 'actor_name[1] == "Foo"'
+	IF: 'actor_skill_learned[1,3]'
+	IF: 'actor_weapon_equiped[1,1]'
+	IF: 'actor_armor_equiped[1,1]'
+	IF: 'actor_state_inflicted[1,1]'
+	IF: 'character_facing[1] == "left"'
+	IF: 'gold > 10'
+	IF: 'item_possessed[1]'
+	IF: 'weapon_possessed[1]'
+	IF: 'armor_possessed[1]'
+
+## Move Route
+
+    MOVE_ROUTE: {'target': 'this','move': ['left','left']}
+
+- target: `this`, `player` or event id
+- move: Path in an array. See `Game_Character.moveRoute()`
+
 ## Change Currency
 
     CHANGE_GOLD: {'operation': 'increase','operand-type': 'constant','operand': '3'}
@@ -75,6 +123,18 @@ You can put as many choices as an element in the array : `CHOICE_X`
 
     TRANSFER_PLAYER: {'position-type': 'constant', 'appointement': {'x':1,'y': 1, 'id':2}}
 
+- position-type : `constant` or `variable`
+- appointement : localisation
+    - x : Position X
+    - y : Position Y
+    - id : Map ID
+
+## Set Event Location
+
+    SET_EVENT_LOCATION: {'event': 'this','direction': '0','position-type': 'constant','appointement': {'id':'3','x':20,'y':14}}
+
+- event: `this` or event id
+- direction: `left`, `right`, `up` or `bottom`. `0` : Direction unchanged
 - position-type : `constant` or `variable`
 - appointement : localisation
     - x : Position X
@@ -194,5 +254,94 @@ You can put as many choices as an element in the array : `CHOICE_X`
 - operand-type: `constant` or `variable`
 - operand : Simple value or variable ID if `operand-type` is `variable`
 
+## Change Level
+
+    CHANGE_LEVEL: {'operation': 'increase', 'operand-type': 'constant', 'operand': '1'}
+
+- operation : `increase` or `decrease`
+- operand-type: `constant` or `variable`
+- operand : Simple value or variable ID if `operand-type` is `variable`
+
+## Change EXP
+
+    CHANGE_EXP: {'operation': 'increase', 'operand-type': 'constant', 'operand': '1'}
+
+- operation : `increase` or `decrease`
+- operand-type: `constant` or `variable`
+- operand : Simple value or variable ID if `operand-type` is `variable`
+
+## Change Parameters
+
+    CHANGE_PARAMS: {'param': 'atk', 'operation': 'increase', 'operand-type': 'constant', 'operand': '1'}    
+
+- param : `atk`, `pdef`, `mdef`, `dex`, `agi`, `int`
+- operation : `increase` or `decrease`
+- operand-type: `constant` or `variable`
+- operand : Simple value or variable ID if `operand-type` is `variable`
+
+## Change HP
+
+    CHANGE_HP: {'operation': 'decrease', 'operand-type': 'constant', 'operand': '90'}
+
+- operation : `increase` or `decrease`
+- operand-type: `constant` or `variable`
+- operand : Simple value or variable ID if `operand-type` is `variable`
+
+## Change SP
+
+    CHANGE_SP: {'operation': 'decrease', 'operand-type': 'constant', 'operand': '90'}
+
+- operation : `increase` or `decrease`
+- operand-type: `constant` or `variable`
+- operand : Simple value or variable ID if `operand-type` is `variable`
+
+## Recover All
+    
+    RECOVER_ALL: {'actor': 1}
+
+- actor : `all` or Actor ID
+
+## Change Skill
+
+    CHANGE_SKILLS: {'operation': 'increase', 'skill': '2'}
+
+- operation : `increase` or `decrease`
+- skill: Skill ID
+
+## Change Actor Name
+
+    CHANGE_NAME: {'actor': 1}
+
+- actor : `all` or Actor ID
+
+## Change Actor Class
+
+    CHANGE_CLASS: {'class': 2, 'actor': 1}
+
+- class: Class ID
+- actor: `all` or Actor ID
+
+## Change Player Graphic
+
+    CHANGE_GRAPHIC: {graphic': '5'}
+
+- graphic: Character Graphic ID
+
+## Change Actor Equipment
+
+    CHANGE_EQUIPMENT: {'type': 'weapons', 'actor': 1, 'operand-type': 'constant', 'operand': '1'}
+
+- type : `weapons` or `armors`
+- actor: `all` or Actor ID
+- operand-type: `constant` or `variable`
+- operand : Simple value or variable ID if `operand-type` is `variable`
+
+## Change State
+
+    CHANGE_STATE: {'actor': 'all','operation': 'increase','state': '2'}
+
+- actor: `all` or Actor ID
+- operation : `increase` or `decrease`
+- state : State ID
 
 
