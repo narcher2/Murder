@@ -95,7 +95,7 @@ RPGJS_Canvas.Scene.New({
 		else {
 			this.select = this._execLoad;
 			back = function() {
-				RPGJS_Core.scene.call("Scene_Title");
+				RPGJS.scene.call("Scene_Title");
 			};
 		}
 		RPGJS_Canvas.Input.press([Input.Esc], back);
@@ -111,7 +111,7 @@ RPGJS_Canvas.Scene.New({
 		/*face.drawImage("face", 0, 0, 100, 100, 0, 0, 100, 94);
 		face.x = 20;*/
 		
-		RPGJS_Core.Path.loadMaterial("characters" , data.actor_face, function() {
+		RPGJS.Path.loadMaterial("characters" , data.actor_face, function() {
 			var img = RPGJS_Canvas.Materials.get("characters_" + data.actor_face);
 			face.drawImage("characters_" + data.actor_face, 0, 0, img.width / data.actor_nbSequenceX, img.height / data.actor_nbSequenceY, -data.actor_regX, -data.actor_regY, img.width / data.actor_nbSequenceX, img.height / data.actor_nbSequenceY);
 			face.x = 50;
@@ -189,7 +189,7 @@ RPGJS_Canvas.Scene.New({
 		global.game_player.x /= global.game_map.tile_w;
 		global.game_player.y /= global.game_map.tile_h;
 		
-		RPGJS_Core.scene.call("Scene_Map", {
+		RPGJS.scene.call("Scene_Map", {
 			params: {
 				map_id: global.game_player.map_id
 			}

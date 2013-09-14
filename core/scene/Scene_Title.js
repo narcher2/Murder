@@ -101,14 +101,14 @@ RPGJS_Canvas.Scene.New({
 	},
 	new_game: function() {
 		if (CE.io) {
-			RPGJS_Core.scene.call("Scene_Map");
+			RPGJS.scene.call("Scene_Map");
 		}
 		else {
-			RPGJS_Core.scene.call("Scene_Map").load();
+			RPGJS.scene.call("Scene_Map").load();
 		}
 	},
 	load_game: function() {
-		var scene = RPGJS_Core.scene.call("Scene_Load");
+		var scene = RPGJS.scene.call("Scene_Load");
 		scene.refresh("load");
 	},
 	existSaves: function() {

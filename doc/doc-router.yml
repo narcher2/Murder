@@ -12,3 +12,7 @@
 - core/game/Game_System.js
 - core/game/Game_Variables.js
 - core/game/Interpreter.js
+- core/scene/Scene_Map.js
+- core/sprite/Sprite_Character.js
+- core/sprite/Spriteset_Map.js
+- core/sprite/Sprite_Plugin.js

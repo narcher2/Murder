@@ -4,12 +4,20 @@ Class.create("Sprite_Hub", {
 	max_hp: 0,
 
 	mapLoadImages: function(array) {
-		array.push(RPGJS.Path.getFile("pictures", "hub.png", "hub"));
+		array.push(RPGJS.Path.getFile("pictures", "../../../materials/Graphics/Pictures/hub.png", "hub"));
+		array.push(RPGJS.Path.getFile("pictures", "../../../materials/Graphics/Pictures/hp_meter.png", "hp_meter"));
+		array.push(RPGJS.Path.getFile("pictures", "../../../materials/Graphics/Pictures/hp_number.png", "hp_number"));
+		array.push(RPGJS.Path.getFile("pictures", "../../../materials/Graphics/Pictures/Hero_Face.png", "hero_face"));
+		array.push(RPGJS.Path.getFile("pictures", "../../../materials/Graphics/Pictures/button_A.png", "button_a"));
+		array.push(RPGJS.Path.getFile("pictures", "../../../materials/Graphics/Pictures/button_B.png", "button_b"));
+		
+		/*array.push(RPGJS.Path.getFile("pictures", "hub.png", "hub"));
 		array.push(RPGJS.Path.getFile("pictures", "hp_meter.png", "hp_meter"));
 		array.push(RPGJS.Path.getFile("pictures", "hp_number.png", "hp_number"));
 		array.push(RPGJS.Path.getFile("pictures", "Hero_Face.png", "hero_face"));
 		array.push(RPGJS.Path.getFile("pictures", "button_A.png", "button_a"));
-		array.push(RPGJS.Path.getFile("pictures", "button_B.png", "button_b"));
+		array.push(RPGJS.Path.getFile("pictures", "button_B.png", "button_b"));*/
+		
 		return array;
 	},
 

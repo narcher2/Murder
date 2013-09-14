@@ -32,7 +32,7 @@ Class.create("Sprite_MenuGenerated", {
 				if (s.block == "all") {
 					RPGJS_Canvas.Scene.get("Scene_Map").pause(true);
 				}
-				scene = RPGJS_Core.scene.call(s.menu_id, {
+				scene = RPGJS.scene.call(s.menu_id, {
 					overlay: true
 				});
 			}

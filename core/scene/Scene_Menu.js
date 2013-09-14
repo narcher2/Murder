@@ -1037,7 +1037,7 @@ RPGJS_Canvas.Scene.New({
 	},
 	
 	__save: function(stage) {
-		var scene = RPGJS_Core.scene.call("Scene_Load", {
+		var scene = RPGJS.scene.call("Scene_Load", {
 			overlay: true
 		});
 		scene.refresh("save");

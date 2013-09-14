@@ -77,8 +77,8 @@ Define the data header :
     - Gameovers
 - core
     - scene
-        - Scene_Map.js
-        - Scene_Window.js
+        - `Scene_Map.js`
+        - `Scene_Window.js`
         - [Others Scenes]
 - plugins
 - Data
@@ -90,3 +90,49 @@ Define the data header :
 - index.html
 - canvasengine-X.Y.Z.all.min.js
 - rpgjs-X.Y.Z.min.js
+
+## Two global variables
+
+- RPGJS : Provides access to a large part of the RPG JS API
+
+    Example 1 :
+
+        RPGJS.Player.moveRoute(["turn_left", "wait_40", "left", "left", "speed_6", "left", left"]);
+
+    Example 2 :
+
+        RPGJS.Map.getEvent(1);
+
+    Example 3 :
+
+        RPGJS.Variables.set(5, 10);
+
+- RPGJS_Canvas : refers to CanvasEngine ([http://canvasengine.net/doc](http://canvasengine.net/doc))
+
+    Example :
+
+        RPGJS_Canvas.Input.press(Input.Enter, function() {
+
+        });
+
+## Use the display classes
+
+Classes : `Scene_Map`, `Spriteset_Map` and `Sprite_Character`
+
+     RPGJS.defines({
+		canvas: "canvas_id"
+	}).ready(function() {
+
+		var scene = RPGJS.Scene.map();           // returns Scene_Map
+        var spriteset = scene.getSpriteset();    // returns Spriteset_Map
+        var chara = spriteset.getEvent(1);       // returns Sprite_Character
+
+        // new element (CanvasEngine) 
+        // http://canvasengine.net/doc/?p=tuto-element.html
+        var el = scene.createElement();
+        el.fillStyle = "red";
+        el.fillRect(0, 0, 100, 100);
+
+        spriteset.map.append(el); // add element in map element
+
+	});
