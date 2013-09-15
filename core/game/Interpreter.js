@@ -378,7 +378,7 @@ if (typeof exports != "undefined") {
 		text = text.replace(/&#39;/g, "'");
 		
 		if (!this.scene_window) {
-			this.scene_window = RPGJS_Core.scene.call("Scene_Window", {
+			this.scene_window = RPGJS.scene.call("Scene_Window", {
 				overlay: true
 			});
 			this.scene_window.box();
@@ -387,7 +387,7 @@ if (typeof exports != "undefined") {
 		if (nextCmd.name != "CHOICES") {
 			this.scene_window.onEnterPress(function() {
 				if (nextCmd.name != "SHOW_TEXT") {
-					RPGJS.Scene.exit("Scene_Window");
+					RPGJS_Canvas.Scene.exit("Scene_Window");
 					self.scene_window = null;
 				}
 				self.nextCommand();
@@ -424,7 +424,7 @@ if (typeof exports != "undefined") {
 	
 		var self = this;
 		if (!this.scene_window) {
-			this.scene_window = RPGJS_Core.scene.call("Scene_Window", {
+			this.scene_window = RPGJS.scene.call("Scene_Window", {
 				overlay: true
 			});
 		}
@@ -434,7 +434,7 @@ if (typeof exports != "undefined") {
 			var c = self._conditions[id];
 			self._conditions[id].val = false;
 			self.setCurrentPos(c["choice_" + index]);
-			RPGJS.Scene.exit("Scene_Window");
+			RPGJS_Canvas.Scene.exit("Scene_Window");
 			self.scene_window = null;
 			self.nextCommand();
 		});
@@ -530,7 +530,7 @@ if (typeof exports != "undefined") {
 		var pos = this._getPos(map);
 		
 		if (map.direction && map.direction != "0") global.game_player.direction = map.direction;
-		RPGJS_Core.scene.call("Scene_Map", {
+		RPGJS.scene.call("Scene_Map", {
 			params: {
 				map_id: pos.id,
 				pos: pos
@@ -897,7 +897,7 @@ if (typeof exports != "undefined") {
 	cmdShowPicture: function(params) {
 		var self = this;
 		params = this._valuePicture(params);
-		params.filename = RPGJS_Core.Path.get("pictures", params.filename, false, true);
+		params.filename = RPGJS.Path.get("pictures", params.filename, false, true);
 		global.game_map.callScene("pictures", ["add", [params.id, params, function() {
 			self.nextCommand();
 		}]]);
@@ -1028,7 +1028,7 @@ if (typeof exports != "undefined") {
 		for (var i=0 ; i < Menu_Generated.scenes.length ; i++) {
 			s = Menu_Generated.scenes[i];
 			if (s.id == params.menus) {
-				scene = RPGJS_Core.scene.call(s.menu_id, {
+				scene = RPGJS.scene.call(s.menu_id, {
 					overlay: true
 				});
 			}
@@ -1037,7 +1037,7 @@ if (typeof exports != "undefined") {
 	},
 	
 	cmdCallSave: function() {
-		var scene = RPGJS_Core.scene.call("Scene_Load");
+		var scene = RPGJS.scene.call("Scene_Load");
 		scene.refresh("save");
 	},
 	

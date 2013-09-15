@@ -500,7 +500,7 @@ Class.create("Spriteset_Map", {
 	
 /**
 @doc spriteset_map/
-@method rotatePicture Deletes an image
+@method erasePicture Deletes an image
 @params {Integer} id Image ID
 */	
 	erasePicture: function(id) {

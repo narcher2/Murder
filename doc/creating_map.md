@@ -4,8 +4,6 @@ The map `(.json)` must be stored in `Data/Maps`. The name of the card must be `M
 
 In the `Data/Events` folter, create a folder with the same map name and store you events `(.json)` inside.
 
-> If the event `(.json)` is not a record of the map, it will be considered a dynamic event (= global)
-
 A scene is a set of tiles located in the `Graphics/Tilesets` folder. A map has a tileset and several autotiles (in `Graphics/Autotiles`). A map can have maximum `64` autotiles. Identifiers reserved for autotiles are from `0` to `3071`
 . Each autotile is divided into 48 possible combinations.
 
@@ -120,6 +118,53 @@ In `Data/Database.json` :
 - x : Position X
 - y : Position Y
 - id : Map ID
+
+# Without .json file
+
+You can set the database header : 
+
+        RPGJS.Materials = {
+			"characters": {
+				"1": "event1.png"
+			},
+			"tilesets": {
+				"1": "tileset.png"
+			}
+		};
+	
+		RPGJS.Database = {
+			"actors": {
+				"1": {
+					"graphic": "1"
+				}
+			},
+			"tilesets": {
+				"1": {
+					"graphic": "1"
+				}
+			},
+			"map_infos": {		
+				"1": {
+					"tileset_id": "1"
+				}
+			}
+		};
+	
+		RPGJS.defines({
+			canvas: "canvas",
+			autoload: false
+		}).ready(function() {
+
+            // You can define the properties of the map.  If not, RPGJS will look for map data in .json file
+           // RPGJS.setMap(1, "[[[3072,null, null],[3072,null,null], ...");
+		
+			RPGJS.Player.init({
+				actor: 1,
+				start: {x: 5, y: 5, id: 1}
+			});
+			
+			RPGJS.Scene.map();
+		});
 
 
 

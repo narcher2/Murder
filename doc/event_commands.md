@@ -58,11 +58,13 @@ You can put as many choices as an element in the array : `CHOICE_X`
 
 ## Condition
 
-    IF: 'condition'
-    ELSE
-    ENDIF
+    "IF: 'condition'",
 
- - conditon
+    "ELSE",
+
+    "ENDIF"
+
+ - condition
     - `switch[ID]`
     - `self_switch[ID]`
     - `variable[ID]`
@@ -344,4 +346,72 @@ Example :
 - operation : `increase` or `decrease`
 - state : State ID
 
+## Show Picture
 
+    SHOW_PICTURE: {'id': '1','filename': '','origin': 'upper_left','operand-type': 'constant','x': '2','y': '3','zoom_x': '100','zoom_y': '100','opacity': '1'
+
+- id : Picture ID
+- filename: File name in `Graphics/Pictures`
+- operand-type: `constant` or `variable`
+- x: Position X
+- y : Position Y
+- opacity (0-255)
+- zoom_x (0-100)
+- zoom_y (0-100)
+- origin : `center` or `upper_left`
+
+## Move Picture 
+
+    MOVE_PICTURE: {'id': '1','duration': '3','operand-type': 'constant','x': '2','y': '2','zoom_x': '','zoom_y': '','opacity': ''}
+
+- id : Picture ID
+- duration: Duration in frames
+- operand-type: `constant` or `variable`
+- x: Position X
+- y : Position Y
+- opacity (0-255)
+- zoom_x (0-100)
+- zoom_y (0-100)
+- origin : `center` or `upper_left`
+
+## Rotate Picture
+
+    ROTATE_PICTURE: {'id': '1','speed': '4'}
+
+- id : Picture ID
+- speed: Speed
+
+## Erase Picture
+
+    ERASE_PICTURE: {'id': '1'}
+
+- id : Picture ID
+
+## Call Common Event
+
+    CALL_COMMON_EVENT: {'name': '2'}
+
+- name : Common Event ID
+
+## Add Dynamic Event
+
+    ADD_DYNAMIC_EVENT: {'name': '2','position-type': 'constant', appointement: {'x': 1, 'y': 1}}
+
+- name : Dynamic Event ID
+- operand-type: `constant` or `variable`
+- appointement : Position in current map
+
+## Add a dynamic event over the player
+
+    ADD_DYNAMIC_EVENT_RELATIVE: {'name': '2', 'position-type': 'distance','dir': '5','move': '1'}
+
+- name : Dynamic Event ID
+- position-type: `distance`
+- dir : Number of tiles from the player to place the event
+- move : Move to the destination. true or false 
+
+## Execute Script
+
+    SCRIPT: {'text': 'alert(&#34;foo&#34;);'}
+
+- text : Code
