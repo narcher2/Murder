@@ -2,9 +2,9 @@
 
 Follow the steps below to start:
 
-1. Download CanvasEngine in[ http://canvasengine.net]( http://canvasengine.net)
+1. Download CanvasEngine 1.3.0 in [http://canvasengine.net]( http://canvasengine.net)
 2. Download the code rpgjs-X.Y.Z.min.js on Github
-2. Add this code in your page : 
+3. Add this code in your page : 
         
 		<!DOCTYPE html>
 		<script src="canvasengine-X.Y.Z.all.min.js"></script>
@@ -12,7 +12,7 @@ Follow the steps below to start:
 		<canvas id="canvas_id" width="640" height="480"></canvas>
 		
        
-3. Initialize the canvas in your JS file :
+4. Initialize the canvas in your JS file :
 
         RPGJS.defines({
 			canvas: "canvas_id"
@@ -21,6 +21,8 @@ Follow the steps below to start:
 			RPGJS.Scene.map();
 
 		});
+
+> Do not forget to put `core/scene` directory at the root of your project for loading scenes.
 
 ## Do not load the .json files by default
 

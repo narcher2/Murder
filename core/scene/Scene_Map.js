@@ -62,6 +62,14 @@ RPGJS_Canvas.Scene.New({
 		if (data.graphics.tileset) images.push({tileset: RPGJS.Path.get("tilesets", data.graphics.tileset)});
 		if ( data.player.graphic) images.push(RPGJS.Path.get("characters", data.player.graphic, true));
 		// images.push({window: "../materials/Graphics/Windowskins/window.png"});
+		if (global.materials.windowskins) {
+			var win_id = 1;
+			for (var id in global.materials.windowskins) {
+				win_id = id;
+				break;
+			}
+			images.push({window: RPGJS.Path.get("windowskins", win_id)});
+		}
 	
 		data.autotiles_img = [];
 		
